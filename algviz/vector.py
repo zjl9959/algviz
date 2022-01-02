@@ -1,0 +1,345 @@
+#!/usr/bin/env python3
+
+'''
+@author:zjl9959@gmail.com
+@license:GPLv3
+'''
+
+import svg_table
+import utility as util
+
+class Vector():
+
+    def __init__(self, data, delay, cell_size, bar=-1, show_index=True):
+        '''
+        @param: (data->list(printable)) The initialize data for vector.
+        @param: (delay->float) Animation delay time between two animation frames.
+        @param: (cell_size->float) Vector cell size.
+        @param: (bar->float) If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
+        @param: (show_index->bool) Whether to display the vector index label.
+        '''
+        self._data = list()             # Store the data in vector list.
+        if data is not None:
+            for i in range(len(data)):
+                self._data.append(data[i])
+        self._delay = delay             # Animation delay time.
+        self._cell_size = cell_size     # Vector cell size.
+        self._bar = bar                 # Vector histogram height.
+        self._show_index = show_index   # Whether to display the vector index label.
+        self._cell_margin = 3           # Margin between two adjacent cells.
+        self._cell_tcs = dict()         # Record the trajectory access information (node_index: ColorStack) of all cells.
+        self._frame_trace_old = list()  # Cache the cell related information that needs to be cleared in the previous frame.
+        self._frame_trace = list()      # Record the relevant information of the cell to be refreshed in the next frame.
+        self._rect_move = dict()        # Record the index of moving cells and it's relative moving distance in the next frame.
+        self._rect_disappear = list()   # Record the index of disappearing cells in the next frame.
+        self._rect_appear = list()      # Record the index of appearing cells in the next frame.
+        self._index2rect = dict()       # The mapping relationship from vector index to the cell object.
+        self._index2text = list()       # The mapping relationship from vector index to the text object.
+        self._label_font_size = int(min(12, cell_size*0.5))   # The font size of the vector's subscript index.
+        self._next_iter = 0             # Mark the positon of current iteration.
+        svg_height = cell_size + 2*self._cell_margin
+        if self._show_index:
+            svg_height += self._label_font_size
+        if self._bar > 0:
+            svg_height = self._bar
+        self._svg = svg_table.SvgTable(len(self._data)*cell_size+(len(self._data)+1)*self._cell_margin, svg_height)
+        for i in range(len(self._data)):
+            rect = (cell_size*i+self._cell_margin*(i+1), self._cell_margin, cell_size, cell_size)
+            rid = self._svg.add_rect_element(rect, text=self._data[i])
+            self._cell_tcs[rid] = util.TraceColorStack()
+            self._index2rect[i] = rid
+        if self._bar > 0:
+            self._update_bar_height_()
+        if self._show_index:
+            for i in range(len(self._data)):
+                pos = (cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25, svg_height)
+                tid = self._svg.add_text_element(pos, i, font_size=self._label_font_size)
+                self._index2text.append(tid)
+    
+
+    def insert(self, index, val):
+        '''
+        @function: Insert a new value into vector. If index < 0 or index >= length of Vector, then set index = index % vector length.
+        @param: (index->int) The subscript index to insert value. (Insert before index)
+        @param: (val->printable) The value to insert into vector.
+        '''
+        if len(self._data) == 0:
+            self.append(val)
+        if index < 0 or index >= len(self._data):
+            index %= len(self._data)
+        # Add a new rectangle node and animation to SVG.
+        rect = (self._cell_size*index+self._cell_margin*(index+1), self._cell_margin, self._cell_size, self._cell_size)
+        rid = self._svg.add_rect_element(rect, text=val)
+        # Record the cells need to be move after the insert postion.
+        for i in range(len(self._data), index, -1):
+            rrid = self._index2rect[i-1]
+            self._index2rect[i] = rrid
+            if rrid in self._rect_move:
+                self._rect_move[rrid] += 1
+            else:
+                self._rect_move[rrid] = 1
+        self._index2rect[index] = rid
+        self._cell_tcs[rid] = util.TraceColorStack()
+        self._rect_appear.append(rid)
+        self._data.insert(index, val)
+    
+
+    def append(self, val):
+        '''
+        @function: Append a new value into vector's tail.
+        @param: (val->printable) The value to appended into vector's tail.
+        '''
+        index = len(self._data)
+        rect = (self._cell_size*index+self._cell_margin*(index+1), self._cell_margin, self._cell_size, self._cell_size)
+        rid = self._svg.add_rect_element(rect, text=val)
+        self._index2rect[index] = rid
+        self._cell_tcs[rid] = util.TraceColorStack()
+        self._rect_appear.append(rid)
+        self._data.append(val)
+    
+
+    def pop(self, index = -1):
+        '''
+        @function: Pop a value from vector. Pop vector's tail value as default. 
+        @param: (index->int) The index position of value to pop out.
+        '''
+        if len(self._data) == 0:
+            raise Exception('No item in vector to pop!')
+        if index < 0 or index >= len(self._data):
+            index %= len(self._data)
+        rid = self._index2rect[index]
+        for i in range(index, len(self._data)-1):
+            rrid = self._index2rect[i+1]
+            self._index2rect[i] = rrid
+            if rrid in self._rect_move:
+                self._rect_move[rrid] -= 1
+            else:
+                self._rect_move[rrid] = -1
+        self._index2rect.pop(len(self._data)-1)
+        self._rect_disappear.append(rid)
+        return self._data.pop(index)
+
+
+    def clear(self):
+        '''
+        function: Clear all the values in vector.
+        '''
+        for i in range(len(self._data)):
+            rid = self._index2rect[i]
+            self._rect_disappear.append(rid)
+        self._index2rect.clear()
+        self._rect_move.clear()
+        self._rect_appear.clear()
+        self._data.clear()
+    
+
+    def swap(self, index1, index2):
+        '''
+        function: Swap the two cells positon in Vector.
+        param: (index1, index2->int) The two index positions to be swapped.
+        '''
+        rid1 = self._index2rect[index1]
+        rid2 = self._index2rect[index2]
+        self._index2rect[index1] = rid2
+        self._index2rect[index2] = rid1
+        if rid1 in self._rect_move.keys():
+            self._rect_move[rid1] += index2 - index1
+        else:
+            self._rect_move[rid1] = index2 - index1
+        if rid2 in self._rect_move.keys():
+            self._rect_move[rid2] += index1 - index2
+        else:
+            self._rect_move[rid2] = index1 - index2
+        temp_data = self._data[index2]
+        self._data[index2] = self._data[index1]
+        self._data[index1] = temp_data
+
+
+    def mark(self, color, st, ed=None, hold=True):
+        '''
+        @function: Emphasize one cell in the Vector by mark it's background color.
+        @param: (color->(R,G,B)) The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
+                R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
+        @param: (st, ed->int) The mark range's index in Vector.
+        @param: (hold->bool) Whether to keep the mark color in future animation frames.
+        '''
+        if ed is None:
+            ed = st + 1
+        for i in range(st, ed):
+            if i < 0 or i >= len(self._data):
+                i %= len(self._data)
+            rid = self._index2rect[i]
+            self._cell_tcs[rid].add(color)
+            self._frame_trace.append((rid, color, hold))
+    
+
+    def removeMark(self, color):
+        '''
+        @function: Remove the mark color for cell(s).
+        @param: (color->(R,G,B)) R, G, B stand for color channel for red, green, blue.
+                R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
+        '''
+        for rid in self._index2rect.values():
+            if self._cell_tcs[rid].remove(color):
+                self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
+    
+
+    def __getitem__(self, index):
+        '''
+        @param: (index->int) The index position of the cell to be accessed.
+        '''
+        if index < 0 or index >= len(self._data):
+            index %= len(self._data)
+        rid = self._index2rect[index]
+        self._cell_tcs[rid].add(util._getElemColor)
+        self._frame_trace.append((rid, util._getElemColor, False))
+        return self._data[index]
+    
+
+    def __setitem__(self, index, val):
+        '''
+        @param: (index->int) The index position of the cell to be updated.
+        @param: (val->printable) New value for the cell.
+        '''
+        if index < 0 or index >= len(self._data):
+            index %= len(self._data)
+        rid = self._index2rect[index]
+        self._cell_tcs[rid].add(util._setElemColor)
+        self._frame_trace.append((rid, util._setElemColor, False))
+        label = val
+        if val is None:
+            label = ''
+        self._svg.update_rect_element(rid, text=label)
+        self._data[index] = val
+    
+
+    def __len__(self):
+        '''
+        return: (int) Length of Vector.
+        '''
+        return len(self._data)
+    
+    def __iter__(self):
+        self._next_iter = 0
+        return self
+    
+    def __next__(self):
+        if self._next_iter >= len(self._data):
+            raise StopIteration
+        else:
+            res = self[self._next_iter]
+            self._next_iter += 1
+            return res
+    
+
+    def _repr_svg_(self):
+        '''
+        @return: (str) The SVG representation of current Vector.
+        '''
+        # Update the color of the cell tracker.
+        nb_elem = len(self._data) + len(self._rect_disappear)
+        svg_height = self._cell_size + 2*self._cell_margin
+        if self._show_index:
+            svg_height += self._label_font_size
+        if self._bar > 0:
+            svg_height = self._bar
+        self._svg.update_svg_size(nb_elem*self._cell_size+(nb_elem+1)*self._cell_margin, svg_height)
+        for (rid, color) in self._frame_trace_old:
+            if rid not in self._cell_tcs.keys():
+                continue
+            if (rid, color, False) not in self._frame_trace and (rid, color, True) not in self._frame_trace:
+                self._cell_tcs[rid].remove(color)
+            self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
+        self._frame_trace_old.clear()
+        for (rid, color, hold) in self._frame_trace:
+            self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
+            if not hold:
+                self._frame_trace_old.append((rid, color))
+        self._frame_trace.clear()
+        # Add animations of the appearance and disappearance of cells.
+        for rid in self._rect_appear:
+            self._svg.add_animate_appear(rid, (0, self._delay))
+        for rid in self._rect_disappear:
+            self._svg.add_animate_appear(rid, (0, self._delay), appear=False)
+        # Add animations of cells movement.
+        if self._bar > 0:
+            self._update_bar_height_()
+        for rid in self._rect_move.keys():
+            if self._rect_move[rid] == 0:
+                continue
+            self._svg.add_animate_move(rid, (self._rect_move[rid]*(self._cell_size+self._cell_margin), 0) , (0, self._delay), bessel=False)
+        if self._show_index:
+            if len(self._index2text) > len(self._data):
+                for i in range(len(self._index2text)-len(self._data)):
+                    self._svg.delete_element(self._index2text[-1])
+                    self._index2text.pop()
+            elif len(self._index2text) < len(self._data):
+                for i in range(len(self._index2text), len(self._data)):
+                    pos = (self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*0.25*len(str(i)), svg_height)
+                    tid = self._svg.add_text_element(pos, i, font_size=self._label_font_size)
+                    self._index2text.append(tid)
+        self._rect_move.clear()
+        res = self._svg._repr_svg_()
+        # Clear the animation effect, update the SVG content, and prepare for the next frame.
+        self._svg.clear_animates()
+        if self._bar > 0:
+            self._update_bar_height_()
+        else:
+            for i in range(len(self._data)):
+                rect = (self._cell_size*i+self._cell_margin*(i+1), self._cell_margin, self._cell_size, self._cell_size)
+                rid = self._index2rect[i]
+                self._svg.update_rect_element(rid, rect=rect)
+        for rid in self._rect_disappear:
+            self._svg.delete_element(rid)
+            self._cell_tcs.pop(rid)
+        self._rect_disappear.clear()
+        for rid in self._rect_appear:
+            self._svg.update_rect_element(rid, opacity=True)
+        self._rect_appear.clear()
+        return res
+    
+
+    def _update_bar_height_(self):
+        '''
+        @function: Update the height of each column in the histogram.
+        '''
+        # Adjust the ratio and baseline position according to the value numbers range.
+        mmax_data, max_data = 0, 0
+        for num in self._data:
+            if num is None:
+                continue
+            num = float(num)
+            if num < 0:
+                mmax_data = min(mmax_data, num)
+            else:
+                max_data = max(max_data, num)
+        if (max_data - mmax_data) < 0.0001:
+            ratio = 0
+        else:
+            useful_height = self._bar - 2*self._cell_margin
+            if self._show_index:
+                useful_height -= self._label_font_size
+            ratio = useful_height/(max_data-mmax_data)
+        baseline = max_data*ratio + self._cell_margin
+        # Update the position coordinates of cells.
+        for i in range(len(self._data)):
+            if self._data[i] is None:
+                num = 0
+            else:
+                num = float(self._data[i])
+            rid = self._index2rect[i]
+            x = self._cell_size*i + self._cell_margin*(i+1)
+            if rid in self._rect_move.keys():
+                x -= self._rect_move[rid] * (self._cell_size+self._cell_margin)
+            height = ratio*num
+            if num < 0:
+                y = baseline
+            else:
+                y = baseline - height
+            if num - int(num) > 0.001:
+                num = '{:.2f}'.format(num)
+            else:
+                num = '{:.0f}'.format(num)
+            if self._data[i] is None:
+                num = None
+            self._svg.update_rect_element(rid, rect=(x, y, self._cell_size, abs(height)), text=num)
