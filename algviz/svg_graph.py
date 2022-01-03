@@ -518,4 +518,15 @@ class SvgGraph():
             else:
                 dot.edge('{}'.format(node1_id), '{}'.format(node2_id), label='{}'.format(label), fontcolor='#C0C0C0', fontsize='12')
             edge_idmap.toConsecutiveId((node1, node2))
-        return (xmldom.parseString(dot._repr_svg_()), node_idmap, edge_idmap)
+        raw_svg_str = ''
+        try:
+            callable(getattr(dot, '_repr_svg_'))
+            raw_svg_str = dot._repr_svg_()
+        except:
+            try:
+                # graphviz replaced interface '_repr_svg_' since version 0.19 (https://graphviz.readthedocs.io/en/stable/changelog.html#version-0-19)
+                callable(getattr(dot, '_repr_image_svg_xml'))
+                raw_svg_str = dot._repr_image_svg_xml()
+            except:
+                raise('Unsupported graphviz version {}'.format(graphviz.__version__))
+        return (xmldom.parseString(raw_svg_str), node_idmap, edge_idmap)
