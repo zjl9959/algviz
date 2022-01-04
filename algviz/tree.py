@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 '''
-@author:zjl9959@gmail.com
-@license:GPLv3
+@author: zjl9959@gmail.com
+@license: GPLv3
 '''
 
 from . import utility as util
@@ -114,10 +114,10 @@ def parseTree(node_vals):
         if node_vals[index] is not None:
             left_node = TreeNode(node_vals[index])
         node_queue.append(left_node)
-        if index+1 >= len(node_vals):
+        if index + 1 >= len(node_vals):
             break
-        left_right = None
-        if node_vals[index+1] is not None:
+        right_node = None
+        if node_vals[index + 1] is not None:
             right_node = TreeNode(node_vals[index+1])
         node_queue.append(right_node)
         if cur_node is not None:
@@ -125,3 +125,5 @@ def parseTree(node_vals):
             cur_node.right = right_node
         index += 2
     return root
+
+#TODO: add tree valid check for parseTree function.
