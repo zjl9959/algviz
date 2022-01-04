@@ -5,7 +5,7 @@
 @license:GPLv3
 '''
 
-import utility as util
+from . import utility as util
 
 
 class ListNode():

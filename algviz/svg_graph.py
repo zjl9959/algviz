@@ -8,7 +8,7 @@
 import graphviz
 import xml.dom.minidom as xmldom
 
-import utility as util
+from . import utility as util
 
 class SvgGraph():
     '''
@@ -528,5 +528,5 @@ class SvgGraph():
                 callable(getattr(dot, '_repr_image_svg_xml'))
                 raw_svg_str = dot._repr_image_svg_xml()
             except:
-                raise('Unsupported graphviz version {}'.format(graphviz.__version__))
+                raise Exception('Unsupported graphviz version {}'.format(graphviz.__version__))
         return (xmldom.parseString(raw_svg_str), node_idmap, edge_idmap)

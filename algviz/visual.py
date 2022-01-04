@@ -9,11 +9,11 @@ import weakref
 import time
 from IPython import display
 
-import table
-import vector
-import svg_graph
-import svg_table
-import logger
+from . import table
+from . import vector
+from . import svg_graph
+from . import svg_table
+from . import logger
 
 
 class _NoDisplay():
