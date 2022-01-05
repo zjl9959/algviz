@@ -1,11 +1,12 @@
 # 版本 V1.0.1
 - [ ] 🔨211229 使用颜色填充来表示元素节点的读写访问不太好，和mark接口中的颜色标记有冲突，而且大面积的颜色填充会覆盖掉本来想要强调的信息。计划通过额外的形状标记来表示 **读（·）和写（⚪）** 元素单元格。
 - [ ] 🔨211229 将链表单元格的形状从圆形改成方形。
-- [ ] 💡211229 支持将 svg 动画导出到 gif 文件中（依赖 `imageio`, `cairosvg` 等三方库）。
+- [ ] 💡211229 支持将连续的动画帧序列导出到一个单独的SVG文件中，以便于保存（先生成连续的SVG文件然后一次性渲染到屏幕）。
 - [ ] 💡220101 `link_list.py` 将 ListNode 改为基类 _ListNode，继承出 ForwardListNode 和 DoubleListNode 两个对象。
 - [ ] 💡220101 `tree.py` 将 TreeNode 改为基类 _TreeNode，继承出 BinaryTreeNode 和 TreeNode 两个对象。
 - [ ] 🔨220102 `svg_graph.py` 初始化函数中将 horizontal 参考改成 layout->str，以便于以后拓展对更多类似拓扑图的布局支持。
 - [ ] 🔨220102 `visual.py` 去掉 CreateGraph 接口，使用 GraphNode 相关的接口获取其绑定的 graph 对象。
+- [ ] 💡220105 `table.py` 在 Table 对象中增加 row 和 column 接口，以获取 Table 的行，列数目。
 
 # 版本 V1.0.0
 
