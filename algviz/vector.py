@@ -12,11 +12,11 @@ class Vector():
 
     def __init__(self, data, delay, cell_size, bar=-1, show_index=True):
         '''
-        @param: (data->list(printable)) The initialize data for vector.
-        @param: (delay->float) Animation delay time between two animation frames.
-        @param: (cell_size->float) Vector cell size.
-        @param: (bar->float) If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
-        @param: (show_index->bool) Whether to display the vector index label.
+        @param: {data->list(printable)} The initialize data for vector.
+        @param: {delay->float} Animation delay time between two animation frames.
+        @param: {cell_size->float} Vector cell size.
+        @param: {bar->float} If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
+        @param: {show_index->bool} Whether to display the vector index label.
         '''
         self._data = list()             # Store the data in vector list.
         if data is not None:
@@ -60,8 +60,8 @@ class Vector():
     def insert(self, index, val):
         '''
         @function: Insert a new value into vector. If index < 0 or index >= length of Vector, then set index = index % vector length.
-        @param: (index->int) The subscript index to insert value. (Insert before index)
-        @param: (val->printable) The value to insert into vector.
+        @param: {index->int} The subscript index to insert value. (Insert before index)
+        @param: {val->printable} The value to insert into vector.
         '''
         if len(self._data) == 0:
             self.append(val)
@@ -87,7 +87,7 @@ class Vector():
     def append(self, val):
         '''
         @function: Append a new value into vector's tail.
-        @param: (val->printable) The value to appended into vector's tail.
+        @param: {val->printable} The value to appended into vector's tail.
         '''
         index = len(self._data)
         rect = (self._cell_size*index+self._cell_margin*(index+1), self._cell_margin, self._cell_size, self._cell_size)
@@ -101,7 +101,7 @@ class Vector():
     def pop(self, index = -1):
         '''
         @function: Pop a value from vector. Pop vector's tail value as default. 
-        @param: (index->int) The index position of value to pop out.
+        @param: {index->int} The index position of value to pop out.
         '''
         if len(self._data) == 0:
             raise Exception('No item in vector to pop!')
@@ -136,7 +136,7 @@ class Vector():
     def swap(self, index1, index2):
         '''
         function: Swap the two cells positon in Vector.
-        param: (index1, index2->int) The two index positions to be swapped.
+        @param: {index1, index2->int} The two index positions to be swapped.
         '''
         rid1 = self._index2rect[index1]
         rid2 = self._index2rect[index2]
@@ -158,10 +158,10 @@ class Vector():
     def mark(self, color, st, ed=None, hold=True):
         '''
         @function: Emphasize one cell in the Vector by mark it's background color.
-        @param: (color->(R,G,B)) The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
+        @param: {color->(R,G,B)} The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: (st, ed->int) The mark range's index in Vector.
-        @param: (hold->bool) Whether to keep the mark color in future animation frames.
+        @param: {st, ed->int} The mark range's index in Vector.
+        @param: {hold->bool} Whether to keep the mark color in future animation frames.
         '''
         if ed is None:
             ed = st + 1
@@ -176,7 +176,7 @@ class Vector():
     def removeMark(self, color):
         '''
         @function: Remove the mark color for cell(s).
-        @param: (color->(R,G,B)) R, G, B stand for color channel for red, green, blue.
+        @param: {color->(R,G,B)} R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
         '''
         for rid in self._index2rect.values():
@@ -186,7 +186,7 @@ class Vector():
 
     def __getitem__(self, index):
         '''
-        @param: (index->int) The index position of the cell to be accessed.
+        @param: {index->int} The index position of the cell to be accessed.
         '''
         if index < 0 or index >= len(self._data):
             index %= len(self._data)
@@ -198,8 +198,8 @@ class Vector():
 
     def __setitem__(self, index, val):
         '''
-        @param: (index->int) The index position of the cell to be updated.
-        @param: (val->printable) New value for the cell.
+        @param: {index->int} The index position of the cell to be updated.
+        @param: {val->printable} New value for the cell.
         '''
         if index < 0 or index >= len(self._data):
             index %= len(self._data)
@@ -215,7 +215,7 @@ class Vector():
 
     def __len__(self):
         '''
-        return: (int) Length of Vector.
+        @return: {int} Length of Vector.
         '''
         return len(self._data)
     
@@ -234,7 +234,7 @@ class Vector():
 
     def _repr_svg_(self):
         '''
-        @return: (str) The SVG representation of current Vector.
+        @return: {str} The SVG representation of current Vector.
         '''
         # Update the color of the cell tracker.
         nb_elem = len(self._data) + len(self._rect_disappear)

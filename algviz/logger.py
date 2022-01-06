@@ -13,7 +13,7 @@ class Logger():
 
     def __init__(self, buffer_lines):
         '''
-        @param: (buffer_lines->int) Max buffer lines for cached logs. Override the oldest line if overflow.
+        @param: {buffer_lines->int} Max buffer lines for cached logs. Override the oldest line if overflow.
         '''
         self._buffer_lines = max(buffer_lines, 1)
         self._logs = list()
@@ -22,7 +22,7 @@ class Logger():
     def write(self, data):
         '''
         @function: Write log data. Use '\n' to split multi-lines.
-        @param: (data->str) The log data string.
+        @param: {data->str} The log data string.
         '''
         data_lines = data.split('\n')
         for line in data_lines:

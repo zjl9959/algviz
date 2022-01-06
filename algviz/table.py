@@ -16,8 +16,8 @@ class TableRowIter():
 
     def __init__(self, r, tab):
         '''
-        @param (r->int) Set which row in the table to iterate over.
-        @param (tab->Table) Bounded Table object for this Iterator.
+        @param: {r->int} Set which row in the table to iterate over.
+        @param: {tab->Table} Bounded Table object for this Iterator.
         '''
         self._r = r
         self._c = 0
@@ -43,8 +43,8 @@ class TableRowOperator():
 
     def __init__(self, r, tab):
         '''
-        @param (r->int) Set which row in the table to iterate over.
-        @param (tab->Table) Bounded Table object for this Iterator.
+        @param: {r->int} Set which row in the table to iterate over.
+        @param: {tab->Table} Bounded Table object for this Iterator.
         ''' 
         self._r = r
         self._tab = tab
@@ -60,11 +60,11 @@ class Table():
 
     def __init__(self, row, col, data, cell_size, show_index=True):
         '''
-        @param: (row->int) The number of rows for this table.
-        @param: (col->int) The number of columns for this table.
-        @param: (data->list(list(printable))) The initial data for table cells.
-        @param: (cell_size->float) Table cell size.
-        @param: (show_index->bool) Whether to display table row and column labels.
+        @param: {row->int} The number of rows for this table.
+        @param: {col->int} The number of columns for this table.
+        @param: {data->list(list(printable))} The initial data for table cells.
+        @param: {cell_size->float} Table cell size.
+        @param: {show_index->bool} Whether to display table row and column labels.
         '''
         if row <=0 or col <=0:
             raise Exception('Table row/col error!')
@@ -103,10 +103,10 @@ class Table():
     def mark(self, color, r, c, hold=True):
         '''
         @function: Emphasize one cell in the table by mark it's background color.
-        @param: (color->(R,G,B)) The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
+        @param: {color->(R,G,B)} The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: (r, c->int) Index the cell's raw, column in the table to be marked.
-        @param: (hold->bool) Whether to keep the mark color in future animation frames.
+        @param: {r, c->int} Index the cell's raw, column in the table to be marked.
+        @param: {hold->bool} Whether to keep the mark color in future animation frames.
         '''
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
@@ -118,7 +118,7 @@ class Table():
     def removeMark(self, color):
         '''
         @function: Remove the mark color for cell(s).
-        @param: (color->(R,G,B)) R, G, B stand for color channel for red, green, blue.
+        @param: {color->(R,G,B)} R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
         '''
         for gid in range(self._row*self._col):
@@ -129,8 +129,8 @@ class Table():
     def getItem(self, r, c):
         '''
         @function: Get the cell value in the table.
-        @param: (r, c->int) Index the cell's raw, column in the table.
-        @return: (printable) The value in the specific cell.
+        @param: {r, c->int} Index the cell's raw, column in the table.
+        @return: {printable} The value in the specific cell.
         '''
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
@@ -143,8 +143,8 @@ class Table():
     def setItem(self, r, c, val):
         '''
         @function: Get the cell value in the table.
-        @param: (r, c->int) Index the cell's raw, column in the table to be modified.
-        @param: (val->printable) New value for the cell.
+        @param: {r, c->int} Index the cell's raw, column in the table to be modified.
+        @param: {val->printable} New value for the cell.
         '''
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
@@ -160,8 +160,8 @@ class Table():
 
     def __getitem__(self, r):
         '''
-        @param: (r->int) The index of the row to access.
-        @return: (TabRowIter) The iterator object for the row in the table.
+        @param: {r->int} The index of the row to access.
+        @return: {TabRowIter} The iterator object for the row in the table.
         '''
         return TableRowOperator(r, self)
 
@@ -182,7 +182,7 @@ class Table():
 
     def _repr_svg_(self):
         '''
-        @return: (str) The SVG representation of current table.
+        @return: {str} The SVG representation of current table.
         '''
         for (gid, color) in self._frame_trace_old:
             if (gid, color, True) not in self._frame_trace and (gid, color, False) not in self._frame_trace:

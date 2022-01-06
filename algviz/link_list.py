@@ -15,7 +15,7 @@ class ListNode():
 
     def __init__(self, val):
         '''
-        @param: (val->printable) The label to be displayed in link list node.
+        @param: {val->printable} The label to be displayed in link list node.
         '''
         super().__setattr__('val', val)
         super().__setattr__('next', None)
@@ -69,7 +69,7 @@ class ListNode():
     def _neighbors_(self):
         '''
         @function: Interface for SvgGraph. Get this node's neighbors(next node).
-        @return: (list(tuple(next_node, None))) The neighbors list of this node.
+        @return: {list(tuple(next_node, None))} The neighbors list of this node.
         '''
         next_node = super().__getattribute__('next')
         return [(next_node, None)]
@@ -78,7 +78,7 @@ class ListNode():
     def _add_graph_(self, gra):
         '''
         @function: Bind a new SvgGraph object for this ListNode object.
-        @param: (gra->SvgGraph) New SvgGraph object to track.
+        @param: {gra->SvgGraph} New SvgGraph object to track.
         '''
         bind_graphs = super().__getattribute__('_bind_graphs')
         bind_graphs.add(gra)
@@ -87,7 +87,7 @@ class ListNode():
     def _remove_graph_(self, gra):
         '''
         @function: Remove one SvgGraph object from this ListNode object.
-        @param: (gra->SvgGraph) SvgGraph object to remove.
+        @param: {gra->SvgGraph} SvgGraph object to remove.
         '''
         bind_graphs = super().__getattribute__('_bind_graphs')
         if gra in bind_graphs:
@@ -97,8 +97,8 @@ class ListNode():
 def parseLinkList(li_vals):
     '''
     @function: Create a new forward link list object and return it's head node.
-    @param: (li_str->list) The labels to display in the link list's nodes.
-    @return: (head->ListNode) The head ListNode objet for this forward link list.
+    @param: {li_str->list} The labels to display in the link list's nodes.
+    @return: {head->ListNode} The head ListNode objet for this forward link list.
     '''
     if len(li_vals) == 0:
         return None

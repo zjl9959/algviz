@@ -15,7 +15,7 @@ class TreeNode:
 
     def __init__(self, val):
         '''
-        @param: (val->printable) The label value for binary node(should be printable object).
+        @param: {val->printable} The label value for binary node(should be printable object).
         '''
         super().__setattr__('val', val)
         super().__setattr__('left', None)
@@ -68,7 +68,7 @@ class TreeNode:
     def _neighbors_(self):
         '''
         @function: Return all children nodes of this node.
-        @return: (list(tuple(TreeNode, None))) Return left child node and right child node.
+        @return: {list(tuple(TreeNode, None))} Return left child node and right child node.
         '''
         left_node = super().__getattribute__('left')
         right_node = super().__getattribute__('right')
@@ -78,7 +78,7 @@ class TreeNode:
     def _add_graph_(self, gra):
         '''
         @function: Bind a new SvgGraph object for this TreeNode object.
-        @param: (gra->SvgGraph) New SvgGraph object to track.
+        @param: {gra->SvgGraph} New SvgGraph object to track.
         '''
         bind_graphs = super().__getattribute__('_bind_graphs')
         bind_graphs.add(gra)
@@ -87,7 +87,7 @@ class TreeNode:
     def _remove_graph_(self, gra):
         '''
         @function: Remove one SvgGraph object from this TreeNode object.
-        @param: (gra->SvgGraph) SvgGraph object to remove.
+        @param: {gra->SvgGraph} SvgGraph object to remove.
         '''
         bind_graphs = super().__getattribute__('_bind_graphs')
         if gra in bind_graphs:
@@ -97,9 +97,9 @@ class TreeNode:
 def parseTree(node_vals):
     '''
     @function: Create a new Tree from given node values.
-    @param: (node_vals->list(printable)) The label of each node in the tree must be given.
+    @param: {node_vals->list(printable)} The label of each node in the tree must be given.
             Empty node is represented by None. eg:([1, None, 2, None, None, 3, 4])
-    @return: (TreeNode) Root node object of this tree.
+    @return: {TreeNode} Root node object of this tree.
     '''
     if len(node_vals) == 0:
         return None

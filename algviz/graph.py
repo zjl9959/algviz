@@ -36,7 +36,7 @@ class GraphNeighborIter():
 class GraphNode():
     def __init__(self, val):
         '''
-        @param: (val->printable) The label to be displayed on the graph node.
+        @param: {val->printable} The label to be displayed on the graph node.
         '''
         super().__setattr__('val', val)
         super().__setattr__('_neighbors', list())
@@ -71,7 +71,7 @@ class GraphNode():
     def neighbors(self):
         '''
         @function: Return all neighbor nodes of this node.
-        @return: (GraphNeighborIter) Neighbor node iterator.
+        @return: {GraphNeighborIter} Neighbor node iterator.
         '''
         iter_neighbors = super().__getattribute__('_neighbors')
         bind_graphs = super().__getattribute__('_bind_graphs')
@@ -81,9 +81,9 @@ class GraphNode():
     def append(self, node, weight=None):
         '''
         @function: Add a node after the last neighbor node.
-        @param: (node->GraphNode) The node object to be appended.
-        @param: (weight->printable) The weight value of the edge between this node and appended node.
-        @return: (bool) True if successfully appended node; Flase if node already in neighbors.
+        @param: {node->GraphNode} The node object to be appended.
+        @param: {weight->printable} The weight value of the edge between this node and appended node.
+        @return: {bool} True if successfully appended node; Flase if node already in neighbors.
         '''
         pos = self._get_node_index_(node)
         if pos == -1:
@@ -101,10 +101,10 @@ class GraphNode():
     def insertBefore(self, node, ref_node, weight=None):
         '''
         @function: If ref_node in neighbor list, then insert a node in front of the 'ref_node' neighbor node.
-        @param: (node->GraphNode) New node to be inserted into neighbor list.
-        @param: (ref_node->GraphNode) Indicate the position to insert new node.
-        @param: (weight) The weight value of the edge between this node and inserted node.
-        @return: (bool) True if successfully inserted node; Flase if node already in neighbors or can't find ref_node.
+        @param: {node->GraphNode} New node to be inserted into neighbor list.
+        @param: {ref_node->GraphNode} Indicate the position to insert new node.
+        @param: {weight} The weight value of the edge between this node and inserted node.
+        @return: {bool} True if successfully inserted node; Flase if node already in neighbors or can't find ref_node.
         '''
         pos = self._get_node_index_(ref_node)
         pos2 = self._get_node_index_(node)
@@ -123,10 +123,10 @@ class GraphNode():
     def replace(self, new_node, old_node, weight=None):
         '''
         @funtion: Replace old_node into new_node in neighbors list.
-        @param: (new_node->GraphNode) New node to replace.
-        @param: (old_node->GraphNode) Old node to be replaced.
-        @param: (weight) The weight value of the edge between this node and replaced new node.
-        @return: (bool) True if successfully replaced node; Flase if new_node already in neighbors or can't find old_node.
+        @param: {new_node->GraphNode} New node to replace.
+        @param: {old_node->GraphNode} Old node to be replaced.
+        @param: {weight} The weight value of the edge between this node and replaced new node.
+        @return: {bool} True if successfully replaced node; Flase if new_node already in neighbors or can't find old_node.
         '''
         pos = self._get_node_index_(old_node)
         pos2 = self._get_node_index_(new_node)
@@ -147,8 +147,8 @@ class GraphNode():
     def remove(self, node):
         '''
         @function: Remove one neighbor node. Do nothing if node not in neighbors list.
-        @param: (node->GraphNode) The node to be replaced.
-        @return: (bool) True if successfully removed node; Flase if can't find node.
+        @param: {node->GraphNode} The node to be replaced.
+        @return: {bool} True if successfully removed node; Flase if can't find node.
         '''
         pos = self._get_node_index_(node)
         if pos != -1:
@@ -164,8 +164,8 @@ class GraphNode():
     def _get_node_index_(self, node):
         '''
         @function: Locate the index position of node in neighbors.
-        @param: (node->GraphNode) The node object to locate.
-        @return: (int) The index of node in neighbors. return -1 if can't find node.
+        @param: {node->GraphNode} The node object to locate.
+        @return: {int} The index of node in neighbors. return -1 if can't find node.
         '''
         neighbors_ = super().__getattribute__('_neighbors')
         for i in range(len(neighbors_)):
@@ -176,7 +176,7 @@ class GraphNode():
 
     def _neighbors_(self):
         '''
-        @return: (list([neighbor_node, weight]))  All the neighbors nodes and edges.
+        @return: {list([neighbor_node, weight])}  All the neighbors nodes and edges.
         '''
         return super().__getattribute__('_neighbors')
 
@@ -184,7 +184,7 @@ class GraphNode():
     def _add_graph_(self, gra):
         '''
         @function: Bind a new SvgGraph object for this GrapNode object.
-        @param: (gra->SvgGraph) New SvgGraph object to track.
+        @param: {gra->SvgGraph} New SvgGraph object to track.
         '''
         bind_graphs = super().__getattribute__('_bind_graphs')
         bind_graphs.add(gra)
@@ -193,7 +193,7 @@ class GraphNode():
     def _remove_graph_(self, gra):
         '''
         @function: Remove one SvgGraph object from this GrapNode object.
-        @param: (gra->SvgGraph) SvgGraph object to remove.
+        @param: {gra->SvgGraph} SvgGraph object to remove.
         '''
         bind_graphs = super().__getattribute__('_bind_graphs')
         if gra in bind_graphs:
@@ -203,9 +203,9 @@ class GraphNode():
 def updateEdgeWeight(node1, node2, weight):
     '''
     @function: Update the edge's weight value between node1 and node2.
-    @param: (node1/node2->GraphNode) The node related to the updated edge.
-    @param: (weight->printable) New weight value for this edge.
-    @retrun: (success->bool) True if successfull update the edge's weight, otherwise return False.
+    @param: {node1/node2->GraphNode} The node related to the updated edge.
+    @param: {weight->printable} New weight value for this edge.
+    @return: {success->bool} True if successfull update the edge's weight, otherwise return False.
     '''
     pos1 = node1._get_node_index_(node2)
     pos2 = node2._get_node_index_(node1)
@@ -226,10 +226,10 @@ def updateEdgeWeight(node1, node2, weight):
 def parseGraph(edges_, nodes_=None, directed=True):
     '''
     @function: Create a new graph from edges and nodes information.
-    @param: (edges->list(iterable)) All the edges in this graph. One edge is a iterable object with two element(node id).（eg:[[0, 1], [1, 2], [2, 0]]）。
-    @param: (nodes->list(iterable)) The correspondence between node_id in this graph and it's node lable.（eg:[[0, node1], [1, node2], [2, node3]]）。
-    @param: (directed->bool) Should this graph be directed graph or undirected.
-    @return: (dict(node_id:GraphNode object)) All the graph nodes set in this graph.
+    @param: {edges->list(iterable)} All the edges in this graph. One edge is a iterable object with two element(node id).（eg:[[0, 1], [1, 2], [2, 0]]）。
+    @param: {nodes->list(iterable)} The correspondence between node_id in this graph and it's node lable.（eg:[[0, node1], [1, node2], [2, node3]]）。
+    @param: {directed->bool} Should this graph be directed graph or undirected.
+    @return: {dict(node_id:GraphNode object)} All the graph nodes set in this graph.
     '''
     res = dict()
     # Create nodes for this graph.
