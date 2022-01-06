@@ -52,6 +52,6 @@ __all__ = [
 ]
 
 __title__ = 'algviz'
-__version__ = '1.0.0'
+__version__ = '0.1.0'
 __author__ = 'zjl9959@gmail.com'
 __license__ = 'GNU General Public License (GPLv3)'
