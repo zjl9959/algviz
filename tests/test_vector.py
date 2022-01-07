@@ -39,6 +39,8 @@ def test_create_vector():
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_data, vec_elems), 'Multi-data type vector', vec_elems, vec_data)
 
+    return res
+
 
 def get_vector_elements(svg_str):
     '''
@@ -80,6 +82,3 @@ def equal(lhs, rhs):
         if str(lhs[i]) != str(rhs[i]):
             return False
     return True
-
-
-test_create_vector()
