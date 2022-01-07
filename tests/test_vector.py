@@ -39,6 +39,63 @@ def test_create_vector():
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_data, vec_elems), 'Multi-data type vector', vec_elems, vec_data)
 
+    # Test create a histogram vector.
+    vec_data = [0.3, -2, 4, 1.5, 9]
+    vec = viz.createVector(vec_data, bar=300)
+    vec_elems = get_vector_elements(vec._repr_svg_())
+    res.add_case(equal(vec_data, vec_elems), 'Histogram vector', vec_elems, vec_data)
+    return res
+
+
+def test_visit_elements():
+    viz = algviz.Visualizer()
+    res = TestResult()
+    vec_data = [1, 2, 3, 4, 5, 6]
+    vec = viz.createVector(vec_data)
+
+    # Test visit vector elements by index.
+    vec_elems = list()
+    for i in range(len(vec)):
+        vec_elems.append(vec[i])
+    res.add_case(equal(vec_data, vec_elems), 'Visit by index', vec_elems, vec_data)
+
+    # Test visit vector elements.
+    vec_elems = list()
+    for elem in vec:
+        vec_elems.append(elem)
+    res.add_case(equal(vec_data, vec_elems), 'Visit by iterator', vec_elems, vec_data)
+    return res
+
+
+def test_update_elements():
+    viz = algviz.Visualizer()
+    res = TestResult()
+    vec_data = [1, 2, 3, 4, 5, 6]
+    vec = viz.createVector(vec_data)
+
+    # Test update elements value.
+    new_data = [3, 5, 7, -2, 'str', None]
+    for i in range(len(vec)):
+        vec[i] = new_data[i]
+    vec_elems = get_vector_elements(vec._repr_svg_())
+    res.add_case(equal(vec_elems, new_data), 'Update elements', vec_elems, new_data)
+
+    return res
+
+
+def test_modify_vectors():
+    res = TestResult()
+
+    # TODO: add subcases.
+
+    return res
+
+
+def test_mark_elements():
+    res = TestResult()
+
+    # TODO: add subcases.
+
     return res
 
 
