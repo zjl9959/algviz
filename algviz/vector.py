@@ -22,9 +22,12 @@ class Vector():
         if data is not None:
             for i in range(len(data)):
                 self._data.append(data[i])
-        self._delay = delay             # Animation delay time.
-        self._cell_size = cell_size     # Vector cell size.
-        self._bar = bar                 # Vector histogram height.
+        self._delay = util.clamp(delay, util.kMinAnimDelay, util.kMaxAnimDelay)                 # Animation delay time.
+        self._cell_size = util.clamp(cell_size, util.kMinCellWidth, util.kMaxCellWidth)         # Vector cell size.
+        self._show_histogram = False
+        if bar > 0:
+            self._show_histogram = True            
+        self._bar = util.clamp(bar, util.kMinCellWidth, util.kMaxBarHight)                      # Vector histogram height.
         self._show_index = show_index   # Whether to display the vector index label.
         self._cell_margin = 3           # Margin between two adjacent cells.
         self._cell_tcs = dict()         # Record the trajectory access information (node_index: ColorStack) of all cells.
@@ -40,7 +43,7 @@ class Vector():
         svg_height = cell_size + 2*self._cell_margin
         if self._show_index:
             svg_height += self._label_font_size
-        if self._bar > 0:
+        if self._show_histogram:
             svg_height = self._bar
         self._svg = svg_table.SvgTable(len(self._data)*cell_size+(len(self._data)+1)*self._cell_margin, svg_height)
         for i in range(len(self._data)):
@@ -48,7 +51,7 @@ class Vector():
             rid = self._svg.add_rect_element(rect, text=self._data[i])
             self._cell_tcs[rid] = util.TraceColorStack()
             self._index2rect[i] = rid
-        if self._bar > 0:
+        if self._show_histogram:
             self._update_bar_height_()
         if self._show_index:
             for i in range(len(self._data)):
@@ -241,7 +244,7 @@ class Vector():
         svg_height = self._cell_size + 2*self._cell_margin
         if self._show_index:
             svg_height += self._label_font_size
-        if self._bar > 0:
+        if self._show_histogram > 0:
             svg_height = self._bar
         self._svg.update_svg_size(nb_elem*self._cell_size+(nb_elem+1)*self._cell_margin, svg_height)
         for (rid, color) in self._frame_trace_old:
@@ -262,7 +265,7 @@ class Vector():
         for rid in self._rect_disappear:
             self._svg.add_animate_appear(rid, (0, self._delay), appear=False)
         # Add animations of cells movement.
-        if self._bar > 0:
+        if self._show_histogram > 0:
             self._update_bar_height_()
         for rid in self._rect_move.keys():
             if self._rect_move[rid] == 0:
@@ -282,7 +285,7 @@ class Vector():
         res = self._svg._repr_svg_()
         # Clear the animation effect, update the SVG content, and prepare for the next frame.
         self._svg.clear_animates()
-        if self._bar > 0:
+        if self._show_histogram > 0:
             self._update_bar_height_()
         else:
             for i in range(len(self._data)):

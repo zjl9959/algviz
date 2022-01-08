@@ -9,6 +9,12 @@
 _getElemColor = (0, 255, 127)      # SpringGreen
 _setElemColor = (255, 165, 0)      # Orange
 
+# Parameter limit for display data objects.
+kMinAnimDelay = 0.1         # The minimum animation delay time is 0.1 seconds.
+kMaxAnimDelay = 100.0       # The maximum animation delay time is 100.0 seconds.
+kMinCellWidth = 10.0        # The minimum vector/table cell display width.
+kMaxCellWidth = 100.0       # The maximum vector/table cell display height.
+kMaxBarHight = 1000.0       # The maximum histogram bar height.
 
 class TraceColorStack():
     '''
@@ -227,3 +233,10 @@ def text_char_num(text):
         else:
             count += 1
     return count
+
+
+def clamp(val, min_val, max_val):
+    '''
+    @return: The clamped value between min_val and max_val.
+    '''
+    return max(min(val, max_val), min_val)
