@@ -31,4 +31,4 @@ class TestResult:
                 self._failed_cases[case_name] = (test_result, expect_result)
 
     def ok(self):
-        return self._nb_pass > 0 and self._nb_failed == 0
+        return self._nb_pass >= 0 and self._nb_failed == 0

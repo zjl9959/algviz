@@ -27,7 +27,7 @@ def main():
     if nb_failed == 0:
         print('Congratulations, everything is OK !!!')
     else:
-        print('[ERROR] There are ((({}))) test cases failed.'.format(nb_failed))
+        print('Oops, {} test function(s) failed !!!'.format(nb_failed))
     print("*"*45)
     return nb_failed
 
