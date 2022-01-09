@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 
+'''
+@author: zjl9959@gmail.com
+@license: GPLv3
+'''
+
 import algviz
+import utility
 from result import TestResult
 
 import xml.dom.minidom as xmldom
-
-class TestVectorClass:
-    '''
-    @class: This class used to test if Vector can display self defined class noramlly.
-    '''
-    
-    def __init__(self, v1, v2) -> None:
-        self._v1 = v1
-        self._v2 = v2
-
-    def __repr__(self) -> str:
-        return '{}->{}'.format(self._v1, self._v2)
 
 
 def test_create_vector():
@@ -32,7 +26,7 @@ def test_create_vector():
     res.add_case(equal(vec_data, vec_elems), 'Normal vector',
                  vec_elems, vec_data)
     # Test create vector with different type in it.
-    vec_data = [-3.56, 'hi', (2.4, 7), None, 6, TestVectorClass(1,2)]
+    vec_data = [-3.56, 'hi', (2.4, 7), None, 6, utility.TestCustomPrintableClass(1,2)]
     vec = viz.createVector(vec_data)
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_data, vec_elems), 'Multi-data type vector',
