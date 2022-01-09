@@ -84,10 +84,17 @@ class Table():
             svg_width += len(str(row-1))*label_font_size
             svg_height += label_font_size
         self._svg = svg_table.SvgTable(svg_width, svg_height)
+        # Copy data into table.
+        if data is not None:
+            for r in range(self._row):
+                for c in range(self._col):
+                    try:
+                        self._data[r][c] = data[r][c]
+                    except:
+                        self._data[r][c] = None
+        # initialization SVG contain.
         for r in range(self._row):
             for c in range(self._col):
-                if data is not None:
-                    self._data[r][c] = data[r][c]
                 rect = (c*cell_size+table_margin, r*cell_size+table_margin, cell_size, cell_size)
                 self._svg.add_rect_element(rect, self._data[r][c], angle=False)
                 self._cell_tcs[r*col+c] = utility.TraceColorStack()
