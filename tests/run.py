@@ -44,7 +44,7 @@ def run_test_module(test_module):
             res = getattr(test_module, func)()
             results[func] = res
         except Exception as e:  # Catch the test exception and print it.
-            print("[ERROR] When running {0}.{1}, exception <{2}> arised.".format(test_module.__name__, func, e))
+            print("[ERROR] When running {0}.{1}, exception: <{2}> was thrown.".format(test_module.__name__, func, e))
             num_failed += 1
     end_time = time.time()
     # Statistic the number of pass and failed cases.

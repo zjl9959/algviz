@@ -13,7 +13,7 @@ class TestResult:
         self._failed_cases = dict()
 
     def __repr__(self) -> str:
-        str = "  - Total cases:{0}, Passed cases:{1}, Failed cases:{2}\r\n".format(
+        str = "  - Total subcases:{0}, Passed subcases:{1}, Failed subcases:{2}\r\n".format(
             self._nb_pass + self._nb_failed,
             self._nb_pass,
             self._nb_failed
