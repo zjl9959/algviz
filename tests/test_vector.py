@@ -6,7 +6,7 @@
 '''
 
 import algviz
-import utility
+from utility import TestCustomPrintableClass, equal
 from result import TestResult
 
 import xml.dom.minidom as xmldom
@@ -26,7 +26,7 @@ def test_create_vector():
     res.add_case(equal(vec_data, vec_elems), 'Normal vector',
                  vec_elems, vec_data)
     # Test create vector with different type in it.
-    vec_data = [-3.56, 'hi', (2.4, 7), None, 6, utility.TestCustomPrintableClass(1,2)]
+    vec_data = [-3.56, 'hi', (2.4, 7), None, 6, TestCustomPrintableClass(1,2)]
     vec = viz.createVector(vec_data)
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_data, vec_elems), 'Multi-data type vector',
@@ -223,16 +223,3 @@ def get_vector_bgcolors(svg_str):
     for _, color in colors_pos:
         result.append(color)
     return result
-
-
-def equal(lhs, rhs, type=str):
-    '''
-    @function: Check if lhs equal with rhs (lhs and rhs should be iterable).
-    @return: {bool} Wheather lhs equal with rhs or not.
-    '''
-    if len(lhs) != len(rhs):
-        return False
-    for i in range(len(lhs)):
-        if type(lhs[i]) != type(rhs[i]):
-            return False
-    return True

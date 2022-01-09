@@ -5,7 +5,7 @@
 @license: GPLv3
 '''
 
-import utility
+from utility import TestCustomPrintableClass, equal, equal_table
 from result import TestResult
 import algviz
 
@@ -19,21 +19,32 @@ def test_create_table():
     table = viz.createTable(2, 2)
     tab_elems = get_table_elements(table._repr_svg_(), 2)
     expect_res = [[None, None], [None, None]]
-    res.add_case(equal(tab_elems, expect_res), 'Empty table',
+    res.add_case(equal_table(tab_elems, expect_res), 'Empty table',
                  tab_elems, expect_res)
     # Test create table with different type.
     table_data = [[3.21, 'hi', 0], [-2, None, True],
-                 [(-7, 8), (3), utility.TestCustomPrintableClass(3.6, 'Test')]]
-    table = viz.createTable(3, 3, table_data)
+                 [(-7, 8), (3), TestCustomPrintableClass(3.6, 'Test')]]
+    table = viz.createTable(3, 3, table_data, show_index=False)
     tab_elems = get_table_elements(table._repr_svg_(), 3)
-    res.add_case(equal(tab_elems, table_data), 'Multi-data type',
+    res.add_case(equal_table(tab_elems, table_data), 'Multi-data type',
                  tab_elems, table_data)
     return res
 
 
 def test_visit_element():
     res = TestResult()
-    # TODO: add subcases.
+    viz = algviz.Visualizer()
+    # Test random access index.
+    table_data = [[3.21, 'hi', 0], [-2, None, True],
+                 [(-7, 8), (3), 5]]
+    table = viz.createTable(3, 3, table_data)
+    index_list = [(0, 0), (2, 2), (1, 0), (2, 1)]
+    expect_res = [3.21, 5, -2, (3)]
+    visit_elems = list()
+    for r, c in index_list:
+        visit_elems.append(table[r][c])
+    res.add_case(equal(visit_elems, expect_res), 'Vist elements',
+                 visit_elems, expect_res)
     return res
 
 
@@ -81,15 +92,3 @@ def get_table_elements(svg_str, col):
             result.append(list())
         result[r].append(elements_pos[i][2])
     return result
-
-
-def equal(lhs, rhs, type=str):
-    if len(lhs) != len(rhs):
-        return False
-    for r in range(len(lhs)):
-        if len(lhs[r]) != len(rhs[r]):
-            return False
-        for c in range(len(lhs[r])):
-            if type(lhs[r][c]) != type(rhs[r][c]):
-                return False
-    return True
