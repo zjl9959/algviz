@@ -65,7 +65,7 @@ class GraphNodeBase:
         '''
         @function: Notify the bind graph objects to update the displayed edge color between this node and it's neighbor.
         '''
-        bind_graphs = object.__getattribute__('_bind_graphs')
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
         for gra in bind_graphs:
             gra.markEdge(util._getElemColor, self, neighbor, hold=False)
 
@@ -76,7 +76,7 @@ class GraphNodeBase:
         @param: (old_neighbor,new_neighbor->GraphNodeBase) The subclasses of GraphNodeBase.
         '''
         # Mark edge between this node and it's old_neighbor.
-        bind_graphs = super().__getattribute__('_bind_graphs')
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
         if old_neighbor:
             for gra in bind_graphs:
                 gra.markEdge(util._setElemColor, self, old_neighbor, hold=False)
@@ -92,7 +92,7 @@ class GraphNodeBase:
         @function: Bind a new SvgGraph object for this graph node object.
         @param: {gra->SvgGraph} New SvgGraph object to track.
         '''
-        bind_graphs = object.__getattribute__('_bind_graphs')
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
         bind_graphs.add(gra)
     
 
@@ -101,6 +101,6 @@ class GraphNodeBase:
         @function: Remove one SvgGraph object from this graph node object.
         @param: {gra->SvgGraph} SvgGraph object to remove.
         '''
-        bind_graphs = object.__getattribute__('_bind_graphs')
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
         if gra in bind_graphs:
             bind_graphs.remove(gra)
