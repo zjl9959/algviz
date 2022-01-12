@@ -11,7 +11,7 @@ from . import utility as util
 class GraphNodeBase:
     '''
     @class: This is the base class for GraphNode, BinaryTreeNode,
-         TreeNode, ForwardLinkedListNode and DoublyLinkedListNode.
+            ForwardLinkedListNode and DoublyLinkedListNode.
     '''
     def __init__(self, val):
         '''
