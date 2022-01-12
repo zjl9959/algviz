@@ -7,8 +7,9 @@
 
 from .visual import Visualizer
 from .graph import GraphNode, parseGraph, updateEdgeWeight
-from .tree import TreeNode, parseTree
-from .link_list import ListNode, parseLinkList
+from .tree import BinaryTreeNode, parseBinaryTree
+from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
+from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
 
 colors = {
     0: (221, 160, 221), # Plum
@@ -46,8 +47,9 @@ def colorsInfo():
 __all__ = [
     'Visualizer',
     'GraphNode', 'parseGraph', 'updateEdgeWeight',
-    'TreeNode', 'parseTree',
-    'ListNode', 'parseLinkList',
+    'BinaryTreeNode', 'parseBinaryTree',
+    'ForwardLinkedListNode', 'DoublyLinkedListNode',
+    'parseForwardLinkedList', 'parseDoublyLinkedList',
     'colors', 'colorsInfo',
 ]
 

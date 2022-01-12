@@ -105,7 +105,7 @@ class ConsecutiveIdMap():
         @return: {hashable} Unordered ID object.
         '''
         return self._id2attr[cons_id - self._offset]
-    
+
 
 def find_tag_by_id(node, tag_name, tag_id):
     '''

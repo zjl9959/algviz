@@ -6,11 +6,13 @@
 '''
 
 from . import utility as util
+from . import graph_node_base
+NodeBase = graph_node_base.GraphNodeBase
 
 
 class GraphNeighborIter():
     '''
-    @class: Neighbor node iterator for GraphNode class.
+    @class: Neighbor nodes iterator for GraphNode class.
     '''
     def __init__(self, node, bind_graphs, neighbors):
         self._node = node
@@ -33,44 +35,18 @@ class GraphNeighborIter():
             return neighbor
 
 
-class GraphNode():
+class GraphNode(NodeBase):
+    '''
+    @class: This class defined the type of typology graph node.
+    '''
     def __init__(self, val):
-        '''
-        @param: {val->printable} The label to be displayed on the graph node.
-        '''
-        super().__setattr__('val', val)
+        super().__init__(val)
         super().__setattr__('_neighbors', list())
-        super().__setattr__('_bind_graphs', set())
-    
-
-    def __str__(self):
-        return str(super().__getattribute__('val'))
-    
-
-    def __getattribute__(self, name):
-        if name == 'val':
-            bind_graphs = super().__getattribute__('_bind_graphs')
-            for gra in bind_graphs:
-                gra.markNode(util._getElemColor, self, hold=False)
-            return super().__getattribute__('val')
-        else:
-            return super().__getattribute__(name)
-    
-
-    def __setattr__(self, name, value):
-        if name == 'val':
-            super().__setattr__('val', value)
-            bind_graphs = super().__getattribute__('_bind_graphs')
-            for gra in bind_graphs:
-                gra._updateNodeLabel(self, value)
-                gra.markNode(util._setElemColor, self, hold=False)
-        else:
-            super().__setattr__(name, value)
 
 
     def neighbors(self):
         '''
-        @function: Return all neighbor nodes of this node.
+        @function: Return an iterator to iter over all the neighbor nodes of this node.
         @return: {GraphNeighborIter} Neighbor node iterator.
         '''
         iter_neighbors = super().__getattribute__('_neighbors')
@@ -89,10 +65,7 @@ class GraphNode():
         if pos == -1:
             neighbors_ = super().__getattribute__('_neighbors')
             neighbors_.append([node, weight])
-            bind_graphs = super().__getattribute__('_bind_graphs')
-            for gra in bind_graphs:
-                gra.addNode(node)
-                gra.markEdge(util._setElemColor, self, node, hold=False)
+            self._on_update_neighbor_(None, node)
             return True
         else:
             return False
@@ -111,10 +84,7 @@ class GraphNode():
         if pos != -1 and pos2 == -1:
             neighbors_ = super().__getattribute__('_neighbors')
             neighbors_.insert(pos, [node, weight])
-            bind_graphs = super().__getattribute__('_bind_graphs')
-            for gra in bind_graphs:
-                gra.addNode(node)
-                gra.markEdge(util._setElemColor, self, node, hold=False)
+            self._on_update_neighbor_(None, node)
             return True
         else:
             return False
@@ -131,14 +101,9 @@ class GraphNode():
         pos = self._get_node_index_(old_node)
         pos2 = self._get_node_index_(new_node)
         if pos != -1 and pos2 == -1:
-            bind_graphs = super().__getattribute__('_bind_graphs')
-            for gra in bind_graphs:
-                gra.markEdge(util._setElemColor, self, old_node, hold=False)
             neighbors_ = super().__getattribute__('_neighbors')
             neighbors_[pos] = [new_node, weight]
-            for gra in bind_graphs:
-                gra.addNode(new_node)
-                gra.markEdge(util._setElemColor, self, new_node, hold=False)
+            self._on_update_neighbor_(old_node, new_node)
             return True
         else:
             return False
@@ -154,9 +119,7 @@ class GraphNode():
         if pos != -1:
             neighbors_ = super().__getattribute__('_neighbors')
             neighbors_.pop(pos)
-            bind_graphs = super().__getattribute__('_bind_graphs')
-            for gra in bind_graphs:
-                gra.markEdge(util._setElemColor, self, node, hold=False)
+            self._on_update_neighbor_(node, None)
             return True
         return False
     
@@ -179,25 +142,6 @@ class GraphNode():
         @return: {list([neighbor_node, weight])}  All the neighbors nodes and edges.
         '''
         return super().__getattribute__('_neighbors')
-
-
-    def _add_graph_(self, gra):
-        '''
-        @function: Bind a new SvgGraph object for this GrapNode object.
-        @param: {gra->SvgGraph} New SvgGraph object to track.
-        '''
-        bind_graphs = super().__getattribute__('_bind_graphs')
-        bind_graphs.add(gra)
-    
-
-    def _remove_graph_(self, gra):
-        '''
-        @function: Remove one SvgGraph object from this GrapNode object.
-        @param: {gra->SvgGraph} SvgGraph object to remove.
-        '''
-        bind_graphs = super().__getattribute__('_bind_graphs')
-        if gra in bind_graphs:
-            bind_graphs.remove(gra)
 
 
 def updateEdgeWeight(node1, node2, weight):
