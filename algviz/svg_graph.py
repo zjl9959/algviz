@@ -9,6 +9,49 @@ import graphviz
 import xml.dom.minidom as xmldom
 
 from . import utility as util
+from . import graph
+from . import tree
+from . import linked_list
+
+
+class _SvgGraphType:
+    '''
+    @class: This class is used to specific the layout parameter for SvgGraph class.
+    '''
+    def __init__(self, rankdir=None):
+        '''
+        @param: {rankdir->str} The layout direction for graph. Example: (LR)
+        '''
+        self.rankdir = rankdir
+
+
+def _get_graph_type_by_data_(data):
+    '''
+    @function: Check the input graph nodes data type and create graph layout parameter.
+    @return: {_SvgGraphType} The layout data parmeter for SvgGraph.
+    '''
+    if not data:
+        return _SvgGraphType()
+    # Get one node data from different type of data.
+    if type(data)==dict:
+        data = tuple(data.values())
+    if (type(data)==list or type(data)==tuple) and len(data) > 0:
+        data = data[0]
+    # Check the data type and specific the layout parameter.
+    if type(data) == graph.GraphNode:
+        # For normal graph layout.
+        layout = _SvgGraphType()
+    elif type(data) == tree.BinaryTreeNode:
+        # For binary tree layout.
+        layout = _SvgGraphType()
+    elif type(data) == linked_list.ForwardLinkedListNode:
+        # For forward linked list layout.
+        layout = _SvgGraphType('LR')
+    elif type(data) == linked_list.DoublyLinkedListNode:
+        # For doubly linked list layout.
+        layout = _SvgGraphType('LR')
+    return layout
+
 
 class SvgGraph():
     '''
@@ -18,7 +61,7 @@ class SvgGraph():
     Every time `__repr_svg__` function is called, SvgGraph object will return the latest svg string for this graph and prepare for a new frame.
     '''
     
-    def __init__(self, data, directed, delay, horizontal=False):
+    def __init__(self, data, directed, delay):
         '''
         @param: {data->iterable} The root node(s) of the topology graph, used to initialize auxiliary data for this graph.
         @param: {directed->bool} Should this graph be directed graph or undirected.
@@ -26,7 +69,6 @@ class SvgGraph():
         '''
         self._directed = directed       # Whether the graph is a directed graph.
         self._delay = delay             # Delay time of each frame of animation.
-        self._horizontal = horizontal   # The layout type for this graph.
         self._node_seq = list()         # The graph node(s) list arranged in a certain order.
         self._add_nodes = list()        # Record the externally added node(s) since last frame.
         self._remove_nodes = list()     # Record the externally deleted node(s) since last frame.
@@ -44,13 +86,10 @@ class SvgGraph():
         self._node_idmap = None         # Map node_index value to the corresponding node index in graphviz's output svg.
         self._edge_idmap = None         # Map edge_index value to the corresponding edge index in graphviz's output svg.
         self._add_history = set()       # Record all the nodes that have been added since graph created. Used to check duplicates when add/remove nodes in the graph.
+        self._type = _get_graph_type_by_data_(data)
+        # Init graph nodes and svg.
         (self._svg, self._node_idmap, self._edge_idmap) = self._create_svg_()
-        if data is not None:
-            if type(data)==list:
-                for node in data:
-                    self.addNode(node)
-            else:
-                self.addNode(data)
+        self._init_graph_nodes(data)    # Traverse the data and add nodes into this graph.
 
 
     def addNode(self, node):
@@ -67,7 +106,7 @@ class SvgGraph():
             cur_node = node_stack.pop()
             if cur_node is None or cur_node in self._add_history:
                 continue
-            cur_node._add_graph_(self)
+            cur_node._bind_graph_(self)
             self._add_history.add(cur_node)
             self._add_nodes.append(node)
             added_nodes_num = added_nodes_num + 1
@@ -89,7 +128,7 @@ class SvgGraph():
             cur_node = node_stack.pop()
             if cur_node is None or cur_node not in self._add_history:
                 continue
-            cur_node._remove_graph_(self)
+            cur_node._bind_graph_(None)
             self._add_history.remove(cur_node)
             if cur_node not in self._remove_nodes:
                 self._remove_nodes.append(cur_node)
@@ -148,6 +187,19 @@ class SvgGraph():
                 edge = util.find_tag_by_id(self._svg, 'g', edge_id)
                 self._update_edge_color_(edge, self._edge_tcs[k].color())
     
+
+    def _init_graph_nodes(self, data):
+        if not data:
+            return
+        if type(data)==dict:
+            for node in data.values():
+                self.addNode(node)
+        elif type(data)==list:
+            for node in data:
+                self.addNode(node)
+        else:
+            self.addNode(data)
+
 
     def _updateNodeLabel(self, node, label):
         '''
@@ -498,7 +550,7 @@ class SvgGraph():
             dot = graphviz.Digraph(format='svg')
         else:
             dot = graphviz.Graph(format='svg')
-        if self._horizontal:
+        if self._type.rankdir == 'LR':
             dot.graph_attr['rankdir'] = 'LR'
         dot.node_attr.update(shape='circle', fixedsize='shape', color='#7B7B7B')
         dot.edge_attr.update(arrowhead='vee', color='#7B7B7B')

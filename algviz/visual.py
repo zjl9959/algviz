@@ -133,7 +133,7 @@ class Visualizer():
         return vec
 
 
-    def createGraph(self, data=None, name=None, directed=True, horizontal=True):
+    def createGraph(self, data=None, name=None, directed=True):
         '''
         @param: {data->iterable} The root node(s) to initialize the topology graph.
         @param: {name->str} The name of this Vector object.
@@ -141,7 +141,7 @@ class Visualizer():
         @return: {SvgGraph} Created SvgGraph object.
         '''
         global _next_display_id
-        gra = svg_graph.SvgGraph(data, directed, self._delay, horizontal)
+        gra = svg_graph.SvgGraph(data, directed, self._delay)
         self._element2display[gra] = _next_display_id
         if name is not None:
             self._displayid2name[_next_display_id] = name
