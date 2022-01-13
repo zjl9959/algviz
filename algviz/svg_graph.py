@@ -40,7 +40,7 @@ def _get_graph_type_by_data_(data):
     # Check the data type and specific the layout parameter.
     if type(data) == graph.GraphNode:
         # For normal graph layout.
-        layout = _SvgGraphType()
+        layout = _SvgGraphType('LR')
     elif type(data) == tree.BinaryTreeNode:
         # For binary tree layout.
         layout = _SvgGraphType()
