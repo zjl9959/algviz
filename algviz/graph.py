@@ -105,23 +105,26 @@ def updateGraphEdge(node1, node2, edge):
             node2_bind_graph.markEdge(util._setElemColor, node2, node1, hold=False)
 
 
-def parseGraph(nodes, edges, directed=True):
+def parseGraph(nodes, edges, nodes_label=None, directed=True):
     '''
     @function: Create a new graph from edges and nodes information.
-    @param: {nodes->list(printable)} All the nodes in this graph. (eg:[0, 1, 2]).
+    @param: {nodes->set(printable)} All the nodes in this graph. (eg:{0, 1, 2}).
     @param: {edges->list(tuple(node1, node2, edge))} All the edges in this graph.
             eg:[(0, 1), (1, 2), (2, 0)].
-    @param: {name->str} The name of the graph to be display as the title of the graph svg.
+    @param: {nodes_label->dict(printable:printable)} Map the node id into it's display label.
     @param: {directed->bool} Should this graph be directed graph or undirected.
     @return: {dict(str:GraphNode)} All the graph nodes in this graph.
             Key is node label in nodes parameter, Value is GraphNode object.
     '''
     # Create nodes for this graph.
     nodes_dict = dict()
-    for node_val in nodes:
-        if node_val in nodes_dict:
+    for node in nodes:
+        if node in nodes_dict:
             continue
-        nodes_dict[node_val] = GraphNode(node_val)
+        node_val = node
+        if nodes_label and node in nodes_label:
+            node_val = nodes_label[node]
+        nodes_dict[node] = GraphNode(node_val)
     # Add edges for this graph.
     for edge in edges:
         node1, node2, edge_val = edge[0], edge[1], None

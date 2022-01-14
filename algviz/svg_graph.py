@@ -37,12 +37,16 @@ def _get_graph_type_by_data_(data):
         data = tuple(data.values())
     if (type(data)==list or type(data)==tuple) and len(data) > 0:
         data = data[0]
+    layout = _SvgGraphType()
     # Check the data type and specific the layout parameter.
     if type(data) == graph.GraphNode:
         # For normal graph layout.
         layout = _SvgGraphType('LR')
     elif type(data) == tree.BinaryTreeNode:
         # For binary tree layout.
+        layout = _SvgGraphType()
+    elif type(data) == tree.TreeNode:
+        # For normal tree layout.
         layout = _SvgGraphType()
     elif type(data) == linked_list.ForwardLinkedListNode:
         # For forward linked list layout.

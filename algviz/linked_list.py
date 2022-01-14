@@ -93,34 +93,34 @@ class DoublyLinkedListNode(NodeBase):
         return [(next_node, None), (prev_node, None)]
 
 
-def parseForwardLinkedList(li_vals):
+def parseForwardLinkedList(list_info):
     '''
     @function: Create a new forward linked list object and return it's head node.
-    @param: {li_vals->list} The labels to display in the forward linked list's nodes.
+    @param: {list_info->list} The labels to display in the forward linked list's nodes.
     @return: {head->ForwardLinkedListNode} The head node objet for this forward linked list.
     '''
-    if len(li_vals) == 0:
+    if len(list_info) == 0:
         return None
-    head = ForwardLinkedListNode(li_vals[0])
+    head = ForwardLinkedListNode(list_info[0])
     cur_node = head
-    for i in range(1, len(li_vals)):
-        cur_node.next = ForwardLinkedListNode(li_vals[i])
+    for i in range(1, len(list_info)):
+        cur_node.next = ForwardLinkedListNode(list_info[i])
         cur_node = cur_node.next
     return head
 
 
-def parseDoublyLinkedList(li_vals):
+def parseDoublyLinkedList(list_info):
     '''
     @function: Create a new doubly linked list object and return it's head and tail node.
-    @param: {li_vals->list} The labels to display in the doubly linked list's nodes.
+    @param: {list_info->list} The labels to display in the doubly linked list's nodes.
     @return: {(head,tail)->DoublyLinkedListNode} The head and tail node objects for this doubly linked list.
     '''
-    if len(li_vals) == 0:
+    if len(list_info) == 0:
         return (None, None)
-    head = DoublyLinkedListNode(li_vals[0])
+    head = DoublyLinkedListNode(list_info[0])
     cur_node, next_node = head, head
-    for i in range(1, len(li_vals)):
-        next_node = DoublyLinkedListNode(li_vals[i])
+    for i in range(1, len(list_info)):
+        next_node = DoublyLinkedListNode(list_info[i])
         cur_node.next = next_node
         next_node.prev = cur_node
         cur_node = cur_node.next

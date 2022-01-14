@@ -48,34 +48,40 @@ class BinaryTreeNode(NodeBase):
         '''
         left_node = super().__getattribute__('left')
         right_node = super().__getattribute__('right')
-        return [(left_node, None), (right_node, None)]
+        # Add edge label if this node just has single child node.
+        left_label, right_label = None, None
+        if left_node and not right_node:
+            left_label = 'L'
+        elif right_node and not left_node:
+            right_label = 'R'
+        return [(left_node, left_label), (right_node, right_label)]
 
 
-def parseBinaryTree(node_vals):
+def parseBinaryTree(tree_info):
     '''
     @function: Create a new Tree from given node values.
-    @param: {node_vals->list(printable)} The label of each node in the tree must be given.
+    @param: {tree_info->list(printable)} The label of each node in the tree must be given.
             Empty node is represented by None. eg:([1, None, 2, None, None, 3, 4])
     @return: {TreeNode} Root node object of this tree.
     '''
-    if len(node_vals) == 0:
+    if len(tree_info) == 0:
         return None
-    root = BinaryTreeNode(node_vals[0])
+    root = BinaryTreeNode(tree_info[0])
     node_queue = [root]
     index = 1
     while len(node_queue) > 0:
         cur_node = node_queue.pop(0)
-        if index >= len(node_vals):
+        if index >= len(tree_info):
             break
         left_node = None
-        if node_vals[index] is not None:
-            left_node = BinaryTreeNode(node_vals[index])
+        if tree_info[index] is not None:
+            left_node = BinaryTreeNode(tree_info[index])
         node_queue.append(left_node)
-        if index + 1 >= len(node_vals):
+        if index + 1 >= len(tree_info):
             break
         right_node = None
-        if node_vals[index + 1] is not None:
-            right_node = BinaryTreeNode(node_vals[index+1])
+        if tree_info[index + 1] is not None:
+            right_node = BinaryTreeNode(tree_info[index+1])
         node_queue.append(right_node)
         if cur_node is not None:
             cur_node.left = left_node
@@ -83,4 +89,122 @@ def parseBinaryTree(node_vals):
         index += 2
     return root
 
-#TODO: add tree valid check for parseTree function.
+
+class TreeChildrenIter():
+    '''
+    @class: Iterator for the children of TreeNode object.
+    '''
+    def __init__(self, node, children):
+        self._node = node
+        self._children = children
+        self._next_index = 0
+
+
+    def __iter__(self):
+        self._next_index = 0
+        return self
+
+
+    def __next__(self):
+        if self._next_index >= len(self._children):
+            raise StopIteration
+        else:
+            child = self._children[self._next_index]
+            self._next_index += 1
+            self._node._on_visit_neighbor_(child)
+            return child
+
+
+class TreeNode(NodeBase):
+    '''
+    @class: A tree node has multiply children node.
+    '''
+    def __init__(self, val):
+        '''
+        @param: {val->printable} The label value for tree node(should be printable object).
+        '''
+        super().__init__(val)
+        super().__setattr__('_children', set())
+    
+
+    def children(self):
+        '''
+        @function: Return an iterator to iter over all the children nodes of this node.
+        @return: {TreeChildrenIter} Children node iterator.
+        '''
+        children_ = super().__getattribute__('_children')
+        return TreeChildrenIter(self, tuple(children_))
+
+
+    def add(self, child):
+        '''
+        @function: Add a child node for this node.
+        @param: {child->TreeNode} The child node object to be added.
+        '''
+        children_ = super().__getattribute__('_children')
+        if child not in children_:
+            children_.add(child)
+            self._on_update_neighbor_(None, child)
+
+
+    def remove(self, child):
+        '''
+        @function: Remove one child node.
+        @param: {child->TreeNode} The child to be removed.
+        '''
+        children_ = super().__getattribute__('_children')
+        if child in children_:
+            children_.remove(child)
+            self._on_update_neighbor_(child, None)
+
+
+    def _neighbors_(self):
+        children_ = super().__getattribute__('_children')
+        res = list()
+        for child in children_:
+            res.append((child, None))
+        return res
+
+
+def parseTree(tree_info, nodes_label=None):
+    '''
+    @function: Create a Tree from node_map information and return the root node.
+    @param: {tree_info->dict(printable:list(printable))} Describe the linked information of this tree.
+        Key is the label of root node, Value is the list of it's children nodes label.
+    @param: {nodes_label->dict(printable:printable)} Map the node id into it's display label.
+    @return: {TreeNode} The root node of this tree.
+    '''
+    # Create TreeNode objects.
+    nodes_dict = dict()
+    child_nodes = set()     # Used to find the root node and check the validity of tree.
+    for node, children in tree_info.items():
+        # Create parent node.
+        node_val = node
+        if nodes_label and node in nodes_label:
+            node_val = nodes_label[node]
+        nodes_dict[node] = TreeNode(node_val)
+        for child in children:
+            # Create children nodes.
+            if child not in child_nodes:
+                child_nodes.add(child)
+                node_val = child
+                if nodes_label and child in nodes_label:
+                    node_val = nodes_label[child]
+                nodes_dict[child] = TreeNode(node_val)
+            else:
+                raise Exception('[ERROR] parseTree: Invalid tree_info, node {} have more than one parent node!'.format(child))
+    # Check and find the root node of this tree.
+    root = None
+    for node in tree_info.keys():
+        if node not in child_nodes:
+            if not root:
+                root = node
+            else:
+                raise Exception('[ERROR] parseTree: Invalid tree_info, tree has more than one({}, {}) root node.'.format(root, node))
+    # Link the edge between root and it's child.
+    for node, children in tree_info.items():
+        parent_node = nodes_dict[node]
+        for child in children:
+            child_node = nodes_dict[child]
+            parent_node.add(child_node)
+    return nodes_dict[root]
