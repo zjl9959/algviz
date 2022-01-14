@@ -28,6 +28,9 @@ def test_create_table():
     tab_elems = get_table_elements(table._repr_svg_())
     res.add_case(equal_table(tab_elems, table_data), 'Multi-data type',
                  tab_elems, table_data)
+    # Test the shape interface of table.
+    row, col = table.shape()
+    res.add_case(row==3 and col==3, 'Table shape', (row, col), (3, 3))
     # Test invalid input row/col. (Throw exception if input row, col is invalid)
     case_ok = False
     try:

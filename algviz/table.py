@@ -165,6 +165,13 @@ class Table():
         self._data[r][c] = val
     
 
+    def shape(self):
+        '''
+        @return: {tuple(int, int)} Return the rows and columns of this table.
+        '''
+        return (self._row, self._col)
+
+
     def __getitem__(self, r):
         '''
         @param: {r->int} The index of the row to access.
