@@ -116,7 +116,7 @@ def test_mark_element():
     res = TestResult()
     viz = algviz.Visualizer()
     table = viz.createTable(2, 2)
-    # Test not presistent mark (check 2 frame2).
+    # Test not presistent mark (check 2 frames).
     mark_list = [(0, 1, (0, 255, 1)), (1, 0, (0, 3, 0)), (1, 0, (0, 1, 0))]
     expect_colors = [['#ffffff', '#00ff01'],
                      ['#000100', '#ffffff']]

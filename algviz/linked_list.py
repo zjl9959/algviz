@@ -96,7 +96,7 @@ class DoublyLinkedListNode(NodeBase):
 def parseForwardLinkedList(list_info):
     '''
     @function: Create a new forward linked list object and return it's head node.
-    @param: {list_info->list} The labels to display in the forward linked list's nodes.
+    @param: {list_info->list(printable)} The labels to display in the forward linked list's nodes.
     @return: {head->ForwardLinkedListNode} The head node objet for this forward linked list.
     '''
     if len(list_info) == 0:
@@ -112,7 +112,7 @@ def parseForwardLinkedList(list_info):
 def parseDoublyLinkedList(list_info):
     '''
     @function: Create a new doubly linked list object and return it's head and tail node.
-    @param: {list_info->list} The labels to display in the doubly linked list's nodes.
+    @param: {list_info->list(printable)} The labels to display in the doubly linked list's nodes.
     @return: {(head,tail)->DoublyLinkedListNode} The head and tail node objects for this doubly linked list.
     '''
     if len(list_info) == 0:
