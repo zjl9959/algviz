@@ -99,7 +99,7 @@ class SvgGraph():
     def addNode(self, node):
         '''
         @function: Add a new node and all it's successor nodes into this graph.
-        @param: {node->iterable} The node object to be added. Can be a graph/tree/linked_list node.
+        @param: {node->subclass of GraphNodeBase} The node object to be added. Can be a graph/tree/linked_list node.
         @return: {int} The number of node(s) added into graph.
         '''
         if node in self._add_history:
@@ -112,7 +112,7 @@ class SvgGraph():
                 continue
             cur_node._bind_graph_(self)
             self._add_history.add(cur_node)
-            self._add_nodes.append(node)
+            self._add_nodes.append(cur_node)
             added_nodes_num = added_nodes_num + 1
             for neigh in cur_node._neighbors_()[::-1]:
                 node_stack.append(neigh[0])
@@ -122,7 +122,7 @@ class SvgGraph():
     def removeNode(self, node, recursive=False):
         '''
         @function: Remove a node from this graph. Remove this node's all successor nodes if recursive is True.
-        @param: {node->iterable} The node object to be removed. Can be a graph/tree/linked_list node.
+        @param: {node->subclass of GraphNodeBase} The node object to be removed. Can be a graph/tree/linked_list node.
         @param: {recursive->bool} Wheather to remove all the successor nodes of this node.
         @return: {int} The number of node(s) removed from graph.
         '''
@@ -148,7 +148,7 @@ class SvgGraph():
         @function: Emphasize one node by mark it's background color.
         @param: {color->(R,G,B)} The background color for the marked node. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: {node->iterable} The node object to be marked. Can be a graph/tree/linked_list node.
+        @param: {node->subclass of GraphNodeBase} The node object to be marked. Can be a graph/tree/linked_list node.
         @param: {hold->bool} Whether to keep the mark color in future animation frames.
         '''
         if node is not None:
@@ -163,7 +163,7 @@ class SvgGraph():
         @function: Emphasize one edge by mark it's stoke color.
         @param: {color->(R,G,B)} The stroke color for the marked edge. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: {node1, node2->iterable} The begin and end node in the edge to be marked. Can be a graph/tree/linked_list node.
+        @param: {node1, node2->subclass of GraphNodeBase} The begin and end node in the edge to be marked. Can be a graph/tree/linked_list node.
         @param: {hold->bool} Whether to keep the mark color in future animation frames.
         '''
         if node1 is not None and node2 is not None:
@@ -208,7 +208,7 @@ class SvgGraph():
     def _updateNodeLabel(self, node, label):
         '''
         function: Update the label value of the node in the graph.
-        @param: {node->iterable} The node object to be updated. Can be a graph/tree/linked_list node.
+        @param: {node->subclass of GraphNodeBase} The node object to be updated. Can be a graph/tree/linked_list node.
         @param: {label->printable} New label content.
         '''
         node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(node))
@@ -240,7 +240,7 @@ class SvgGraph():
     def _updateEdgeLabel(self, node1, node2, label):
         '''
         function: Update the label value of the node in the graph.
-        @param: {node->iterable} The begin and end node in the edge to be updated. Can be a graph/tree/linked_list node.
+        @param: {node->subclass of GraphNodeBase} The begin and end node in the edge to be updated. Can be a graph/tree/linked_list node.
         @param: {label->printable} New label content.
         '''
         edge_key = self._make_edge_tuple_(node1, node2)
@@ -530,7 +530,7 @@ class SvgGraph():
     def _make_edge_tuple_(self, node1, node2):
         '''
         @function: Create an edge tuple according to nodes and the graph's type.
-        @param: {node1, node2->iterable} The begin and end node in the edge. Can be a graph/tree/linked_list node.
+        @param: {node1, node2->subclass of GraphNodeBase} The begin and end node in the edge. Can be a graph/tree/linked_list node.
         '''
         if self._directed:
             return (node1, node2)
