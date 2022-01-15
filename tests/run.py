@@ -54,12 +54,14 @@ def run_test_module(test_module):
         else:
             num_failed = num_failed + 1
     # Print the test results.
-    print("- Total functions:{0:>9}\r\n- Failed functions:{2:>8}".format(
-            len(results), num_pass, num_failed))
+    if num_failed > 0:
+        print(">>>> {0} function(s) failed:".format(num_failed))
+    else:
+        print(">>>> OK!")
     for func, result in results.items():
         if not result.ok():
             print(" - [ERROR] {0}".format(func))
-            print(result)
+            print(result, end='')
     print(">>>> End <{0}> ({1:.2f} ms).".format(test_module.__name__, (end_time-start_time)*1000))
     return num_failed
 
