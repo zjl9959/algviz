@@ -18,7 +18,7 @@ class GraphNodeBase:
         @param: {val->printable} The label to be print in the graph node.
         '''
         object.__setattr__(self, 'val', val)
-        object.__setattr__(self, '_bind_graph', None)
+        object.__setattr__(self, '_bind_graphs', set())
 
     
     def __getattribute__(self, name):
@@ -45,9 +45,9 @@ class GraphNodeBase:
         '''
         @function: Notify the bind graph to update the displayed node mark.
         '''
-        bind_graph = object.__getattribute__(self, '_bind_graph')
-        if bind_graph:
-            bind_graph.markNode(util._getElemColor, self, hold=False)
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
+        for graph in bind_graphs:
+            graph.markNode(util._getElemColor, self, hold=False)
 
 
     def _on_update_value_(self, value):
@@ -55,19 +55,19 @@ class GraphNodeBase:
         @function: Notify the bind graph to update the displayed node mark and value.
         @param: {value->printable} The value to be displayed in this node.
         '''
-        bind_graph = object.__getattribute__(self, '_bind_graph')
-        if bind_graph:
-            bind_graph._updateNodeLabel(self, value)
-            bind_graph.markNode(util._setElemColor, self, hold=False)
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
+        for graph in bind_graphs:
+            graph._updateNodeLabel(self, value)
+            graph.markNode(util._setElemColor, self, hold=False)
 
 
     def _on_visit_neighbor_(self, neighbor):
         '''
         @function: Notify the bind graph to update the displayed edge color between this node and it's neighbor.
         '''
-        bind_graph = object.__getattribute__(self, '_bind_graph')
-        if bind_graph:
-            bind_graph.markEdge(util._getElemColor, self, neighbor, hold=False)
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
+        for graph in bind_graphs:
+            graph.markEdge(util._getElemColor, self, neighbor, hold=False)
 
     
     def _on_update_neighbor_(self, old_neighbor, new_neighbor):
@@ -76,27 +76,41 @@ class GraphNodeBase:
         @param: (old_neighbor,new_neighbor->GraphNodeBase) The subclasses of GraphNodeBase.
         '''
         # Mark edge between this node and it's old_neighbor.
-        bind_graph = object.__getattribute__(self, '_bind_graph')
-        if not bind_graph:
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
+        if len(bind_graphs) == 0:
             return
         if old_neighbor:
-            bind_graph.markEdge(util._setElemColor, self, old_neighbor, hold=False)
+            for graph in bind_graphs:
+                graph.markEdge(util._setElemColor, self, old_neighbor, hold=False)
         # Mark edge between this node and it's new_neighbor.
         if new_neighbor:
-            bind_graph.addNode(new_neighbor)
-            bind_graph.markEdge(util._setElemColor, self, new_neighbor, hold=False)
+            for graph in bind_graphs:
+                graph.addNode(new_neighbor)
+                graph.markEdge(util._setElemColor, self, new_neighbor, hold=False)
 
 
-    def bind_graph(self):
+    def bind_graphs(self):
         '''
         @return: {SvgGraph} Return the bind graph of this node.
         '''
-        return object.__getattribute__(self, '_bind_graph')
+        return object.__getattribute__(self, '_bind_graphs')
 
 
-    def _bind_graph_(self, graph):
+    def _bind_new_graph_(self, graph):
         '''
         @function: Bind a new SvgGraph object for this graph node object.
         @param: {graph->SvgGraph} New SvgGraph object to track.
         '''
-        object.__setattr__(self, '_bind_graph', graph)
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
+        if graph not in bind_graphs:
+            bind_graphs.add(graph)
+
+
+    def _remove_bind_graph_(self, graph):
+        '''
+        @function: Remove the SvgGraph object binded to this graph node object.
+        @param: {graph->SvgGraph} SvgGraph object to be removed.
+        '''
+        bind_graphs = object.__getattribute__(self, '_bind_graphs')
+        if graph in bind_graphs:
+            bind_graphs.remove(graph)

@@ -110,7 +110,7 @@ class SvgGraph():
             cur_node = node_stack.pop()
             if cur_node is None or cur_node in self._add_history:
                 continue
-            cur_node._bind_graph_(self)
+            cur_node._bind_new_graph_(self)
             self._add_history.add(cur_node)
             self._add_nodes.append(cur_node)
             added_nodes_num = added_nodes_num + 1
@@ -132,7 +132,7 @@ class SvgGraph():
             cur_node = node_stack.pop()
             if cur_node is None or cur_node not in self._add_history:
                 continue
-            cur_node._bind_graph_(None)
+            cur_node._remove_bind_graph_(self)
             self._add_history.remove(cur_node)
             if cur_node not in self._remove_nodes:
                 self._remove_nodes.append(cur_node)

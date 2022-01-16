@@ -92,17 +92,17 @@ def updateGraphEdge(node1, node2, edge):
     node1_neighbors = node1._neighbors
     if node2 in node1_neighbors:
         node1_neighbors[node2] = edge
-        node1_bind_graph = node1.bind_graph()
-        if node1_bind_graph:
-            node1_bind_graph._updateEdgeLabel(node1, node2, edge)
-            node1_bind_graph.markEdge(util._setElemColor, node1, node2, hold=False)
+        node1_bind_graphs = node1.bind_graphs()
+        for graph in node1_bind_graphs:
+            graph._updateEdgeLabel(node1, node2, edge)
+            graph.markEdge(util._setElemColor, node1, node2, hold=False)
     node2_neighbors = node2._neighbors
     if node1 in node2_neighbors:
         node2_neighbors[node1] = edge
-        node2_bind_graph = node2.bind_graph()
-        if node2_bind_graph:
-            node2_bind_graph._updateEdgeLabel(node2, node1, edge)
-            node2_bind_graph.markEdge(util._setElemColor, node2, node1, hold=False)
+        node2_bind_graphs = node2.bind_graphs()
+        for graph in node2_bind_graphs:
+            graph._updateEdgeLabel(node2, node1, edge)
+            graph.markEdge(util._setElemColor, node2, node1, hold=False)
 
 
 def parseGraph(nodes, edges, nodes_label=None, directed=True):
