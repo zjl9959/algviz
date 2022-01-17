@@ -66,7 +66,7 @@ def get_graph_elements(svg_str):
             return None, None
         node_title = titles[0].firstChild.data
         # Get node label.
-        label = None
+        label = 'None'
         texts = node.getElementsByTagName('text')
         for text in texts:
             if text.getAttribute('text-anchor') == 'middle' and text.firstChild:
