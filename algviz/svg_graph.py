@@ -130,13 +130,12 @@ class SvgGraph():
         removed_nodes_num = 0
         while len(node_stack) > 0:
             cur_node = node_stack.pop()
-            if cur_node is None or cur_node not in self._add_history:
+            if cur_node is None or cur_node in self._remove_nodes or cur_node not in self._add_history:
                 continue
             cur_node._remove_bind_graph_(self)
             self._add_history.remove(cur_node)
-            if cur_node not in self._remove_nodes:
-                self._remove_nodes.append(cur_node)
-                removed_nodes_num = removed_nodes_num + 1
+            self._remove_nodes.append(cur_node)
+            removed_nodes_num = removed_nodes_num + 1
             if recursive:
                 for neighbor in cur_node._neighbors_():
                     node_stack.append(neighbor[0])
