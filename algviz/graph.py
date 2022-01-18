@@ -113,7 +113,7 @@ def parseGraph(nodes, edges, nodes_label=None, directed=True):
             eg:[(0, 1), (1, 2), (2, 0)].
     @param: {nodes_label->dict(printable:printable)} Map the node id into it's display label.
     @param: {directed->bool} Should this graph be directed graph or undirected.
-    @return: {dict(str:GraphNode)} All the graph nodes in this graph.
+    @return: {dict(printable:GraphNode)} All the graph nodes in this graph.
             Key is node label in nodes parameter, Value is GraphNode object.
     '''
     # Create nodes for this graph.

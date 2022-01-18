@@ -89,11 +89,21 @@ def get_graph_elements(svg_str):
             title, edge_val = get_node_title_and_label(node)
             if not node_id:
                 continue
-            title = title.split('->')
-            if len(title) != 2:
+            directed = False
+            if '->' in title:
+                directed = True
+                title = title.split('->')
+            elif '--' in title:
+                title = title.split('--')
+            else:
                 continue
             start_node, end_node = title[0], title[1]
             start_node_val = node_id2label[start_node]
             end_node_val = node_id2label[end_node]
-            res_edges.append((start_node_val, end_node_val, edge_val))
+            if not directed:
+                res_edges.append(
+                    (min(start_node_val, end_node_val),
+                    max(start_node_val, end_node_val), edge_val))
+            else:
+                res_edges.append((start_node_val, end_node_val, edge_val))
     return sorted(list(node_id2label.values())), sorted(res_edges)
