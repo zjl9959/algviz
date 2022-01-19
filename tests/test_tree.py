@@ -103,12 +103,12 @@ def test_modify_binary_tree():
     tree.removeNode(right_node)
     expect_nodes = ['left', 'root']
     expect_edges = [('root', 'left', 'L')]
-    tree._repr_svg_()
+    tree._repr_svg_()   # Skip the animation frame.
     nodes, edges = get_graph_elements(tree._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     # Test multiply graph refresh.
-    tree2._repr_svg_()
+    tree2._repr_svg_()  # Skip the animation frame.
     nodes, edges = get_graph_elements(tree2._repr_svg_())
     expect_nodes = ['left', 'right', 'root']
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes(multiply graph)',
@@ -174,7 +174,7 @@ def test_modify_tree():
         (3, 4, None), (3, 5, None), (3, 6, None),
         (4, 7, None), (4, 9, None)
     ]
-    tree._repr_svg_()
+    tree._repr_svg_()   # Skip the animation frame.
     nodes, edges = get_graph_elements(tree._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
@@ -185,7 +185,7 @@ def test_modify_tree():
             tree.removeNode(child, recursive=True)
     expect_nodes = [0, 8]
     expect_edges = [(0, 8, None)]
-    tree._repr_svg_()
+    tree._repr_svg_()   # Skip the animation frame.
     nodes, edges = get_graph_elements(tree._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
