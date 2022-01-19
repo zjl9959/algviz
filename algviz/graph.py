@@ -12,9 +12,9 @@ NodeBase = graph_node_base.GraphNodeBase
 
 
 class GraphNeighborIter():
-    '''
-    @class: Neighbor nodes iterator for GraphNode class.
-    '''
+    """Neighbor nodes iterator for GraphNode class.
+
+    """
     def __init__(self, node, neighbors):
         self._node = node
         self._neighbors = neighbors
@@ -35,29 +35,31 @@ class GraphNeighborIter():
 
 
 class GraphNode(NodeBase):
-    '''
-    @class: This class defined the type of typology graph node.
-    '''
+    """This class defined the type of typology graph node.
+
+    """
     def __init__(self, val):
         super().__init__(val)
         super().__setattr__('_neighbors', dict())   # Key: Neighbor Node, Value: Edge Label.
 
 
     def neighbors(self):
-        '''
-        @function: Return an iterator to iter over all the neighbor nodes of this node.
-        @return: {GraphNeighborIter} Neighbor node iterator.
-        '''
+        """Return an iterator to iter over all the neighbor nodes of this node.
+        
+        Returns:
+            GraphNeighborIter: Neighbor node iterator.
+        """
         iter_neighbors = super().__getattribute__('_neighbors')
         return GraphNeighborIter(self, tuple(iter_neighbors.items()))
     
 
     def add(self, node, edge=None):
-        '''
-        @function: Add a neighbor node for this node.
-        @param: {node->GraphNode} The neighbor node object to be added.
-        @param: {edge->printable} The weight value of the edge between this node and neighbor node.
-        '''
+        """Add a neighbor node for this node.
+        
+        Args:
+            node (GraphNode): The neighbor node object to be added.
+            edge (printable): The weight value of the edge between this node and neighbor node.
+        """
         neighbors_ = super().__getattribute__('_neighbors')
         if node not in neighbors_:
             neighbors_[node] = edge
@@ -65,10 +67,11 @@ class GraphNode(NodeBase):
 
 
     def remove(self, node):
-        '''
-        @function: Remove one neighbor node. Do nothing if node not in neighbors collection.
-        @param: {node->GraphNode} The node to be removed.
-        '''
+        """Remove one neighbor node. Do nothing if node not in neighbors collection.
+        
+        Args:
+            node (GraphNode): The node to be removed.
+        """
         neighbors_ = super().__getattribute__('_neighbors')
         if node in neighbors_:
             neighbors_.pop(node)
@@ -76,19 +79,22 @@ class GraphNode(NodeBase):
 
 
     def _neighbors_(self):
-        '''
-        @return: {list([neighbor_node, edge])}  All the neighbors nodes and edges.
-        '''
+        """
+
+        Returns:
+            list([neighbor_node, edge]): All the neighbors nodes and edges.
+        """
         neighbors_ = super().__getattribute__('_neighbors')
         return tuple(neighbors_.items())
 
 
 def updateGraphEdge(node1, node2, edge):
-    '''
-    @function: Update the graph's edge between node1 and node2.
-    @param: {node1/node2->GraphNode} The node related to the updated edge.
-    @param: {edge->printable} New weight value for this edge.
-    '''
+    """Update the graph's edge between node1 and node2.
+    
+    Args:
+        node1,node2 (GraphNode): The node related to the updated edge.
+        edge (printable): New weight value for this edge.
+    """
     node1_neighbors = node1._neighbors
     if node2 in node1_neighbors:
         node1_neighbors[node2] = edge
@@ -106,16 +112,20 @@ def updateGraphEdge(node1, node2, edge):
 
 
 def parseGraph(nodes, edges, nodes_label=None, directed=True):
-    '''
-    @function: Create a new graph from edges and nodes information.
-    @param: {nodes->set(printable)} All the nodes in this graph. (eg:{0, 1, 2}).
-    @param: {edges->list(tuple(node1, node2, edge))} All the edges in this graph.
-            eg:[(0, 1), (1, 2), (2, 0)].
-    @param: {nodes_label->dict(printable:printable)} Map the node id into it's display label.
-    @param: {directed->bool} Should this graph be directed graph or undirected.
-    @return: {dict(printable:GraphNode)} All the graph nodes in this graph.
-            Key is node label in nodes parameter, Value is GraphNode object.
-    '''
+    """Create a new graph from edges and nodes information.
+    
+    Examples:
+        parseGraph({0, 1, 2}, [(0, 1), (1, 2), (2, 0)], nodes_label={0:'node_0'})
+
+    Args:
+        nodes (set(printable)): All the nodes in this graph.
+        edges (list(tuple(node1, node2, edge))): All the edges in this graph.
+        nodes_label (dict(printable:printable)): Map the node id into it's display label.
+        directed (bool): Should this graph be directed graph or undirected.
+
+    Returns:
+        dict(printable): All the graph nodes in this graph. Key is node label in nodes parameter, Value is GraphNode object.
+    """
     # Create nodes for this graph.
     nodes_dict = dict()
     for node in nodes:

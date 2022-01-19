@@ -11,6 +11,8 @@ Welcome to algviz's documentation!
    :caption: Contents:
 
 
+   modules
+
 
 Indices and tables
 ==================
