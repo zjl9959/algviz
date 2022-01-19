@@ -141,7 +141,10 @@ class SvgGraph():
                 for neighbor in cur_node._neighbors_():
                     node_stack.append(neighbor[0])
         else:
-            subgraph_nodes.add(node)
+            if node and node in self._add_history:
+                subgraph_nodes.add(node)
+            else:
+                return 0
         # Make sure there is no output edge into the subgraph nodes to be removed.
         node_stack = self._node_seq + self._add_nodes
         visited = set(self._remove_nodes)
