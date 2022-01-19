@@ -174,9 +174,3 @@ def test_modify_undirected_graph():
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     return res
-
-
-def test_mark_graph():
-    res = TestResult()
-    # TODO: add subcases.
-    return res
