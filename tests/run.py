@@ -45,6 +45,8 @@ def run_test_module(test_module):
             results[func] = res
         except Exception as e:  # Catch the test exception and print it.
             print("[ERROR] When running {0}, exception: <{1}> was thrown.".format(func, e))
+            import traceback
+            print(traceback.format_exc())
             num_failed += 1
     end_time = time.time()
     # Statistic the number of pass and failed cases.

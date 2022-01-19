@@ -7,6 +7,7 @@
 
 
 import algviz
+from algviz.graph import parseGraph
 from result import TestResult
 from utility import equal, equal_table, get_graph_elements
 from utility import TestCustomPrintableClass
@@ -142,7 +143,36 @@ def test_modify_directed_graph():
 
 def test_modify_undirected_graph():
     res = TestResult()
-    # TODO: add subcases.
+    viz = algviz.Visualizer()
+    nodes = [0, 1, 2, 3]
+    edges = [[0, 1, None], [1, 2, None], [2, 3, '2<->3'], [3, 0, '3<->0']]
+    graph_nodes = parseGraph(nodes, edges, directed=False)
+    graph = viz.createGraph(graph_nodes, directed=False)
+    # Test add nodes into undirected graph.
+    node4 = algviz.GraphNode(4); node5 = algviz.GraphNode(5)
+    graph_nodes[0].add(node4); node4.add(graph_nodes[2])
+    graph_nodes[1].add(node5); node5.add(graph_nodes[3], '3<->5')
+    expect_nodes = [0, 1, 2, 3, 4, 5]
+    expect_edges = [
+        [0, 1, None], [0, 3, '3<->0'], [0, 4, None],
+        [1, 2, None], [1, 5, None],
+        [2, 3, '2<->3'], [2, 4, None], [3, 5, '3<->5']]
+    nodes, edges = get_graph_elements(graph._repr_svg_())
+    res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
+                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    # Test remove nodes from undirected graph.
+    graph_nodes[2].remove(graph_nodes[1]); graph_nodes[1].remove(graph_nodes[2])
+    graph_nodes[2].remove(graph_nodes[3]); graph_nodes[3].remove(graph_nodes[2])
+    node4.remove(graph_nodes[2])
+    assert(graph.removeNode(graph_nodes[2])==1)
+    expect_nodes = [0, 1, 3, 4, 5]
+    expect_edges = [
+        [0, 1, None], [0, 3, '3<->0'], [0, 4, None],
+        [1, 5, None], [3, 5, '3<->5']]
+    graph._repr_svg_()
+    nodes, edges = get_graph_elements(graph._repr_svg_())
+    res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes',
+                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     return res
 
 
