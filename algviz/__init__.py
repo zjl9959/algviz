@@ -12,11 +12,13 @@ License: GPLv3
 
 """
 
+
 from .visual import Visualizer
 from .graph import GraphNode, parseGraph, updateGraphEdge
 from .tree import BinaryTreeNode, TreeNode, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
+
 
 colors = {
     0: (221, 160, 221), # Plum
@@ -39,7 +41,10 @@ colors = {
     'white': (255, 255, 255)
 }
 
+
 def colorsInfo():
+    """Display all the default colors name and background color in a vector.
+    """
     viz = Visualizer()
     c = 6
     r = len(colors) // c
@@ -51,6 +56,7 @@ def colorsInfo():
         count += 1
     viz.display()
 
+
 __all__ = [
     'Visualizer',
     'GraphNode', 'parseGraph', 'updateGraphEdge',
@@ -59,6 +65,7 @@ __all__ = [
     'parseForwardLinkedList', 'parseDoublyLinkedList',
     'colors', 'colorsInfo',
 ]
+
 
 __title__ = 'algviz'
 __version__ = '0.1.0'
