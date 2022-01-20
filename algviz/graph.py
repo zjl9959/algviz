@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-'''
-@author: zjl9959@gmail.com
-@license: GPLv3
-'''
+"""Define graph related classes and functions.
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 from . import utility as util
 from . import graph_node_base
