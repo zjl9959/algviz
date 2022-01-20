@@ -1,29 +1,36 @@
 #!/usr/bin/env python3
 
-'''
-@author: zjl9959@gmail.com
-@license: GPLv3
-'''
+"""Define the Logger related classes.
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 
 class Logger():
-    '''
-    @class: A log class to display strings into the screen.
-    '''
+    """A log class to display strings into the screen.
+
+    You can write string into this logger object, it will separate lines by \\n.
+    And if the buffer lines overflow, the oldest lines in the buffer will be discard.
+    """
 
     def __init__(self, buffer_lines):
-        '''
-        @param: {buffer_lines->int} Max buffer lines for cached logs. Override the oldest line if overflow.
-        '''
+        """
+        Args:
+            buffer_lines (int): Set the max buffer lines for cached logs. Override the oldest line if overflow.
+        """
         self._buffer_lines = max(buffer_lines, 1)
         self._logs = list()
     
 
     def write(self, data):
-        '''
-        @function: Write log data. Use '\n' to split multi-lines.
-        @param: {data->str} The log data string.
-        '''
+        """Write log data. Use \\n to split multi-lines.
+        
+        Args:
+            data (str): The log data string.
+        """
         data_lines = data.split('\n')
         for line in data_lines:
             if len(self._logs) >= self._buffer_lines:
@@ -32,9 +39,8 @@ class Logger():
     
 
     def clear(self):
-        '''
-        function: Clear all cached logs.
-        '''
+        """Clear all cached log string.
+        """
         self._logs.clear()
     
     def __repr__(self):

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-'''
-@author: zjl9959@gmail.com
-@license: GPLv3
-'''
+"""Define visual class in jupyter notebook.
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 import weakref
 import time
@@ -27,10 +30,11 @@ _next_display_id = 0
 class Visualizer(): 
 
     def __init__(self, delay=3.0, wait=False):
-        '''
-        @param: {delay->float} Animation delay time (in seconds).
-        @param: {wait->bool} Whether to wait for the key input to continue execute the code.
-        '''
+        """
+        Args:
+            delay (float): Animation delay time (in seconds).
+            wait (bool): Whether to wait for the key input to continue execute the code.
+        """
         self._delay = 3.0               # Set default delay time for animation as 3.0 seconds.
         if delay > 0:
             self._delay = delay
@@ -47,10 +51,10 @@ class Visualizer():
 
 
     def display(self, delay=None):
-        '''
-        @function: Refresh all created display objects.
-        @param: {delay->float} Specific the delay time for this animation frame (in seconds).
-        '''
+        """Refresh all created display objects.
+        Args:
+            delay (float): Specific the delay time for this animation frame (in seconds).
+        """
         if delay == None:
             delay = self._delay
         if self._wait == False:
@@ -98,14 +102,17 @@ class Visualizer():
 
 
     def createTable(self, row, col, data=None, name=None, cell_size=40, show_index=True):
-        '''
-        @param: {row, col->int} The number of rows, columns for this table.
-        @param: {data->list(list(printable))} The initial data for table cells.
-        @param: {name->str} The name of this table object.
-        @param: {cell_size->float} Table cell size.
-        @param: {show_index->bool} Whether to display table row and column labels.
-        @return: {Table} New created Table object.
-        '''
+        """
+        Args:
+            row, col (int): The number of rows, columns for this table.
+            data (list(list(printable))): The initial data for table cells.
+            name (str): The name of this table object.
+            cell_size (float): Table cell size.
+            show_index (bool): Whether to display table row and column labels.
+        
+        Returns:
+            Table: New created Table object.
+        """
         global _next_display_id
         tab = table.Table(row, col, data, cell_size, show_index)
         self._element2display[tab] = _next_display_id
@@ -116,14 +123,17 @@ class Visualizer():
 
 
     def createVector(self, data=None, name=None, cell_size=40, bar=-1, show_index=True):
-        '''
-        @param: {data->list(printable)} The initial data for vector cells.
-        @param: {name->str} The name of this Vector object.
-        @param: {cell_size->float} Vector cell size.
-        @param: {bar->float} If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
-        @param: {show_index->bool} Whether to display the vector index label.
-        @return: {Vector} New created Vector object.
-        '''
+        """
+        Args:
+            data (list(printable)): The initial data for vector cells.
+            name (str): The name of this Vector object.
+            cell_size (float): Vector cell size.
+            bar (float): If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
+            show_index (bool): Whether to display the vector index label.
+        
+        Returns:
+            Vector: New created Vector object.
+        """
         global _next_display_id
         vec = vector.Vector(data, self._delay, cell_size, bar, show_index)
         self._element2display[vec] = _next_display_id
@@ -134,12 +144,15 @@ class Visualizer():
 
 
     def createGraph(self, data=None, name=None, directed=True):
-        '''
-        @param: {data->iterable} The root node(s) to initialize the topology graph.
-        @param: {name->str} The name of this Vector object.
-        @param: {directed->bool} Should this graph be directed graph or undirected.
-        @return: {SvgGraph} Created SvgGraph object.
-        '''
+        """
+        Args:
+            data (iterable): The root node(s) to initialize the topology graph.
+            name (str): The name of this Vector object.
+            directed (bool): Should this graph be directed graph or undirected.
+        
+        Returns:
+            SvgGraph: Created SvgGraph object.
+        """
         global _next_display_id
         gra = svg_graph.SvgGraph(data, directed, self._delay)
         self._element2display[gra] = _next_display_id
@@ -150,11 +163,14 @@ class Visualizer():
 
 
     def createLogger(self, buffer_lines=10, name=None):
-        '''
-        @param: {buffer_lines->int} Maximum buffer line of this logger.
-        @param: {name->str} The name of this Vector object.
-        @return: {Logger} Created Logger object.
-        '''
+        """
+        Args:
+            buffer_lines (int): Maximum buffer line of this logger.
+            name (str): The name of this Vector object.
+        
+        Returns:
+            Logger: Created Logger object.
+        """
         global _next_display_id
         logg = logger.Logger(buffer_lines)
         self._element2display[logg] = _next_display_id

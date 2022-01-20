@@ -1,23 +1,31 @@
 #!/usr/bin/env python3
 
-'''
-@author: zjl9959@gmail.com
-@license: GPLv3
-'''
+"""Define tree related classes and functions.
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 from . import graph_node_base
 NodeBase = graph_node_base.GraphNodeBase
 
 
 class BinaryTreeNode(NodeBase):
-    '''
-    @class: The definition of a binary tree node.
-    '''
+    """The definition of a binary tree node.
+
+    Attributes:
+        val (printable): The label to be displayed in the binary tree node.
+        left (BinaryTreeNode): Point to the left subtree node object.
+        right (BinaryTreeNode): Point to the right subtree node object.
+    """
 
     def __init__(self, val):
-        '''
-        @param: {val->printable} The label value for binary node(should be printable object).
-        '''
+        """
+        Args:
+            val (printable): The label value for binary node(should be printable object).
+        """
         super().__init__(val)
         super().__setattr__('left', None)
         super().__setattr__('right', None)
@@ -42,10 +50,11 @@ class BinaryTreeNode(NodeBase):
 
 
     def _neighbors_(self):
-        '''
-        @function: Return all children nodes of this tree node.
-        @return: {list(tuple(BinaryTreeNode, None))} Return left child node and right child node.
-        '''
+        """Return all children nodes of this tree node.
+        
+        Returns:
+            list(tuple(BinaryTreeNode, None)): Return left child node and right child node.
+        """
         left_node = super().__getattribute__('left')
         right_node = super().__getattribute__('right')
         # Add edge label if this node just has single child node.
@@ -58,12 +67,15 @@ class BinaryTreeNode(NodeBase):
 
 
 def parseBinaryTree(tree_info):
-    '''
-    @function: Create a new Tree from given node values.
-    @param: {tree_info->list(printable)} The label of each node in the tree must be given.
+    """ Create a new Tree from given node values.
+    
+    Args:
+        tree_info (list(printable)): The label of each node in the tree must be given.
             Empty node is represented by None. eg:([1, None, 2, None, None, 3, 4])
-    @return: {TreeNode} Root node object of this tree.
-    '''
+    
+    Returns:
+        TreeNode: Root node object of this tree.
+    """
     if len(tree_info) == 0:
         return None
     root = BinaryTreeNode(tree_info[0])
@@ -91,9 +103,8 @@ def parseBinaryTree(tree_info):
 
 
 class TreeChildrenIter():
-    '''
-    @class: Iterator for the children of TreeNode object.
-    '''
+    """Iterator for the children of TreeNode object.
+    """
     def __init__(self, node, children):
         self._node = node
         self._children = children
@@ -116,31 +127,36 @@ class TreeChildrenIter():
 
 
 class TreeNode(NodeBase):
-    '''
-    @class: A tree node has multiply children node.
-    '''
+    """A tree node has multiply children node.
+
+    Attributes:
+        val (printable): The label to be displayed in the binary tree node.
+    """
     def __init__(self, val):
-        '''
-        @param: {val->printable} The label value for tree node(should be printable object).
-        '''
+        """
+        Args:
+            val (printable): The label value for tree node.
+        """
         super().__init__(val)
         super().__setattr__('_children', set())
     
 
     def children(self):
-        '''
-        @function: Return an iterator to iter over all the children nodes of this node.
-        @return: {TreeChildrenIter} Children node iterator.
-        '''
+        """Return an iterator to iter over all the children nodes of this node.
+        
+        Returns:
+            TreeChildrenIter: Children node iterator.
+        """
         children_ = super().__getattribute__('_children')
         return TreeChildrenIter(self, tuple(children_))
 
 
     def add(self, child):
-        '''
-        @function: Add a child node for this node.
-        @param: {child->TreeNode} The child node object to be added.
-        '''
+        """Add a child node for this node.
+        
+        Args:
+            child (TreeNode): The child node object to be added.
+        """
         children_ = super().__getattribute__('_children')
         if child not in children_:
             children_.add(child)
@@ -148,10 +164,11 @@ class TreeNode(NodeBase):
 
 
     def remove(self, child):
-        '''
-        @function: Remove one child node.
-        @param: {child->TreeNode} The child to be removed.
-        '''
+        """Remove one child node.
+        
+        Args:
+            child (TreeNode): The child to be removed.
+        """
         children_ = super().__getattribute__('_children')
         if child in children_:
             children_.remove(child)
@@ -167,13 +184,27 @@ class TreeNode(NodeBase):
 
 
 def parseTree(tree_info, nodes_label=None):
-    '''
-    @function: Create a Tree from node_map information and return the root node.
-    @param: {tree_info->dict(printable:list(printable))} Describe the linked information of this tree.
-        Key is the label of root node, Value is the list of it's children nodes label.
-    @param: {nodes_label->dict(printable:printable)} Map the node id into it's display label.
-    @return: {TreeNode} The root node of this tree.
-    '''
+    """Create a Tree from node_map information and return the root node.
+    
+    Input tree_info should meet these constraints:
+        
+        1. Each node must have one parent node expect for the root node.
+
+        2. The node id in tree info should be unique,
+        but you can set the nodes_label to map the unique id into it's display label text.
+
+    Args:
+        tree_info (dict(printable:list(printable))): Describe the linked information of this tree.
+            Key is the label of root node, Value is the list of it's children nodes label.
+        nodes_label (dict(printable:printable)): Map the node id into it's display label.
+    
+    Returns:
+        TreeNode: The root node of this tree.
+
+    Raises:
+        Exception: [ERROR] parseTree: Invalid tree_info, node xxx have more than one parent node!
+        Exception: [ERROR] parseTree: Invalid tree_info, tree has more than one root node.
+    """
     # Create TreeNode objects.
     nodes_dict = dict()
     child_nodes = set()     # Used to find the root node and check the validity of tree.

@@ -117,8 +117,9 @@ def updateGraphEdge(node1, node2, edge):
 def parseGraph(nodes, edges, nodes_label=None, directed=True):
     """Create a new graph from edges and nodes information.
     
-    Examples:
-        parseGraph({0, 1, 2}, [(0, 1), (1, 2), (2, 0)], nodes_label={0:'node_0'})
+    All the input edges's start and edge node should be found in nodes parameter.
+    
+    Example: parseGraph({0, 1, 2}, [(0, 1), (1, 2), (2, 0)], nodes_label={0:'node_0'})
 
     Args:
         nodes (set(printable)): All the nodes in this graph.
@@ -128,6 +129,10 @@ def parseGraph(nodes, edges, nodes_label=None, directed=True):
 
     Returns:
         dict(printable): All the graph nodes in this graph. Key is node label in nodes parameter, Value is GraphNode object.
+    
+    Raises:
+        Exception: [ERROR] paraseGraph: can not find node object for edge xxx.
+
     """
     # Create nodes for this graph.
     nodes_dict = dict()

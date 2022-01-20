@@ -21,7 +21,9 @@ class GraphNodeBase:
     GraphNode, BinaryTreeNode, ForwardLinkedListNode and DoublyLinkedListNode.
     If you want to get/set attribute in subclass, don't use dot operation like 'self.attr'.
     Please use these interfaces instead:
+
         super().__getattribute__(attr)
+        
         super().__setattr__(attr, new_value)
     
     Attributes:

@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 
-'''
-@author: zjl9959@gmail.com
-@license: GPLv3
-'''
+"""Define the table data structure related classes.
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 from . import svg_table
 from . import utility
 
 
 class TableRowIter():
-    '''
-    @class: An iterator that iterate on one specifies row in Table object.
-    '''
+    """An iterator that iterate on one specifies row in Table object.
+    """
 
     def __init__(self, r, tab):
-        '''
-        @param: {r->int} Set which row in the table to iterate over.
-        @param: {tab->Table} Bounded Table object for this Iterator.
-        '''
+        """
+        Args:
+            r (int): Set which row in the table to iterate over.
+            tab (Table): Bounded Table object for this Iterator.
+        """
         self._r = r
         self._c = 0
         self._tab = tab
@@ -37,15 +40,15 @@ class TableRowIter():
 
 
 class TableRowOperator():
-    '''
-    @class: A manipulator to get/set the elements of the specified row in the table.
-    '''
+    """A manipulator to get/set the elements of the specified row in the table.
+    """
 
     def __init__(self, r, tab):
-        '''
-        @param: {r->int} Set which row in the table to iterate over.
-        @param: {tab->Table} Bounded Table object for this Iterator.
-        ''' 
+        """
+        Args:
+            r (int): Set which row in the table to iterate over.
+            tab (Table): Bounded Table object for this Iterator.
+        """
         self._r = r
         self._tab = tab
         
@@ -57,17 +60,25 @@ class TableRowOperator():
 
 
 class Table():
+    """A static table with label text in table cells.
+    
+    [WARNING] Don't create this class directly, use algviz.Visualizer.createTable instead.
+    """
 
     def __init__(self, row, col, data, cell_size, show_index=True):
-        '''
-        @param: {row->int} The number of rows for this table.
-        @param: {col->int} The number of columns for this table.
-        @param: {data->list(list(printable))} The initial data for table cells.
-        @param: {cell_size->float} Table cell size.
-        @param: {show_index->bool} Whether to display table row and column labels.
-        '''
+        """
+        Args:
+            row (int): The number of rows for this table.
+            col (int): The number of columns for this table.
+            data (list(list(printable))): The initial data for table cells.
+            cell_size (float): Table cell size.
+            show_index (bool): Whether to display table row and column labels.
+        
+        Raises:
+            Exception: Table row or col error!
+        """
         if row <=0 or col <=0:
-            raise Exception('Table row/col error!')
+            raise Exception('Table row or col error!')
         self._row = row
         self._col = col
         self._cell_tcs = dict()           # Record the trajectory access information (node_index: ColorStack) of all cells.
@@ -108,13 +119,17 @@ class Table():
     
 
     def mark(self, color, r, c, hold=True):
-        '''
-        @function: Emphasize one cell in the table by mark it's background color.
-        @param: {color->(R,G,B)} The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
+        """Emphasize one cell in the table by mark it's background color.
+        
+        Args:
+            color ((R,G,B)): The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: {r, c->int} Index the cell's raw, column in the table to be marked.
-        @param: {hold->bool} Whether to keep the mark color in future animation frames.
-        '''
+            r, c (int): Index the cell's raw, column in the table to be marked.
+            hold (bool): Whether to keep the mark color in future animation frames.
+        
+        Raises:
+            Exception: Table index out of range!
+        """
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
         gid = r*self._col + c
@@ -123,22 +138,29 @@ class Table():
     
 
     def removeMark(self, color):
-        '''
-        @function: Remove the mark color for cell(s).
-        @param: {color->(R,G,B)} R, G, B stand for color channel for red, green, blue.
+        """Remove the mark color for cell(s).
+
+        Args:
+            color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        '''
+        """
         for gid in range(self._row*self._col):
             if self._cell_tcs[gid].remove(color):
                 self._svg.update_rect_element(gid, fill=self._cell_tcs[gid].color())
     
 
     def getItem(self, r, c):
-        '''
-        @function: Get the cell value in the table.
-        @param: {r, c->int} Index the cell's raw, column in the table.
-        @return: {printable} The value in the specific cell.
-        '''
+        """Get the cell value in the table.
+        
+        Args:
+            r, c (int): Index the cell's raw, column in the table.
+        
+        Returns:
+            printable: The value in the specific cell.
+
+        Raises:
+            Exception: Table index out of range!
+        """
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
         gid = r*self._col + c
@@ -148,11 +170,15 @@ class Table():
     
 
     def setItem(self, r, c, val):
-        '''
-        @function: Get the cell value in the table.
-        @param: {r, c->int} Index the cell's raw, column in the table to be modified.
-        @param: {val->printable} New value for the cell.
-        '''
+        """ Get the cell value in the table.
+        
+        Args:
+            r, c (int): Index the cell's raw, column in the table to be modified.
+            val (printable): New value for the cell.
+
+        Raises:
+            Exception: Table index out of range!
+        """
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
         gid = r*self._col + c
@@ -166,17 +192,21 @@ class Table():
     
 
     def shape(self):
-        '''
-        @return: {tuple(int, int)} Return the rows and columns of this table.
-        '''
+        """
+        Returns:
+            tuple(int, int): Return the rows and columns of this table.
+        """
         return (self._row, self._col)
 
 
     def __getitem__(self, r):
-        '''
-        @param: {r->int} The index of the row to access.
-        @return: {TabRowIter} The iterator object for the row in the table.
-        '''
+        """
+        Args:
+            r (int): The index of the row to access.
+        
+        Returns:
+            TabRowIter: The iterator object for the row in the table.
+        """
         return TableRowOperator(r, self)
 
     
@@ -195,9 +225,10 @@ class Table():
     
 
     def _repr_svg_(self):
-        '''
-        @return: {str} The SVG representation of current table.
-        '''
+        """
+        Returns:
+            str: The SVG representation of current table.
+        """
         for (gid, color) in self._frame_trace_old:
             if (gid, color, True) not in self._frame_trace and (gid, color, False) not in self._frame_trace:
                 self._cell_tcs[gid].remove(color)

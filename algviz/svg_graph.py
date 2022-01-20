@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 
-'''
-@author: zjl9959@gmail.com
-@license: GPLv3
-'''
+"""Define low-level SVG animation refresh related classes for graph.
+
+This module was used by linked_list, tree and graph module.
+You can use the addNode, removeNode, markNode, markEdge and removeMark interfaces to update the graph.
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 import graphviz
 import xml.dom.minidom as xmldom
@@ -15,21 +21,22 @@ from . import linked_list
 
 
 class _SvgGraphType:
-    '''
-    @class: This class is used to specific the layout parameter for SvgGraph class.
-    '''
+    """This class is used to specific the layout parameter for SvgGraph class.
+    """
     def __init__(self, rankdir=None):
-        '''
-        @param: {rankdir->str} The layout direction for graph. Example: (LR)
-        '''
+        """
+        Args:
+            rankdir (str): The layout direction for graph. example: 'LR'
+        """
         self.rankdir = rankdir
 
 
 def _get_graph_type_by_data_(data):
-    '''
-    @function: Check the input graph nodes data type and create graph layout parameter.
-    @return: {_SvgGraphType} The layout data parmeter for SvgGraph.
-    '''
+    """Check the input graph nodes data type and create graph layout parameter.
+    
+    Returns:
+        _SvgGraphType: The layout data parmeter for SvgGraph.
+    """
     if not data:
         return _SvgGraphType()
     # Get one node data from different type of data.
@@ -58,19 +65,21 @@ def _get_graph_type_by_data_(data):
 
 
 class SvgGraph():
-    '''
-    @class: A SvgGraph object can record all the nodes in it's binded graph.
+    """A SvgGraph object can record all the nodes in it's binded graph.
+    
     It will relayout the graph and generate animation when add/remove/replace node(s) in graph.
     It will also show the mark of graph node(s)&edge(s) visit status.
     Every time `__repr_svg__` function is called, SvgGraph object will return the latest svg string for this graph and prepare for a new frame.
-    '''
+    
+    """
     
     def __init__(self, data, directed, delay):
-        '''
-        @param: {data->iterable} The root node(s) of the topology graph, used to initialize auxiliary data for this graph.
-        @param: {directed->bool} Should this graph be directed graph or undirected.
-        @param: {delay->float} Animation delay time between two animation frames.
-        '''
+        """
+        Args:
+            data (iterable): The root node(s) of the topology graph, used to initialize auxiliary data for this graph.
+            directed (bool): Should this graph be directed graph or undirected.
+            delay (float): Animation delay time between two animation frames.
+        """
         self._directed = directed       # Whether the graph is a directed graph.
         self._delay = delay             # Delay time of each frame of animation.
         self._node_seq = list()         # The graph node(s) list arranged in a certain order.
@@ -97,11 +106,14 @@ class SvgGraph():
 
 
     def addNode(self, node):
-        '''
-        @function: Add a new node and all it's successor nodes into this graph.
-        @param: {node->subclass of GraphNodeBase} The node object to be added. Can be a graph/tree/linked_list node.
-        @return: {int} The number of node(s) added into graph.
-        '''
+        """Add a new node and all it's successor nodes into this graph.
+        
+        Args:
+            node (subclass of GraphNodeBase): The node object to be added. Can be a graph/tree/linked_list node.
+        
+        Returns:
+            int: The number of node(s) added into graph.
+        """
         if node in self._add_history:
             return 0
         node_stack = [node]
@@ -120,12 +132,17 @@ class SvgGraph():
     
 
     def removeNode(self, node, recursive=False):
-        '''
-        @function: Remove a node from this graph. Remove this node's all successor nodes if recursive is True.
-        @param: {node->subclass of GraphNodeBase} The node object to be removed. Can be a graph/tree/linked_list node.
-        @param: {recursive->bool} Wheather to remove all the successor nodes of this node.
-        @return: {int} The number of node(s) removed from graph.
-        '''
+        """Remove a node from this graph. Remove this node's all successor nodes if recursive is True.
+        
+        If the removed node(s) have input edge(s) from the remains node(s) in this graph, do nothing a return 0.
+
+        Args:
+            node (subclass of GraphNodeBase): The node object to be removed. Can be a graph/tree/linked_list node.
+            recursive (bool): Wheather to remove all the successor nodes of this node.
+        
+        Returns:
+            int: The number of node(s) removed from graph.
+        """
         subgraph_nodes = set()
         if recursive:
             node_stack = [node]
@@ -164,13 +181,14 @@ class SvgGraph():
     
 
     def markNode(self, color, node, hold=True):
-        '''
-        @function: Emphasize one node by mark it's background color.
-        @param: {color->(R,G,B)} The background color for the marked node. R, G, B stand for color channel for red, green, blue.
+        """Emphasize one node by mark it's background color.
+        
+        Args:
+            color ((R,G,B)): The background color for the marked node. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: {node->subclass of GraphNodeBase} The node object to be marked. Can be a graph/tree/linked_list node.
-        @param: {hold->bool} Whether to keep the mark color in future animation frames.
-        '''
+            node (subclass of GraphNodeBase): The node object to be marked. Can be a graph/tree/linked_list node.
+            hold (bool): Whether to keep the mark color in future animation frames.
+        """
         if node is not None:
             if node not in self._node_tcs.keys():
                 self._node_tcs[node] = util.TraceColorStack()
@@ -179,13 +197,14 @@ class SvgGraph():
     
 
     def markEdge(self, color, node1, node2, hold=True):
-        '''
-        @function: Emphasize one edge by mark it's stoke color.
-        @param: {color->(R,G,B)} The stroke color for the marked edge. R, G, B stand for color channel for red, green, blue.
+        """Emphasize one edge by mark it's stoke color.
+        
+        Args:
+            color ((R,G,B)): The stroke color for the marked edge. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: {node1, node2->subclass of GraphNodeBase} The begin and end node in the edge to be marked. Can be a graph/tree/linked_list node.
-        @param: {hold->bool} Whether to keep the mark color in future animation frames.
-        '''
+            node1, node2 (subclass of GraphNodeBase): The begin and end node in the edge to be marked. Can be a graph/tree/linked_list node.
+            hold (bool): Whether to keep the mark color in future animation frames.
+        """
         if node1 is not None and node2 is not None:
             edge_key = self._make_edge_tuple_(node1, node2)
             if edge_key not in self._edge_tcs.keys():
@@ -195,11 +214,12 @@ class SvgGraph():
     
 
     def removeMark(self, color):
-        '''
-        @function: Remove the mark color for node(s) and edge(s).
-        @param: {color->(R,G,B)} R, G, B stand for color channel for red, green, blue.
+        """Remove the mark color for node(s) and edge(s).
+        
+        Args:
+            color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        '''
+        """
         for k in self._node_seq:
             if self._node_tcs[k].remove(color):
                 node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(k))
@@ -226,11 +246,12 @@ class SvgGraph():
 
 
     def _updateNodeLabel(self, node, label):
-        '''
-        function: Update the label value of the node in the graph.
-        @param: {node->subclass of GraphNodeBase} The node object to be updated. Can be a graph/tree/linked_list node.
-        @param: {label->printable} New label content.
-        '''
+        """Update the label value of the node in the graph.
+        
+        Args:
+            node (subclass of GraphNodeBase): The node object to be updated. Can be a graph/tree/linked_list node.
+            label (printable): New label content.
+        """
         node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(node))
         svg_node = util.find_tag_by_id(self._svg, 'g', node_id)
         if svg_node is None or label is None:
@@ -258,11 +279,12 @@ class SvgGraph():
     
 
     def _updateEdgeLabel(self, node1, node2, label):
-        '''
-        function: Update the label value of the node in the graph.
-        @param: {node->subclass of GraphNodeBase} The begin and end node in the edge to be updated. Can be a graph/tree/linked_list node.
-        @param: {label->printable} New label content.
-        '''
+        """Update the label value of the node in the graph.
+        
+        Args:
+            node (subclass of GraphNodeBase): The begin and end node in the edge to be updated. Can be a graph/tree/linked_list node.
+            label (printable): New label content.
+        """
         edge_key = self._make_edge_tuple_(node1, node2)
         edge_id = 'edge{}'.format(self._edge_idmap.toConsecutiveId(edge_key))
         svg_node = util.find_tag_by_id(self._svg, 'g', edge_id)
@@ -276,10 +298,11 @@ class SvgGraph():
     
 
     def _repr_svg_(self):
-        '''
-        @function: Render the graph into SVG and add animation effects.
-        @return: {str} SVG string.
-        '''
+        """Render the graph into SVG and add animation effects.
+        
+        Returns:
+            str: SVG string to representation graph nodes and edges with animation.
+        """
         # Sequence the graph and add animation effects.
         self._traverse_graph_()
         (new_svg, node_idmap, edge_idmap) = self._create_svg_()
@@ -312,9 +335,8 @@ class SvgGraph():
     
 
     def _traverse_graph_(self):
-        '''
-        @function: Traverse each node in the graph and update the related data structure.
-        '''
+        """Traverse each node in the graph and update the related data structure.
+        """
         # Traverse the nodes in the graph and record the new topology structure of this graph.
         new_node_seq = list()
         new_edge_label = dict()
@@ -354,12 +376,13 @@ class SvgGraph():
     
 
     def _update_node_color_(self, node, color):
-        '''
-        @function: Update the color attribute of the node in SVG.
-        @param: {node->xmldom.Node} The node to be updated in SVG.
-        @param: {color->(R,G,B)} R, G, B stand for color channel for red, green, blue.
+        """Update the color attribute of the node in SVG.
+        
+        Args:
+            node (xmldom.Node): The node to be updated in SVG.
+            color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        '''
+        """
         if node is not None:
             ellipse = node.getElementsByTagName('ellipse')[0]
             ellipse.setAttribute('fill', util.rgbcolor2str(color))
@@ -369,12 +392,13 @@ class SvgGraph():
     
 
     def _update_edge_color_(self, edge, color):
-        '''
-        @function: Update the color attribute of the edge in SVG.
-        @param: {edge->xmldom.Node} The edge to be updated in SVG.
-        @param: {color->(R,G,B)} R, G, B stand for color channel for red, green, blue.
+        """Update the color attribute of the edge in SVG.
+        
+        Args:
+            edge (xmldom.Node): The edge to be updated in SVG.
+            color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        '''
+        """
         if edge is not None:
             path = edge.getElementsByTagName('path')[0]
             path.setAttribute('stroke', util.rgbcolor2str(color))
@@ -385,9 +409,8 @@ class SvgGraph():
     
 
     def _update_trace_color_(self):
-        '''
-        @function: Update the color change of the SVG track in the frame.
-        '''
+        """Update the color change of the SVG track in the frame.
+        """
         for k, color in self._frame_trace_old:
             if type(k) == tuple and k in self._edge_tcs.keys():
                 if (k, color, False) not in self._frame_trace and (k, color, True) not in self._frame_trace:
@@ -417,10 +440,11 @@ class SvgGraph():
     
 
     def _update_svg_size_(self, new_svg):
-        '''
-        @function: Adjust the view size of self._svg to ensure that all elements can be observed.
-        @param: {new_svg->xmldom.Document} The latest SVG object to be updated.
-        '''
+        """Adjust the view size of self._svg to ensure that all elements can be observed.
+        
+        Args:
+            new_svg (xmldom.Document): The latest SVG object to be updated.
+        """
         old_svg_node = self._svg.getElementsByTagName('svg')[0]
         new_svg_node = new_svg.getElementsByTagName('svg')[0]
         old_svg_width = int(old_svg_node.getAttribute('width')[0:-2])
@@ -439,11 +463,12 @@ class SvgGraph():
     
 
     def _update_svg_edges_(self, new_svg, edge_idmap):
-        '''
-        @function: Add all edge-related animations to SVG.
-        @param: {new_svg->xmldom.Doucment} The latest SVG object to be updated.
-        @param: {edge_idmap->ConsecutiveIdMap} The two-way mapping relationship between the edge ID in the memory and the ID in the SVG.
-        '''
+        """Add all edge-related animations to SVG.
+        
+        Args:
+            new_svg (xmldom.Doucment): The latest SVG object to be updated.
+            edge_idmap (ConsecutiveIdMap): The two-way mapping relationship between the edge ID in the memory and the ID in the SVG.
+        """
         old_edges = self._get_svg_edges_(self._svg)
         new_edges = self._get_svg_edges_(new_svg)
         for old_edge_id in old_edges.keys():
@@ -466,11 +491,12 @@ class SvgGraph():
     
 
     def _update_svg_nodes_(self, new_svg, node_idmap):
-        '''
-        @function: Add all node-related animations to SVG.
-        @param: {new_svg->xmldom.Doucment} The latest SVG object to be updated.
-        @param: {node_idmap->ConsecutiveIdMap} The two-way mapping relationship between the node ID in the memory and the ID in the SVG.
-        '''
+        """Add all node-related animations to SVG.
+        
+        Args:
+            new_svg (xmldom.Doucment): The latest SVG object to be updated.
+            node_idmap (ConsecutiveIdMap): The two-way mapping relationship between the node ID in the memory and the ID in the SVG.
+        """
         old_pos = self._get_node_pos_(self._svg)
         new_pos = self._get_node_pos_(new_svg)
         for old_node_id in old_pos.keys():
@@ -505,12 +531,15 @@ class SvgGraph():
     
 
     def _get_node_pos_(self, svg):
-        '''
-        @function: Get the absolute coordinates of all the graph node(s) in the SVG.
-        @param: {svg->xmldom.Document} The SVG object to be display.
-        @return: {dict(int:tuple(xmldom.Node,float,float))} The map from SVG_node_id to the SVG_node_object and node position.
+        """Get the absolute coordinates of all the graph node(s) in the SVG.
+        
+        Args:
+            svg (xmldom.Document): The SVG object to be display.
+        
+        Returns:
+            dict(int:tuple(xmldom.Node,float,float)): The map from SVG_node_id to the SVG_node_object and node position.
                 Key is SVG_node_id, value is (SVG_node_object, position_x, position_y).
-        '''
+        """
         graph = util.find_tag_by_id(svg, 'g', 'graph0')
         transform = graph.getAttribute('transform')
         translate_index = transform.find('translate')
@@ -533,11 +562,14 @@ class SvgGraph():
     
 
     def _get_svg_edges_(self, svg):
-        '''
-        @function: Get all the edges index and object in the SVG xml tree.
-        @param: {svg->xmldom.Document} The SVG object to be display.
-        @return: {dict(int:xmldom.Node)} Key is the edge index in SVG, Value is the edge node in SVG.
-        '''
+        """Get all the edges index and object in the SVG xml tree.
+        
+        Args:
+            svg (xmldom.Document): The SVG object to be display.
+        
+        Returns:
+            dict(int:xmldom.Node): Key is the edge index in SVG, Value is the edge node in SVG.
+        """
         edges = dict()
         nodes = svg.getElementsByTagName('g')
         for node in nodes:
@@ -548,10 +580,11 @@ class SvgGraph():
     
 
     def _make_edge_tuple_(self, node1, node2):
-        '''
-        @function: Create an edge tuple according to nodes and the graph's type.
-        @param: {node1, node2->subclass of GraphNodeBase} The begin and end node in the edge. Can be a graph/tree/linked_list node.
-        '''
+        """Create an edge tuple according to nodes and the graph's type.
+        
+        Args:
+            node1, node2 (subclass of GraphNodeBase): The begin and end node in the edge. Can be a graph/tree/linked_list node.
+        """
         if self._directed:
             return (node1, node2)
         else:
@@ -562,11 +595,15 @@ class SvgGraph():
     
 
     def _create_svg_(self):
-        '''
-        @function: Call graphviz lib to create a new SVG object to represent the latest graph.
-                The SVG is static and don't include animations.
-        @return: {xmldom.Document} The xmldom.Document object of the SVG.
-        '''
+        """Call graphviz lib to create a new SVG object to represent the latest graph.
+        The SVG is static and don't include animations.
+        
+        Returns:
+            xmldom.Document: The xmldom.Document object of the SVG.
+
+        Raises:
+            Exception: Unsupported graphviz version xxx.
+        """
         dot = None
         node_idmap = util.ConsecutiveIdMap(1)
         edge_idmap = util.ConsecutiveIdMap(1)

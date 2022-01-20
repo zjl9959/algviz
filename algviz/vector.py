@@ -1,23 +1,33 @@
 #!/usr/bin/env python3
 
-'''
-@author: zjl9959@gmail.com
-@license: GPLv3
-'''
+"""Define the table data structure.
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 from . import svg_table
 from . import utility as util
 
 class Vector():
+    """
+    A vector is an expandable list, you can add or remove cell for vector.
+    When the cell position changed, the vector display SVG will show the related animation.
+    
+    [WARNING] Don't create this class directly, use algviz.Visualizer.createTable instead.
+    """
 
     def __init__(self, data, delay, cell_size, bar=-1, show_index=True):
-        '''
-        @param: {data->list(printable)} The initialize data for vector.
-        @param: {delay->float} Animation delay time between two animation frames.
-        @param: {cell_size->float} Vector cell size.
-        @param: {bar->float} If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
-        @param: {show_index->bool} Whether to display the vector index label.
-        '''
+        """
+        Args:
+            data (list(printable)): The initialize data for vector.
+            delay (float) Animation delay time between two animation frames.
+            cell_size (float): Vector cell size.
+            bar (float) If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
+            show_index (bool) Whether to display the vector index label.
+        """
         self._data = list()             # Store the data in vector list.
         if data is not None:
             for i in range(len(data)):
@@ -61,11 +71,12 @@ class Vector():
     
 
     def insert(self, index, val):
-        '''
-        @function: Insert a new value into vector. If index < 0 or index >= length of Vector, then set index = index % vector length.
-        @param: {index->int} The subscript index to insert value. (Insert before index)
-        @param: {val->printable} The value to insert into vector.
-        '''
+        """Insert a new value into vector. If index < 0 or index >= length of Vector, then set index = index % vector length.
+        
+        Args:
+            index (int): The subscript index to insert value. (Insert before index)
+            val (printable): The value to insert into vector.
+        """
         if len(self._data) == 0:
             self.append(val)
         if index < 0 or index >= len(self._data):
@@ -88,10 +99,11 @@ class Vector():
     
 
     def append(self, val):
-        '''
-        @function: Append a new value into vector's tail.
-        @param: {val->printable} The value to appended into vector's tail.
-        '''
+        """Append a new value into vector's tail.
+        
+        Args:
+            val (printable): The value to appended into vector's tail.
+        """
         index = len(self._data)
         rect = (self._cell_size*index+self._cell_margin*(index+1), self._cell_margin, self._cell_size, self._cell_size)
         rid = self._svg.add_rect_element(rect, text=val)
@@ -102,10 +114,14 @@ class Vector():
     
 
     def pop(self, index = -1):
-        '''
-        @function: Pop a value from vector. Pop vector's tail value as default. 
-        @param: {index->int} The index position of value to pop out.
-        '''
+        """Pop a value from vector. Pop vector's tail value as default. 
+        
+        Args:
+            index (int): The index position of value to pop out.
+
+        Raises:
+            Exception: No item in vector to pop!
+        """
         if len(self._data) == 0:
             raise Exception('No item in vector to pop!')
         if index < 0 or index >= len(self._data):
@@ -124,9 +140,8 @@ class Vector():
 
 
     def clear(self):
-        '''
-        function: Clear all the values in vector.
-        '''
+        """Clear all the values in vector.
+        """
         for i in range(len(self._data)):
             rid = self._index2rect[i]
             self._rect_disappear.append(rid)
@@ -137,10 +152,10 @@ class Vector():
     
 
     def swap(self, index1, index2):
-        '''
-        function: Swap the two cells positon in Vector.
-        @param: {index1, index2->int} The two index positions to be swapped.
-        '''
+        """Swap the two cells positon in Vector.
+        Args:
+            index1, index2 (int): The two index positions to be swapped.
+        """
         rid1 = self._index2rect[index1]
         rid2 = self._index2rect[index2]
         self._index2rect[index1] = rid2
@@ -159,13 +174,14 @@ class Vector():
 
 
     def mark(self, color, st, ed=None, hold=True):
-        '''
-        @function: Emphasize one cell in the Vector by mark it's background color.
-        @param: {color->(R,G,B)} The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
+        """Emphasize one cell in the Vector by mark it's background color.
+            
+        Args:
+            color ((R,G,B)): The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        @param: {st, ed->int} The mark range's index in Vector.
-        @param: {hold->bool} Whether to keep the mark color in future animation frames.
-        '''
+            st, ed (int): The mark range's index in Vector.
+            hold (bool): Whether to keep the mark color in future animation frames.
+        """
         if ed is None:
             ed = st + 1
         for i in range(st, ed):
@@ -177,20 +193,22 @@ class Vector():
     
 
     def removeMark(self, color):
-        '''
-        @function: Remove the mark color for cell(s).
-        @param: {color->(R,G,B)} R, G, B stand for color channel for red, green, blue.
+        """Remove the mark color for cell(s).
+        
+        Args:
+            color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        '''
+        """
         for rid in self._index2rect.values():
             if self._cell_tcs[rid].remove(color):
                 self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
     
 
     def __getitem__(self, index):
-        '''
-        @param: {index->int} The index position of the cell to be accessed.
-        '''
+        """
+        Args:
+            index (int): The index position of the cell to be accessed.
+        """
         if index < 0 or index >= len(self._data):
             index %= len(self._data)
         rid = self._index2rect[index]
@@ -200,10 +218,11 @@ class Vector():
     
 
     def __setitem__(self, index, val):
-        '''
-        @param: {index->int} The index position of the cell to be updated.
-        @param: {val->printable} New value for the cell.
-        '''
+        """
+        Args:
+            index (int): The index position of the cell to be updated.
+            val (printable): New value for the cell.
+        """
         if index < 0 or index >= len(self._data):
             index %= len(self._data)
         rid = self._index2rect[index]
@@ -217,9 +236,10 @@ class Vector():
     
 
     def __len__(self):
-        '''
-        @return: {int} Length of Vector.
-        '''
+        """
+        Returns:
+            int: Length of Vector.
+        """
         return len(self._data)
     
     def __iter__(self):
@@ -236,9 +256,10 @@ class Vector():
     
 
     def _repr_svg_(self):
-        '''
-        @return: {str} The SVG representation of current Vector.
-        '''
+        """
+        Returns:
+            str: The SVG representation of current Vector.
+        """
         # Update the color of the cell tracker.
         nb_elem = len(self._data) + len(self._rect_disappear)
         svg_height = self._cell_size + 2*self._cell_margin
@@ -303,9 +324,8 @@ class Vector():
     
 
     def _update_bar_height_(self):
-        '''
-        @function: Update the height of each column in the histogram.
-        '''
+        """Update the height of each column in the histogram.
+        """
         # Adjust the ratio and baseline position according to the value numbers range.
         mmax_data, max_data = 0, 0
         for num in self._data:
