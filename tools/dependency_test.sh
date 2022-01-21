@@ -1,23 +1,20 @@
 #!/usr/bin/bash
 
-if [ $# -lt 1 ]; then
-    echo "Usage: lib1_name==lib1_version,lib2_name==lib2_version,...
+if [ $# -lt 2 ]; then
+    echo "Usage: <python version> <lib1_name==lib1_version,lib2_name==lib2_version,...>
             example: ./dependency_test.sh graphviz==0.13.2,ipython==7.0.0"
     exit -2
 fi
 
 # Check python3 version in the system.
-PYTHON="python3"
+PYTHON=$1
 if [[ `$PYTHON -V | grep -c "Python 3"` -eq 0 ]]; then
-    PYTHON="python"
-    if [[ `$PYTHON -V | grep -c "Python 3"` -eq 0 ]]; then
-        echo "Can't find Python3 in your system. Please install Python3."
-        exit -1
-    fi
+    echo "Can't find Python3 in your system."
+    exit -1
 fi
 echo "Python version: "`$PYTHON -V`
 
-DEPENDENCY_LIBS="\""${1//","/"\",\""}"\""
+DEPENDENCY_LIBS="\""${2//","/"\",\""}"\""
 
 clean_up_env()
 {

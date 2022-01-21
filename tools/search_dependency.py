@@ -44,6 +44,7 @@ dep_libs = {
                 '0.18.1', '0.18.2', '0.19', '0.19.1'],
 }
 
+PYTHON_='python'
 
 def binary_search():
     earliest = list()
@@ -104,18 +105,26 @@ def call_dependency_test(test_libs):
         else:
             platform_type = -1
     if platform_type == 0:
-        raise Exception("Not implement error!")
+        test_cmd = test_libs.replace("==", '-').replace(',', '--')
+        cmd = 'dependency_test.bat {} {}'.format(PYTHON_, test_cmd)
+        print('Call', cmd)
+        return os.system(cmd)
     elif platform_type == 1:
-        return os.system('./dependency_test.sh {}'.format(test_libs))
+        cmd = './dependency_test.sh {} {}'.format(PYTHON_, test_libs)
+        print('Call', cmd)
+        return os.system('./dependency_test.sh {} {}'.format(PYTHON_, test_libs))
     else:
         raise Exception("Not supported platform!")
 
 
 def main():
+    global PYTHON_
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     earliest = list()
-    if len(sys.argv) == 2:
-        search_mode = sys.argv[1]
+    if len(sys.argv) >= 2:
+        PYTHON_=sys.argv[1]
+    if len(sys.argv) >= 3:
+        search_mode = sys.argv[2]
         if search_mode == 'B':
             earliest = binary_search()
         elif search_mode == 'L':
