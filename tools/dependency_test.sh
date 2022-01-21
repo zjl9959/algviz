@@ -46,6 +46,12 @@ from setuptools import setup
 setup(
     name="algviz",
     version="0.0.0",
+    author="0",
+    author_email="0",
+    description=("0"),
+    license="GPLv3",
+    keywords="0",
+    url="0",
     packages=['algviz'],
     install_requires=[
         $DEPENDENCY_LIBS

@@ -22,7 +22,7 @@ setup(
     packages=['algviz'],
     install_requires=[
         'graphviz>=0.5.1',
-        'ipython>=0.13.1',
+        'ipykernel>=4.0.1'
     ],
     python_requires='>=3',
     classifiers=[
