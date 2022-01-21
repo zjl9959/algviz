@@ -1,2 +1,2 @@
-graphviz>=0.13.2
-ipython>=7.0.0
+graphviz>=0.5.1
+ipython>=0.13.1

@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-'''
-@author:zjl9959@gmail.com
-@license:GPLv3
-'''
+"""
+
+Author: zjl9959@gmail.com
+
+License: GPLv3
+
+"""
 
 from setuptools import setup
 
@@ -18,8 +21,8 @@ setup(
     url="https://github.com/zjl9959/algviz",
     packages=['algviz'],
     install_requires=[
-        'graphviz>=0.13.2',
-        'ipython>=7.0.0',
+        'graphviz>=0.5.1',
+        'ipython>=0.13.1',
     ],
     python_requires='>=3',
     classifiers=[
