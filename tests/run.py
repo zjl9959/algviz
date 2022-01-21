@@ -7,6 +7,7 @@
 
 
 import time
+import sys
 
 
 def main():
@@ -69,4 +70,4 @@ def run_test_module(test_module):
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

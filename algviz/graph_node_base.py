@@ -113,7 +113,7 @@ class GraphNodeBase:
     def bind_graphs(self):
         """
         Returns:
-            SvgGraph: The bind graphs of this node.
+            set(SvgGraph): The bind graphs collection of this node.
         """
         return object.__getattribute__(self, '_bind_graphs')
 

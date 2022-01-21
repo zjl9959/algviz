@@ -15,12 +15,11 @@ setup(
     description=("This is a algorithm visualizer lib."),
     license="GPLv3",
     keywords="Algorithm Visualizer Animation",
-    #url="",
+    url="https://github.com/zjl9959/algviz",
     packages=['algviz'],
     install_requires=[
         'graphviz>=0.13.2',
         'ipython>=7.0.0',
-        'ipykernel>=6.1.0'
     ],
     python_requires='>=3',
     classifiers=[
