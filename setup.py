@@ -27,8 +27,8 @@ setup(
     python_requires='>=3.7, <=3.10',
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Topic :: Visualization Tool",
-        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Topic :: Scientific/Engineering :: Visualization",
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
