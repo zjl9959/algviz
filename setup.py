@@ -13,23 +13,27 @@ from setuptools import setup
 setup(
     name="algviz",
     version="0.1.0",
-    author="zjl",
+    author="zjl9959",
     author_email="zjl9959@gmail.com",
-    description=("This is a algorithm visualizer lib."),
+    description=("An algorithm visualization library for jupyter notebook to show animation for normal data structure."),
     license="GPLv3",
-    keywords="Algorithm Visualizer Animation",
+    keywords="Algorithm Visualizer Animation Jupyter-notebook Graph",
     url="https://github.com/zjl9959/algviz",
     packages=['algviz'],
     install_requires=[
-        'graphviz>=0.5.1',
-        'ipykernel>=4.0.1'
+        'graphviz >= 0.8.4, != 0.18, <= 0.19.1',
+        'ipykernel >= 6.4.0, <= 6.7.0'
     ],
-    python_requires='>=3',
+    python_requires='>=3.7, <=3.10',
     classifiers=[
-        "Development Status :: Alpha",
+        "Development Status :: 3 - Alpha",
         "Topic :: Visualization Tool",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     zip_safe=False
 )

@@ -134,3 +134,4 @@ dmypy.json
 
 # User specific
 .backup/
+.logs/

@@ -1,2 +1,2 @@
-graphviz>=0.5.1
-ipykernel>=4.0.1
+graphviz >= 0.8.4, != 0.18, <= 0.19.1
+ipykernel >= 6.4.0, <= 6.7.0

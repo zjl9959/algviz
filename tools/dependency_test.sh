@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
 if [ $# -lt 2 ]; then
-    echo "Usage: <python version> <lib1_name==lib1_version,lib2_name==lib2_version,...>
-            example: ./dependency_test.sh graphviz==0.13.2,ipython==7.0.0"
+    echo "Usage: <python path> <lib1_name==lib1_version,lib2_name==lib2_version,...>
+            example: ./dependency_test.sh /usr/bin/python3.7 graphviz==0.8.4,ipykernel==6.7.0"
     exit -2
 fi
 
@@ -29,7 +29,7 @@ cd $BASEDIR"/.."
 # Create virtual environment for test.
 clean_up_env
 $PYTHON -m venv venv
-if [ ! -d "venv" ]; then
+if [ ! -f "venv/bin/activate" ]; then
     echo "Create virtual environment failed."
     exit -1
 fi

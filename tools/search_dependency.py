@@ -106,7 +106,7 @@ def call_dependency_test(test_libs):
             platform_type = -1
     if platform_type == 0:
         test_cmd = test_libs.replace("==", '-').replace(',', '--')
-        cmd = 'dependency_test.bat {} {}'.format(PYTHON_, test_cmd)
+        cmd = 'dependency_test.bat {} {} s'.format(PYTHON_, test_cmd)
         print('Call', cmd)
         return os.system(cmd)
     elif platform_type == 1:
