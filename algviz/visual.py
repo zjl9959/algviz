@@ -52,6 +52,7 @@ class Visualizer():
 
     def display(self, delay=None):
         """Refresh all created display objects.
+        
         Args:
             delay (float): Specific the delay time for this animation frame (in seconds).
         """
