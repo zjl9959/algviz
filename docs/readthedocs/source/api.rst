@@ -1,4 +1,8 @@
-algviz package
+.. toctree::
+   :maxdepth: 4
+   :caption: API Reference:
+
+API Reference
 ==============
 
 Module contents

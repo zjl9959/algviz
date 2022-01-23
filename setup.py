@@ -15,7 +15,7 @@ setup(
     version="0.1.0",
     author="zjl9959",
     author_email="zjl9959@gmail.com",
-    description=("An algorithm visualization library for jupyter notebook to show animation for normal data structure."),
+    description=("An algorithm visualization tool for jupyter notebook to show animation for vector, table, linked list, tree and graph data structures."),
     license="GPLv3",
     keywords="Algorithm Visualizer Animation Jupyter-notebook Graph",
     url="https://github.com/zjl9959/algviz",

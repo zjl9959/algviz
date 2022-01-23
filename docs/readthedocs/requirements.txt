@@ -1,0 +1,4 @@
+graphviz >= 0.8.4, != 0.18, <= 0.19.1
+ipython >= 7.0.0
+sphinx-markdown-tables >= 0.0.15
+m2r2 >= 0.3.2
