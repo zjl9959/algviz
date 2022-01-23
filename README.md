@@ -2,17 +2,19 @@
 
 Algviz is an algorithm visualization tool for Jupyter-notebook.
 
-Algviz can generate visualize animations for [vector](examples/vector.ipynb), [table](examples/table.ipynb), [linked_list](examples/linked_list.ipynb), [tree](examples/tree.ipynb) and [graph](examples/graph.ipynb) data structures.
-You can bring your code to life after insert a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/algviz.html#module-algviz) into your code. The animation was 
-generated in real time, so you can easily preview the changes of the data in Jypyter-notebook like that:
+Algviz can generate visualize animations for [vector](examples/vector.ipynb), [table](examples/table.ipynb), [linked list](examples/linked_list.ipynb), [tree](examples/tree.ipynb) and [graph](examples/graph.ipynb) data structures.
+You can bring your code to life after insert a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/algviz.html#module-algviz) into code. All the animations were 
+generated in real time, so you can easily preview the changes of the data with animation like that:
 
 ![vector_swap_animation](docs/animation_images/vector_swap_animation.svg)
 
-If you come up with a good algorithm that can solve a problem, but don't know how to describe it to your friends. At this point, you can use algviz to create a demo of how your algorithm works with intuitive animation effects. The point is, you don't need to know about fundamentals of animation at all. Leave the dirty work to algviz and just focus on how to implement your algorithm.
+If you come up with a good algorithm that can solve a problem, but don't know how to describe it to your friends. At this point, you can use algviz to create an intuitive animation demo to show to working process of your algorithm. The point is, you don't need to know about fundamentals of animation at all. Leave the dirty work to algviz and just focus on how to implement your algorithm.
 
 It's useful when you try to express the working process of a complex algorithm.
-For example, it's hard to image the entire operation of "[mirror binary tree](examples/tree.ipynb)" algorithm.
-Because the algorithm including some recursive operations on a binary tree, which subtree was moved first is a headache problem. But no matter how complex the binary tree is, algviz can tell you how the algorithm works.
+For example, it's hard to image in mind the whole detail of "[mirror binary tree](examples/tree.ipynb)" algorithm.
+Because the algorithm including some recursive operations on a binary tree, which subtree was moved first is a headache problem. But no matter how complex the binary tree is, algviz can tell you how the algorithm works by intuitive animations.
+
+This animation below shows one swap subtrees operation in mirror binary tree algorithm:
 
 ![mirror_tree_animation](docs/animation_images/mirror_tree_animation.svg)
 
@@ -28,20 +30,20 @@ for num in vector:              # Iterate over all the elements in vector.
     viz.display()               # Refresh the animation in Jupyter-notebook.
 ```
 
-You can modify the data multi-times, and algviz will record the operations to generate the animation when you call the [display](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.visual.Visualizer.display) interface. So the only thing you need to concern is when to call the display interface, because some operations may override other operations in animation render result. 
+You can modify the data multi-times, and algviz will record all the operations since last time you call the [display](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.visual.Visualizer.display) interface. Then it will merge all the operations in one animation when you call display next time. So the only thing you need to concern is: `when to call the display interface?` Because some operations may override other operations and the output animation may be confusing.
 
-These animations below shows multiple operations in one render period.
+These animations below shows multiple operations in one render output:
 
 + Two [insert](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.vector.Vector.insert) operations on vector. (Insert two elements "0" and "1" into vector ["a", "b", "c"].)
 
     ![vector_move_animation](docs/animation_images/vector_move_animation.svg)
 
-+ Modify two edges on graph. ([Add](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.graph.GraphNode.add) neighbor node 7 int node 5;
-[Remove](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.graph.GraphNode.remove) neighbor nodes 4 of node 5).
++ Modify two edges on graph. ([Add](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.graph.GraphNode.add) node7 into node5's neighbors;
+[Remove](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.graph.GraphNode.remove) nodes4 from node5's neighbors).
 
     ![graph_move_animation](docs/animation_images/graph_move_animation.svg)
 
-All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/) string format. You can export the animation frame and view it in browser or embedded it in your slides.
+All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/) string format. You can export the animation frames and review it in browser or embedded it in your slides.
 
 
 # Installation
@@ -65,13 +67,14 @@ It's a popular open source software, you can download the program in it's [offic
 
 Note: algviz run on Python 3.7 or heigher version of Python.
 
-```
+```shell
+python -m pip install --upgrade pip
 pip install algviz
 ```
 
 # Usage
 
-There are some example in the `examples` floder. You can open it in your jupyter notebook and run the code to see animation output. These is the examples:
+There are some example in the `examples` folder. You can open it in your Jupyter-notebook and run the code to see animation output. These is the examples:
 
 + [vector](examples/vector.ipynb) shows how to create [Vector](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.vector.Vector) object and access, modify, mark elements in it.
 + [table](examples/table.ipynb) shows how to create [Table](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.table.Table) object and visit, mark elements in it.
@@ -80,6 +83,21 @@ There are some example in the `examples` floder. You can open it in your jupyter
 + [graph](examples/graph.ipynb) shows how to create a directly or undirectly [graph](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.graph.parseGraph) and use the [GraphNode](https://algviz.readthedocs.io/en/latest/algviz.html#algviz.graph.GraphNode) to track or modify graph.
 
 For the whole API in graphviz, please read the [interface introduce of algviz](https://algviz.readthedocs.io/en/latest/algviz.html#).
+
+# Unit test
+
+Make sure you have successfully installed algviz and call the command:
+
+```shell
+python tests/run.py
+```
+
+If you see the output like this:
+
+> Congratulations, everything is OK !!!
+
+It means algviz working fine in your environment.
+Otherwise please [report](https://github.com/zjl9959/algviz/issues) the bug.
 
 # License
 
