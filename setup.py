@@ -8,7 +8,14 @@ License: GPLv3
 
 """
 
-from setuptools import setup
+import os
+from distutils.core import setup, Extension
+
+script_path = os.path.split(os.path.realpath(__file__))[0]
+readme_filepath = os.path.join(script_path, 'README.md')
+long_description_data = ''
+with open(readme_filepath, encoding='utf-8') as f:
+    long_description_data = f.read()
 
 setup(
     name="algviz",
@@ -16,9 +23,15 @@ setup(
     author="zjl9959",
     author_email="zjl9959@gmail.com",
     description=("An algorithm visualization tool for jupyter notebook to show animation for vector, table, linked list, tree and graph data structures."),
+    long_description=long_description_data,
+    long_description_content_type="text/markdown",
     license="GPLv3",
     keywords="Algorithm Visualizer Animation Jupyter-notebook Graph",
     url="https://github.com/zjl9959/algviz",
+    project_urls={
+        "Documentation": "https://algviz.readthedocs.io/en/latest/index.html",
+        "Issue Tracker": "https://github.com/zjl9959/algviz/issues",
+    },
     packages=['algviz'],
     install_requires=[
         'graphviz >= 0.8.4, != 0.18, <= 0.19.1',
