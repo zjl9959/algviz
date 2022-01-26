@@ -1,11 +1,5 @@
 # Algviz
 
-## Links:
-
-+ GitHub: https://github.com/zjl9959/algviz
-+ PyPi: https://pypi.org/project/algviz/
-+ ReadtheDocs: https://algviz.readthedocs.io/en/latest/index.html
-
 ## What is algviz?
 
 Algviz is an algorithm visualization tool for Jupyter-notebook.
@@ -108,3 +102,9 @@ If you are a google [colab](https://colab.research.google.com/) user, you can cl
 + Example [linked_list.ipynb](https://colab.research.google.com/drive/1rsg-6irXzQODPi6DUZhtu-pKq_r55hwV?usp=sharing) on google colab.
 + Example [tree.ipynb](https://colab.research.google.com/drive/138pnzwoS2vdhssZyTx-k5rwBQNb2Hi9N?usp=sharing) on google colab.
 + Example [graph.ipynb](https://colab.research.google.com/drive/14hF30-N9VGBb5-vkERPuURvmnB9VspU9?usp=sharing) on google colab.
+
+## Useful Links:
+
++ [GitHub](https://github.com/zjl9959/algviz): https://github.com/zjl9959/algviz
++ [ReadtheDocs](https://algviz.readthedocs.io/en/latest/index.html): https://algviz.readthedocs.io/en/latest/index.html
++ [PyPi](https://pypi.org/project/algviz/): https://pypi.org/project/algviz/
