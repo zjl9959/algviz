@@ -18,6 +18,7 @@ from .graph import GraphNode, parseGraph, updateGraphEdge
 from .tree import BinaryTreeNode, TreeNode, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
+from . import utility
 
 
 colors = {
@@ -68,6 +69,6 @@ __all__ = [
 
 
 __title__ = 'algviz'
-__version__ = '0.1.0'
+__version__ = utility._version
 __author__ = 'zjl9959@gmail.com'
 __license__ = 'GNU General Public License (GPLv3)'

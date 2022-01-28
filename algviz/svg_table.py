@@ -32,6 +32,7 @@ class SvgTable():
         self._svg.setAttribute('viewBox', '0.00 0.00 {:.2f} {:.2f}'.format(width, height))
         self._svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
         self._dom.appendChild(self._svg)
+        util.add_desc_into_svg(self._dom)
 
 
     def update_svg_size(self, width, height):
@@ -60,7 +61,7 @@ class SvgTable():
                 True for round corner; False for sharp corner.
         
         Returns:
-            int: Unique ID number for the new added rect element in this SvgTable。
+            int: Unique ID number for the new added rect element in this SvgTable.
         """
         gid = str(self._cur_id)
         self._cur_id += 1
@@ -104,7 +105,7 @@ class SvgTable():
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 0, 0)
         
         Returns:
-            int: Unique ID number for the new added text element in this SvgTable。
+            int: Unique ID number for the new added text element in this SvgTable.
         """
         gid = str(self._cur_id)
         self._cur_id += 1
@@ -222,7 +223,25 @@ class SvgTable():
         if g is not None:
             animate = self._dom.createElement('animate')
             util.add_animate_appear_into_node(g, animate, time, appear)
-    
+
+
+    def add_cursor(self, x, y, len, name=None, dir='U'):
+        """Add a cursor into SVG table.
+        
+        A cursor is an arrow to indicate the current index of rect element.
+        It will be displayed in the SVG and you need to choose the proper position to put it.
+
+        Args:
+            x, y (float): The x, y position of the arrow top in cursor (relative to the top left of the SVG).
+            len (float): The total length of the cursor (from arrow head to it's tail).
+            name (str): The name to be displayed close to the arrow.
+            dir (str): The direction of the arrow (U:up; D:down; L:left; R:right).
+
+        Returns:
+            int: Unique ID number for the new added cursor element in this SvgTable.
+        """
+        pass
+
 
     def clear_animates(self):
         """Clear all the animations in this SvgTable.

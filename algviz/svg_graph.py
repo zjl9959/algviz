@@ -103,6 +103,7 @@ class SvgGraph():
         # Init graph nodes and svg.
         (self._svg, self._node_idmap, self._edge_idmap) = self._create_svg_()
         self._init_graph_nodes(data)    # Traverse the data and add nodes into this graph.
+        util.add_desc_into_svg(self._svg)
 
 
     def addNode(self, node):
@@ -306,6 +307,7 @@ class SvgGraph():
         # Sequence the graph and add animation effects.
         self._traverse_graph_()
         (new_svg, node_idmap, edge_idmap) = self._create_svg_()
+        util.add_desc_into_svg(new_svg)
         self._update_svg_size_(new_svg)
         self._update_svg_nodes_(new_svg, node_idmap)
         self._update_svg_edges_(new_svg, edge_idmap)
