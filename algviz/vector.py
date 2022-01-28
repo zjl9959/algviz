@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 """Define the table data structure.
 
 Author: zjl9959@gmail.com
@@ -8,8 +9,11 @@ License: GPLv3
 
 """
 
+
 from . import svg_table
+from . import cursor
 from . import utility as util
+
 
 class Vector():
     """
@@ -47,28 +51,28 @@ class Vector():
         self._rect_disappear = list()   # Record the index of disappearing cells in the next frame.
         self._rect_appear = list()      # Record the index of appearing cells in the next frame.
         self._index2rect = dict()       # The mapping relationship from vector index to the cell object.
-        self._index2text = list()       # The mapping relationship from vector index to the text object.
-        self._label_font_size = int(min(12, cell_size*0.5))   # The font size of the vector's subscript index.
+        self._index2text = dict()       # The mapping relationship from vector index to the text object.
+        self._label_font_size = int(min(12, self._cell_size*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
-        svg_height = cell_size + 2*self._cell_margin
-        if self._show_index:
-            svg_height += self._label_font_size
-        if self._show_histogram:
-            svg_height = self._bar
-        self._svg = svg_table.SvgTable(len(self._data)*cell_size+(len(self._data)+1)*self._cell_margin, svg_height)
+        self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
+        # Create rect elements for initial data.
         for i in range(len(self._data)):
-            rect = (cell_size*i+self._cell_margin*(i+1), self._cell_margin, cell_size, cell_size)
+            rect_pos_x = self._cell_size*i+self._cell_margin*(i+1)
+            rect_pos_y = self._cell_margin
+            rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
             rid = self._svg.add_rect_element(rect, text=self._data[i])
             self._cell_tcs[rid] = util.TraceColorStack()
             self._index2rect[i] = rid
+        # Initial cursor manager.
+        self._cursor_manager = cursor._CursorManager(
+            self._cell_size, self._svg, 'D', (self._cell_margin, self._cell_margin))
+        # Update SVG and rects size.
+        self._update_svg_size_(len(self._data))
         if self._show_histogram:
             self._update_bar_height_()
         if self._show_index:
-            for i in range(len(self._data)):
-                pos = (cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25, svg_height)
-                tid = self._svg.add_text_element(pos, i, font_size=self._label_font_size)
-                self._index2text.append(tid)
-    
+            self._create_new_subscripts_(0, len(self._data))
+
 
     def insert(self, index, val):
         """Insert a new value into vector. If index < 0 or index >= length of Vector, then set index = index % vector length.
@@ -76,13 +80,16 @@ class Vector():
         Args:
             index (int): The subscript index to insert value. (Insert before index)
             val (printable): The value to insert into vector.
+
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
-        if len(self._data) == 0:
-            self.append(val)
-        if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+        index = self._check_index_type_and_range_(index)
         # Add a new rectangle node and animation to SVG.
-        rect = (self._cell_size*index+self._cell_margin*(index+1), self._cell_margin, self._cell_size, self._cell_size)
+        rect_pos_x = self._cell_size*index+self._cell_margin*(index+1)
+        rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
+        rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
         rid = self._svg.add_rect_element(rect, text=val)
         # Record the cells need to be move after the insert postion.
         for i in range(len(self._data), index, -1):
@@ -105,7 +112,9 @@ class Vector():
             val (printable): The value to appended into vector's tail.
         """
         index = len(self._data)
-        rect = (self._cell_size*index+self._cell_margin*(index+1), self._cell_margin, self._cell_size, self._cell_size)
+        rect_pos_x = self._cell_size*index+self._cell_margin*(index+1)
+        rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
+        rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
         rid = self._svg.add_rect_element(rect, text=val)
         self._index2rect[index] = rid
         self._cell_tcs[rid] = util.TraceColorStack()
@@ -113,19 +122,20 @@ class Vector():
         self._data.append(val)
     
 
-    def pop(self, index = -1):
+    def pop(self, index=None):
         """Pop a value from vector. Pop vector's tail value as default. 
         
         Args:
             index (int): The index position of value to pop out.
 
         Raises:
-            Exception: No item in vector to pop!
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
-        if len(self._data) == 0:
-            raise Exception('No item in vector to pop!')
-        if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+        if index == None:
+            index = len(self._data) - 1
+        else:
+            index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
         for i in range(index, len(self._data)-1):
             rrid = self._index2rect[i+1]
@@ -155,7 +165,13 @@ class Vector():
         """Swap the two cells positon in Vector.
         Args:
             index1, index2 (int): The two index positions to be swapped.
+        
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
+        index1 = self._check_index_type_and_range_(index1)
+        index2 = self._check_index_type_and_range_(index2)
         rid1 = self._index2rect[index1]
         rid2 = self._index2rect[index2]
         self._index2rect[index1] = rid2
@@ -204,13 +220,46 @@ class Vector():
                 self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
     
 
+    def new_cursor(self, name=None, offset=0):
+        """Create a new cursor to track the element's index.
+        
+        Args:
+            name (str): The cursor's name to be displayed.
+            offset (int): The cursor's initital index offset.
+        
+        Returns:
+            Cursor: Return the new created Cursor object.
+        """
+        res_cursor = self._cursor_manager.new_cursor(name, offset)
+        self._update_svg_size_(len(self._data))
+        self._update_rects_position_()
+        self._update_subscripts_position_()
+        return res_cursor
+
+    def remove_cursor(self, cursor_obj):
+        """Remove one cursor from Vector and it's SVG representation.
+
+        Args:
+            cursor_obj (Cursor): The cursor object to be removed.
+        """
+        if type(cursor_obj) != cursor.Cursor:
+            return
+        self._cursor_manager.remove_cursor(cursor_obj._id)
+        self._update_svg_size_(len(self._data))
+        self._update_rects_position_()
+        self._update_subscripts_position_()
+
+
     def __getitem__(self, index):
         """
         Args:
             index (int): The index position of the cell to be accessed.
+
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
-        if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+        index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
         self._cell_tcs[rid].add(util._getElemColor)
         self._frame_trace.append((rid, util._getElemColor, False))
@@ -222,9 +271,12 @@ class Vector():
         Args:
             index (int): The index position of the cell to be updated.
             val (printable): New value for the cell.
+        
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
-        if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+        index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
         self._cell_tcs[rid].add(util._setElemColor)
         self._frame_trace.append((rid, util._setElemColor, False))
@@ -261,13 +313,8 @@ class Vector():
             str: The SVG representation of current Vector.
         """
         # Update the color of the cell tracker.
-        nb_elem = len(self._data) + len(self._rect_disappear)
-        svg_height = self._cell_size + 2*self._cell_margin
-        if self._show_index:
-            svg_height += self._label_font_size
-        if self._show_histogram > 0:
-            svg_height = self._bar
-        self._svg.update_svg_size(nb_elem*self._cell_size+(nb_elem+1)*self._cell_margin, svg_height)
+        all_data_num = len(self._data) + len(self._rect_disappear)
+        self._update_svg_size_(all_data_num)
         for (rid, color) in self._frame_trace_old:
             if rid not in self._cell_tcs.keys():
                 continue
@@ -294,15 +341,13 @@ class Vector():
             self._svg.add_animate_move(rid, (self._rect_move[rid]*(self._cell_size+self._cell_margin), 0) , (0, self._delay), bessel=False)
         if self._show_index:
             if len(self._index2text) > len(self._data):
-                for i in range(len(self._index2text)-len(self._data)):
-                    self._svg.delete_element(self._index2text[-1])
-                    self._index2text.pop()
+                for i in range(len(self._data), len(self._index2text)):
+                    self._svg.delete_element(self._index2text[i])
+                    self._index2text.pop(i)
             elif len(self._index2text) < len(self._data):
-                for i in range(len(self._index2text), len(self._data)):
-                    pos = (self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*0.25*len(str(i)), svg_height)
-                    tid = self._svg.add_text_element(pos, i, font_size=self._label_font_size)
-                    self._index2text.append(tid)
+                self._create_new_subscripts_(len(self._index2text), len(self._data))
         self._rect_move.clear()
+        self._cursor_manager.refresh_cursors_animation(all_data_num, (0, self._delay))
         res = self._svg._repr_svg_()
         # Clear the animation effect, update the SVG content, and prepare for the next frame.
         self._svg.clear_animates()
@@ -310,7 +355,9 @@ class Vector():
             self._update_bar_height_()
         else:
             for i in range(len(self._data)):
-                rect = (self._cell_size*i+self._cell_margin*(i+1), self._cell_margin, self._cell_size, self._cell_size)
+                rect_pos_x = self._cell_size*i + self._cell_margin*(i+1)
+                rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
+                rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
                 rid = self._index2rect[i]
                 self._svg.update_rect_element(rid, rect=rect)
         for rid in self._rect_disappear:
@@ -320,6 +367,7 @@ class Vector():
         for rid in self._rect_appear:
             self._svg.update_rect_element(rid, opacity=True)
         self._rect_appear.clear()
+        self._cursor_manager.update_cursors_position()
         return res
     
 
@@ -343,7 +391,7 @@ class Vector():
             if self._show_index:
                 useful_height -= self._label_font_size
             ratio = useful_height/(max_data-mmax_data)
-        baseline = max_data*ratio + self._cell_margin
+        baseline = max_data*ratio + self._cell_margin + self._cursor_manager.get_cursors_occupy()
         # Update the position coordinates of cells.
         for i in range(len(self._data)):
             if self._data[i] is None:
@@ -366,3 +414,49 @@ class Vector():
             if self._data[i] is None:
                 num = None
             self._svg.update_rect_element(rid, rect=(x, y, self._cell_size, abs(height)), text=num)
+
+
+    def _update_svg_size_(self, data_num):
+        if self._show_histogram:
+            self._svg_height = self._bar
+        else:
+            self._svg_height = self._cell_size + 2*self._cell_margin
+            if self._show_index:
+                self._svg_height += self._label_font_size
+        self._svg_height += self._cursor_manager.get_cursors_occupy()
+        self._svg_width = data_num*self._cell_size+(data_num+1)*self._cell_margin
+        self._svg.update_svg_size(self._svg_width, self._svg_height)
+
+    def _update_rects_position_(self):
+        for i, gid in self._index2rect.items():
+            rect_pos_x = self._cell_size*i+self._cell_margin*(i+1)
+            rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
+            rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
+            if self._svg:
+                self._svg.update_rect_element(gid, rect)
+
+    def _create_new_subscripts_(self, st, ed):
+        for i in range(st, ed):
+            pos_x = self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25
+            pos_y = self._svg_height - self._cell_margin
+            tid = self._svg.add_text_element((pos_x, pos_y), i, font_size=self._label_font_size)
+            self._index2text[i] = tid
+
+    def _update_subscripts_position_(self):
+        for i, gid in self._index2text.items():
+            gid = self._index2text[i]
+            pos_x = self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25
+            pos_y = self._svg_height - self._cell_margin
+            self._svg.update_text_element(gid, (pos_x, pos_y))
+
+    def _check_index_type_and_range_(self, index):
+        res = None
+        if type(index) is int:
+            res = index
+        elif type(index) is cursor.Cursor:
+            res = index.index()
+        else:
+            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
+        if index < 0 or index >= len(self._data):
+            raise RuntimeError('Vector index={} out of range!'.format(index))
+        return res

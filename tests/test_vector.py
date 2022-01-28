@@ -59,12 +59,26 @@ def test_visit_elements():
                  visit_elems, vec_data)
     # Test random visit elements.
     visit_elems = list()
-    index_list = [3, 9, -2, 6, 1, 4]
+    index_list = [3, 3, 4, 0, 1, 4]
     expect_results = [4, 4, 5, 1, 2, 5]
     for i in index_list:
         visit_elems.append(vec[i])
     res.add_case(equal(expect_results, visit_elems), 'Random visit',
                  visit_elems, expect_results)
+    # Test index out of range.
+    case_ok = False
+    try:
+        vec[-1] = 2
+    except RuntimeError:
+        case_ok = True
+    res.add_case(case_ok, 'Index out of range.')
+    # Test invalid index type.
+    case_ok = False
+    try:
+        vec['abc'] = 3
+    except TypeError:
+        case_ok = True
+    res.add_case(case_ok, 'Invalid index type.')
     return res
 
 
@@ -83,7 +97,7 @@ def test_update_elements():
     # Test repeat update one elements multi-times.
     expect_results = [3, -4, 7, -2, 'str', 3]
     vec[1] = 6; vec[1] = -4
-    vec[-1] = 9; vec[-1] = 3; vec[-1] = 3
+    vec[len(vec)-1] = 9; vec[len(vec)-1] = 3; vec[len(vec)-1] = 3
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_elems, expect_results), 'Repeat update',
                  vec_elems, expect_results)
@@ -103,7 +117,7 @@ def test_modify_vectors():
     res.add_case(equal(vec_elems, expect_results), 'Insert element',
                  vec_elems, expect_results)
     # Test pop element.
-    vec.pop(-1)
+    vec.pop()
     vec._repr_svg_()
     vec_elems = get_vector_elements(vec._repr_svg_())
     expect_results = [1, -2, 2]
@@ -172,6 +186,45 @@ def test_mark_elements():
     return res
 
 
+def test_vector_cursor():
+    res = TestResult()
+    viz = algviz.Visualizer()
+    vec_data = [1, 2, 3, 4, 5]
+    vec = viz.createVector(vec_data)
+    # Test access elements by vector cursor.
+    results, expect_results = list(), [2, 1, 4, 5]
+    i = vec.new_cursor('i', 1)
+    results.append(vec[i])
+    results.append(vec[i.dec()])
+    results.append(vec[i.inc(3)])
+    i.update(4)
+    results.append(vec[i])
+    res.add_case(equal(results, expect_results), 'Access elements', results, expect_results)
+    # Test modify elements by vector cursor.
+    j = vec.new_cursor('j', 3)
+    expect_results = [2, 3, 4, 7, -5]
+    if j < i:
+        j.update(i.index())
+        if j == 4:
+            vec[j] = -5
+        if j != i.index()-1:
+            vec.insert(j, 7)
+        if j <= 4:
+            vec.pop(j.dec(4))
+    vec._repr_svg_()        # Call this to skip animation frame.
+    vec_elems = get_vector_elements(vec._repr_svg_())
+    res.add_case(equal(vec_elems, expect_results), 'Modify vector',
+                 vec_elems, expect_results)
+    # Test index out of range.
+    case_ok = False
+    try:
+        vec[j.dec()] = 2
+    except RuntimeError:
+        case_ok = True
+    res.add_case(case_ok, 'Index out of range.')
+    return res
+
+
 def get_vector_elements(svg_str):
     '''
     @function: Parse vector elements from it's display SVG string.
@@ -190,7 +243,7 @@ def get_vector_elements(svg_str):
         texts = g.getElementsByTagName('text')
         element = None
         for text in texts:
-            if text.getAttribute('text-anchor') == 'middle' and text.firstChild:
+            if text.getAttribute('class') == 'txt' and text.firstChild:
                 element = text.firstChild.data
         elements_pos.append((pos, element))
     # Sort elements by positon and get elements string.

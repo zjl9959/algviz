@@ -9,6 +9,7 @@ License: GPLv3
 """
 
 from . import svg_table
+from . import cursor
 from . import utility
 
 
@@ -81,20 +82,18 @@ class Table():
             raise Exception('Table row or col error!')
         self._row = row
         self._col = col
-        self._cell_tcs = dict()           # Record the trajectory access information (node_index: ColorStack) of all cells.
-        self._frame_trace_old = list()    # Cache the cell related information that needs to be cleared in the previous frame.
-        self._frame_trace = list()        # Record the relevant information of the cell to be refreshed in the next frame.
-        self._delay = 0                   # Animation frame delay time, used to adapt Visualizer class.
-        self._next_row = 0                # Used to mark which row the current iterated is on for the table.
-        self._data = [[None for _ in range(col)] for _ in range(row)]
-        label_font_size = int(min(12, cell_size/len(str(max(row,col)-1))))
-        table_margin = 3
-        svg_width = col*cell_size + table_margin*2
-        svg_height = row*cell_size + table_margin*2
-        if show_index:
-            svg_width += len(str(row-1))*label_font_size
-            svg_height += label_font_size
-        self._svg = svg_table.SvgTable(svg_width, svg_height)
+        self._cell_tcs = dict()             # Record the trajectory access information (node_index: ColorStack) of all cells.
+        self._frame_trace_old = list()      # Cache the cell related information that needs to be cleared in the previous frame.
+        self._frame_trace = list()          # Record the relevant information of the cell to be refreshed in the next frame.
+        self._delay = 0                     # Animation frame delay time, used to adapt Visualizer class.
+        self._next_row = 0                  # Used to mark which row the current iterated is on for the table.
+        self._cell_size = cell_size         # The rectangle cells size(width and height) in table.
+        self._cell_margin = 3               # The cell margin between the elements in table.
+        self._show_index = show_index       # Wheather to show subscript of rows and columns index in table.
+        self._label_font_size = 0           # The font size of the subscript labels in table.
+        self._index2rect = dict()           # Map the row and column index into rectangle's gid in SVG.
+        self._data = [[None for _ in range(self._col)] for _ in range(self._row)]
+        self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
         # Copy data into table.
         if data is not None:
             for r in range(self._row):
@@ -103,19 +102,36 @@ class Table():
                         self._data[r][c] = data[r][c]
                     except:
                         self._data[r][c] = None
-        # initialization SVG contain.
+        # Initial rectangle elemenets in SVG.
         for r in range(self._row):
             for c in range(self._col):
-                rect = (c*cell_size+table_margin, r*cell_size+table_margin, cell_size, cell_size)
-                self._svg.add_rect_element(rect, self._data[r][c], angle=False)
-                self._cell_tcs[r*col+c] = utility.TraceColorStack()
-        if show_index:
-            for r in range(row):
-                pos = (col*cell_size+table_margin*2, (r+0.5)*cell_size+label_font_size*0.5+table_margin)
-                self._svg.add_text_element(pos, r, font_size=label_font_size)
-            for c in range(col):
-                pos = ((c+0.5)*cell_size-label_font_size*len(str(c))*0.25+table_margin, row*cell_size+1+label_font_size+table_margin)
-                self._svg.add_text_element(pos, c, font_size=label_font_size)
+                rect_pos_x = c*self._cell_size+self._cell_margin
+                rect_pos_y = r*self._cell_size+self._cell_margin
+                rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
+                gid = self._svg.add_rect_element(rect, self._data[r][c], angle=False)
+                self._index2rect[(r, c)] = gid
+                self._cell_tcs[gid] = utility.TraceColorStack()
+        # Initial the subscript labels in table.
+        if self._show_index:
+            self._label_font_size = int(min(12, self._cell_size/len(str(max(self._row,self._col)-1))))
+            self._row_index2text = dict()       # Map the row index into the row subscript's text gid in SVG.
+            self._col_index2text = dict()       # Map the column index into the row subscript's text gid in SVG.
+            for r in range(self._row):
+                pos_x = self._col*self._cell_size+self._cell_margin*2
+                pos_y = (r+0.5)*self._cell_size+self._label_font_size*0.5+self._cell_margin
+                gid = self._svg.add_text_element((pos_x, pos_y), r, self._label_font_size)
+                self._row_index2text[r] = gid
+            for c in range(self._col):
+                pos_x = (c+0.5)*self._cell_size-self._label_font_size*len(str(c))*0.25+self._cell_margin
+                pos_y = self._row*self._cell_size+1+self._label_font_size+self._cell_margin
+                gid = self._svg.add_text_element((pos_x, pos_y), c, self._label_font_size)
+                self._col_index2text[c] = gid
+        # Add row and column cursor managers for table.
+        self._row_cursor_mgr = cursor._CursorManager(self._cell_size,
+            self._svg, 'R', (self._cell_margin, self._cell_margin))
+        self._col_cursor_mgr = cursor._CursorManager(self._cell_size,
+            self._svg, 'D', (self._cell_margin, self._cell_margin))
+        self._update_svg_size_()
     
 
     def mark(self, color, r, c, hold=True):
@@ -132,7 +148,7 @@ class Table():
         """
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
-        gid = r*self._col + c
+        gid = self._index2rect[(r, c)]
         self._cell_tcs[gid].add(color)
         self._frame_trace.append((gid, color, hold))
     
@@ -144,7 +160,7 @@ class Table():
             color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
         """
-        for gid in range(self._row*self._col):
+        for gid in self._index2rect.values():
             if self._cell_tcs[gid].remove(color):
                 self._svg.update_rect_element(gid, fill=self._cell_tcs[gid].color())
     
@@ -163,7 +179,7 @@ class Table():
         """
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
-        gid = r*self._col + c
+        gid = self._index2rect[(r, c)]
         self._cell_tcs[gid].add(utility._getElemColor)
         self._frame_trace.append((gid, utility._getElemColor, False))
         return self._data[r][c]
@@ -181,7 +197,7 @@ class Table():
         """
         if r < 0 or r >= self._row or c < 0 or c >= self._col:
             raise Exception("Table index out of range!")
-        gid = r*self._col + c
+        gid = self._index2rect[(r, c)]
         self._cell_tcs[gid].add(utility._setElemColor)
         self._frame_trace.append((gid, utility._setElemColor, False))
         label = val
@@ -197,6 +213,58 @@ class Table():
             tuple(int, int): Return the rows and columns of this table.
         """
         return (self._row, self._col)
+
+    
+    def reshape(self, row, col):
+        """Reshape the row and column size of this table.
+        row, col (int): The new row and column number of the table.
+        """
+        raise Exception("[ERROR]Not implement!")
+
+
+    def new_cursor(self, name=None, offset=0, is_row=True):
+        """Create a new cursor to track the rows or columns in table.
+        
+        Args:
+            name (str): The cursor's name to be displayed.
+            offset (int): The cursor's initital index offset.
+            is_row (bool): Wheather this cursor index to the row in table.
+                True: this cursor displayed in the left side of table to index the row.
+                False: this cursor displayed in the top side of table to index the columns.
+        
+        Returns:
+            Cursor: Return the new created Cursor object.
+        """
+        res_cursor = None
+        if is_row:
+            res_cursor = self._row_cursor_mgr.new_cursor(name, offset)
+            res_cursor._dir = 'R'
+        else:
+            res_cursor = self._col_cursor_mgr.new_cursor(name, offset)
+            res_cursor._dir = 'U'
+        self._update_svg_size_()
+        self._update_rects_position_()
+        self._update_subscripts_position_()
+        return res_cursor
+
+
+    def remove_cursor(self, cursor_obj):
+        """Remove one cursor from Vector and it's SVG representation.
+
+        Args:
+            cursor_obj (Cursor): The cursor object to be removed.
+        """
+        if type(cursor_obj) != cursor.Cursor:
+            return
+        if cursor_obj._dir == 'R':
+            self._row_cursor_mgr.remove_cursor(cursor_obj._id)
+        elif cursor_obj._dir == 'U':
+            self._col_cursor_mgr.remove_cursor(cursor_obj._id)
+        else:
+            return
+        self._update_svg_size_()
+        self._update_rects_position_()
+        self._update_subscripts_position_()
 
 
     def __getitem__(self, r):
@@ -238,5 +306,41 @@ class Table():
             self._svg.update_rect_element(gid, fill=self._cell_tcs[gid].color())
             if not hold:
                 self._frame_trace_old.append((gid, color))
+        self._row_cursor_mgr.refresh_cursors_animation(self._row, (0, self._delay))
+        self._col_cursor_mgr.refresh_cursors_animation(self._col, (0, self._delay))
         self._frame_trace.clear()
+        self._row_cursor_mgr.update_cursors_position()
+        self._col_cursor_mgr.update_cursors_position()
         return self._svg._repr_svg_()
+
+
+    def _update_svg_size_(self):
+        svg_width = self._col*self._cell_size + self._cell_margin*2
+        svg_height = self._row*self._cell_size + self._cell_margin*2
+        svg_width += self._row_cursor_mgr.get_cursors_occupy()
+        svg_height += self._col_cursor_mgr.get_cursors_occupy()
+        if self._show_index:
+            svg_width += len(str(self._row-1))*self._label_font_size
+            svg_height += self._label_font_size
+        self._svg.update_svg_size(svg_width, svg_height)
+
+
+    def _update_rects_position_(self):
+        for r in range(self._row):
+            for c in range(self._col):
+                rect_pos_x = c*self._cell_size+self._cell_margin+self._row_cursor_mgr.get_cursors_occupy()
+                rect_pos_y = r*self._cell_size+self._cell_margin+self._col_cursor_mgr.get_cursors_occupy()
+                rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
+                gid = self._index2rect[(r, c)]
+                self._svg.update_rect_element(gid, rect)
+
+
+    def _update_subscripts_position_(self):
+        for r in range(self._row):
+            pos_x = self._col*self._cell_size+self._cell_margin*2+self._row_cursor_mgr.get_cursors_occupy()
+            pos_y = (r+0.5)*self._cell_size+self._label_font_size*0.5+self._cell_margin+self._col_cursor_mgr.get_cursors_occupy()
+            self._svg.update_text_element(self._row_index2text[r], (pos_x, pos_y))
+        for c in range(self._col):
+            pos_x = (c+0.5)*self._cell_size-self._label_font_size*len(str(c))*0.25+self._cell_margin+self._row_cursor_mgr.get_cursors_occupy()
+            pos_y = self._row*self._cell_size+1+self._label_font_size+self._cell_margin+self._col_cursor_mgr.get_cursors_occupy()
+            self._svg.update_text_element(self._col_index2text[c], (pos_x, pos_y))
