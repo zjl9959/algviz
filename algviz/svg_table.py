@@ -33,6 +33,7 @@ class SvgTable():
         self._svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
         self._dom.appendChild(self._svg)
         util.add_desc_into_svg(self._dom)
+        util.add_default_text_style(self._dom)
 
 
     def update_svg_size(self, width, height):
@@ -81,9 +82,7 @@ class SvgTable():
         g.appendChild(r)
         if text is not None:
             t = self._dom.createElement('text')
-            t.setAttribute('alignment-baseline', 'middle')
-            t.setAttribute('text-anchor', 'middle')
-            t.setAttribute('font-family', 'Times,serif')
+            t.setAttribute('class', 'txt')
             t.setAttribute('x', '{:.2f}'.format(rect[0]+rect[2]*0.5))
             t.setAttribute('y', '{:.2f}'.format(rect[1]+rect[3]*0.5))
             t.setAttribute('font-size', '{:.2f}'.format(util.text_font_size(rect[2], '{}'.format(text))))
@@ -170,9 +169,7 @@ class SvgTable():
             width = float(r.getAttribute('width'))
             height = float(r.getAttribute('height'))
             fc = util.str2rgbcolor(r.getAttribute('fill'))
-            t.setAttribute('alignment-baseline', 'middle')
-            t.setAttribute('text-anchor', 'middle')
-            t.setAttribute('font-family', 'Times,serif')
+            t.setAttribute('class', 'txt')
             t.setAttribute('x', '{:.2f}'.format(rx+width*0.5))
             t.setAttribute('y', '{:.2f}'.format(ry+height*0.5))
             t.setAttribute('font-size', '{:.2f}'.format(util.text_font_size(width, '{}'.format(text))))
@@ -225,22 +222,109 @@ class SvgTable():
             util.add_animate_appear_into_node(g, animate, time, appear)
 
 
-    def add_cursor(self, x, y, len, name=None, dir='U'):
+    def add_cursor(self, cursor, color=(123,123,123), name=None, dir='U'):
         """Add a cursor into SVG table.
         
         A cursor is an arrow to indicate the current index of rect element.
         It will be displayed in the SVG and you need to choose the proper position to put it.
 
         Args:
-            x, y (float): The x, y position of the arrow top in cursor (relative to the top left of the SVG).
-            len (float): The total length of the cursor (from arrow head to it's tail).
+            cursor (float, float, float, float, float): The x, y, offset, width, height of the arrow in cursor.
+                x, y is the arrow's top point position, relative to the SVG's top left point.
+                Offset is the x offset of the arrow relative to x position.
+                width, height is the total width and height of cursor, including arrow and name.
+            color: ((int, int, int)): The (Red, Green, Blue) stroke color of the cursor's arrow and name.
             name (str): The name to be displayed close to the arrow.
             dir (str): The direction of the arrow (U:up; D:down; L:left; R:right).
 
         Returns:
             int: Unique ID number for the new added cursor element in this SvgTable.
         """
-        pass
+        gid = str(self._cur_id)
+        self._cur_id += 1
+        g = self._dom.createElement('g')
+        g.setAttribute('id', gid)
+        self._svg.appendChild(g)
+        # Create the arrow "^" node of the cursor.
+        arrow_width = util.clamp(cursor[2]*0.2, 4, 10)*0.5
+        arrow_top_x = cursor[0] + cursor[2]
+        arrow_top_y = cursor[1]
+        arrow_left_x = arrow_top_x - arrow_width
+        arrow_left_y = arrow_top_y + arrow_width
+        arrow_right_x = arrow_top_x + arrow_width
+        arrow_right_y = arrow_top_y + arrow_width
+        if dir == 'D':
+            arrow_left_x = arrow_top_x - arrow_width
+            arrow_left_y = arrow_top_y - arrow_width
+            arrow_right_x = arrow_top_x + arrow_width
+            arrow_right_y = arrow_top_y - arrow_width
+        elif dir == 'L':
+            arrow_top_x = cursor[0]
+            arrow_top_y = cursor[1] + cursor[2]
+            arrow_left_x = arrow_top_x + arrow_width
+            arrow_left_y = arrow_top_y + arrow_width
+            arrow_right_x = arrow_top_x + arrow_width
+            arrow_right_y = arrow_top_y - arrow_width
+        elif dir == 'R':
+            arrow_top_x = cursor[0]
+            arrow_top_y = cursor[1] + cursor[2]
+            arrow_left_x = arrow_top_x - arrow_width
+            arrow_left_y = arrow_top_y - arrow_width
+            arrow_right_x = arrow_top_x - arrow_width
+            arrow_right_y = arrow_top_y + arrow_width
+        arrow_points = '{:.2f},{:.2f} {:.2f},{:.2f} {:.2f},{:.2f}'.format(
+            arrow_left_x, arrow_left_y,     # Left point of the arrow.
+            arrow_top_x, arrow_top_y,       # Top point of the arrow.
+            arrow_right_x, arrow_right_y    # Right point of the arrow.
+        )
+        svg_arrow = self._dom.createElement('polyline')
+        svg_arrow.setAttribute('points', arrow_points)
+        svg_arrow.setAttribute('fill', 'none')
+        svg_arrow.setAttribute('stroke', util.rgbcolor2str(color))
+        g.appendChild(svg_arrow)
+        # Create the text name node.
+        txt_font_size = 0
+        if name is not None:
+            txt_font_size = util.text_font_size(cursor[3], '{}'.format(name))
+            t = self._dom.createElement('text')
+            t.setAttribute('class', 'txt')
+            txt_pos_x, txt_pos_y = cursor[0], cursor[1] + cursor[4] - txt_font_size*0.5
+            if dir == 'D':
+                txt_pos_y = cursor[1] - cursor[4] + txt_font_size*0.5
+                t.setAttribute('transform', 'rotate(180, {}, {})'.format(txt_pos_x, txt_pos_y))
+            elif dir == 'L':
+                txt_pos_x = cursor[0] + cursor[4] - txt_font_size*0.5
+                txt_pos_y = cursor[1]
+                t.setAttribute('transform', 'rotate(-90, {}, {})'.format(txt_pos_x, txt_pos_y))
+            elif dir == 'R':
+                txt_pos_x = cursor[0] - cursor[4] + txt_font_size*0.5
+                txt_pos_y = cursor[1]
+                t.setAttribute('transform', 'rotate(90, {}, {})'.format(txt_pos_x, txt_pos_y))
+            t.setAttribute('x', '{:.2f}'.format(txt_pos_x))
+            t.setAttribute('y', '{:.2f}'.format(txt_pos_y))
+            t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
+            t.setAttribute('fill', util.rgbcolor2str(color))
+            tt = self._dom.createTextNode('{}'.format(name))
+            t.appendChild(tt)
+            g.appendChild(t)
+        # Create the tail line node of the cursor's arrow.
+        svg_line = self._dom.createElement('line')
+        svg_line.setAttribute('x1', '{:.2f}'.format(arrow_top_x))
+        svg_line.setAttribute('y1', '{:.2f}'.format(arrow_top_y))
+        svg_line.setAttribute('stroke', util.rgbcolor2str(color))
+        line_x2, line_y2 = arrow_top_x, max(arrow_top_y + cursor[4] - txt_font_size * 0.6, arrow_top_y)
+        if dir == 'D':
+            line_y2 = min(arrow_top_y - cursor[4] + txt_font_size*0.6, arrow_top_y)
+        elif dir == 'L':
+            line_x2 = max(arrow_top_x + cursor[4] - txt_font_size*0.6, arrow_top_x)
+            line_y2 = arrow_top_y
+        elif dir == 'R':
+            line_x2 = min(arrow_top_x - cursor[4] + txt_font_size*0.6, arrow_top_x)
+            line_y2 = arrow_top_y
+        svg_line.setAttribute('x2', '{:.2f}'.format(line_x2))
+        svg_line.setAttribute('y2', '{:.2f}'.format(line_y2))
+        g.appendChild(svg_line)
+        return int(gid)
 
 
     def clear_animates(self):

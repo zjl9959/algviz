@@ -190,7 +190,7 @@ def get_vector_elements(svg_str):
         texts = g.getElementsByTagName('text')
         element = None
         for text in texts:
-            if text.getAttribute('text-anchor') == 'middle' and text.firstChild:
+            if text.getAttribute('class') == 'txt' and text.firstChild:
                 element = text.firstChild.data
         elements_pos.append((pos, element))
     # Sort elements by positon and get elements string.

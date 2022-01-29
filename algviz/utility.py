@@ -296,3 +296,20 @@ def add_desc_into_svg(dom):
     text = dom.createTextNode('{}'.format(desc_str))
     desc.appendChild(text)
     svg.appendChild(desc)
+
+
+def add_default_text_style(dom):
+    """Add the default text style into svg.
+    
+    Args:
+        dom (xmldom.document) The dom object to contain the description.
+    """
+    svgs = dom.getElementsByTagName('svg')
+    if len(svgs) == 0:
+        return
+    svg = svgs[0]
+    style = dom.createElement('style')
+    style_content = r".txt { alignment-baseline:middle; text-anchor:middle; font-family:Times,serif; }"
+    text = dom.createTextNode(style_content)
+    style.appendChild(text)
+    svg.appendChild(style)
