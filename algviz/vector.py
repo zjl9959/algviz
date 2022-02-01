@@ -54,10 +54,11 @@ class Vector():
         self._index2text = list()       # The mapping relationship from vector index to the text object.
         self._label_font_size = int(min(12, self._cell_size*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
+        self._cursor_manager = None
         self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
         self._update_svg_size_(len(self._data))
         cursor_dir = 'D' if self._show_index else 'U'
-        cursor_anchor = (self._cell_margin, 0)
+        cursor_anchor = [self._cell_margin, 0]
         if not self._show_index:
             cursor_anchor[1] = self._svg_height
         self._cursor_manager = cursor._CursorManager(self._cell_size, self._svg, cursor_dir, cursor_anchor)
@@ -392,7 +393,7 @@ class Vector():
         if self._cursor_manager:
             self._svg_height += self._cursor_manager.get_cursors_margin()
         self._svg_width = data_num*self._cell_size+(data_num+1)*self._cell_margin
-        self._svg = svg_table.SvgTable(self._svg_width, self._svg_height)
+        self._svg.update_svg_size(self._svg_width, self._svg_height)
 
 
     def _create_new_rects_(self):

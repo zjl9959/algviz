@@ -169,7 +169,10 @@ class SvgTable():
         g = util.find_tag_by_id(self._svg, 'g', str(gid))
         if g is None:
             return
-        r = g.getElementsByTagName('rect')[0]
+        rects = g.getElementsByTagName('rect')
+        if len(rects) == 0:
+            return
+        r = rects[0]
         t = g.getElementsByTagName('text')
         if opacity is not None:
             g.setAttribute('style', 'opacity:{:.0f}'.format(opacity))
