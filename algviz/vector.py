@@ -218,8 +218,8 @@ class Vector():
         Returns:
             Cursor: Return the new created Cursor object.
         """
-        res_cursor = self._cursor_manager._new_cursor(self, name, offset)
-        self._update_svg_size_()
+        res_cursor = self._cursor_manager.new_cursor(self, name, offset)
+        self._update_svg_size_(len(self._data))
         if self._show_index:
             self._update_rects_position_()
             self._update_subscripts_position_()
@@ -421,7 +421,7 @@ class Vector():
             self._index2text.append(tid)
 
     def _update_subscripts_position_(self):
-        for i in self._index2text:
+        for i in range(len(self._index2text)):
             gid = self._index2text[i]
             pos_x = self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25
             pos_y = self._svg_height - self._cell_margin + self._get_cursor_offset_()

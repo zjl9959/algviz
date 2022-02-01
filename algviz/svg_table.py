@@ -142,8 +142,8 @@ class SvgTable():
             return
         txt = t[0]
         if pos != None:
-            t.setAttribute('x', '{:.2f}'.format(pos[0]))
-            t.setAttribute('y', '{:.2f}'.format(pos[1]))
+            txt.setAttribute('x', '{:.2f}'.format(pos[0]))
+            txt.setAttribute('y', '{:.2f}'.format(pos[1]))
         if text != None:
             for t_child in txt.childNodes:
                 txt.removeChild(t_child)
