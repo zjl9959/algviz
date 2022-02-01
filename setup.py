@@ -9,7 +9,7 @@ License: GPLv3
 """
 
 import os
-from distutils.core import setup, Extension
+from setuptools import setup
 
 script_path = os.path.split(os.path.realpath(__file__))[0]
 readme_filepath = os.path.join(script_path, 'README.md')

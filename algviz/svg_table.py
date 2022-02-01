@@ -123,6 +123,38 @@ class SvgTable():
         return int(gid)
     
 
+    def update_text_element(self, gid, pos=None, text=None, font_size=None, fill=None):
+        """Add a new text element into this SvgTable.
+        
+        Args:
+            gid (int): The unique ID of the rectangle to be updated.
+            pos ((x,y)): The left bottom corner position(x,y), x and y are both float number.
+            text (str): The text string.
+            font_size (int): Text font size.
+            fill ((R,G,B)): Stroke color of this text element. R, G, B stand for color channel for red, green, blue.
+                R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 0, 0)
+        """
+        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        if g is None:
+            return
+        t = g.getElementsByTagName('text')
+        if len(t) == 0:
+            return
+        txt = t[0]
+        if pos != None:
+            t.setAttribute('x', '{:.2f}'.format(pos[0]))
+            t.setAttribute('y', '{:.2f}'.format(pos[1]))
+        if text != None:
+            for t_child in txt.childNodes:
+                txt.removeChild(t_child)
+            tt = self._dom.createTextNode('{}'.format(text))
+            txt.appendChild(tt)
+        if font_size != None:
+            txt.setAttribute('font-size', '{:.2f}'.format(font_size))
+        if fill != None:
+            txt.setAttribute('fill', util.rgbcolor2str(fill))
+
+
     def update_rect_element(self, gid, rect=None, text=None, fill=None, stroke=None, opacity=None):
         """Update the color, text, fill, stroke and opacity attribute of specific rectangle element.
         
@@ -222,7 +254,7 @@ class SvgTable():
             util.add_animate_appear_into_node(g, animate, time, appear)
 
 
-    def add_cursor(self, cursor, color=(123,123,123), name=None, dir='U'):
+    def add_cursor_element(self, cursor, color=(123,123,123), name=None, dir='U'):
         """Add a cursor into SVG table.
         
         A cursor is an arrow to indicate the current index of rect element.

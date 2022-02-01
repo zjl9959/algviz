@@ -123,6 +123,8 @@ class ConsecutiveIdMap():
         return self._id2attr[cons_id - self._offset]
 
 
+# TODO: Deprecated this function, use a more effective way to find node.
+# Or, just cache the node object directly.
 def find_tag_by_id(node, tag_name, tag_id):
     """Find the first match node in XML node and its sub nodes.
     Args:
@@ -159,6 +161,7 @@ def add_animate_move_into_node(g, animate, move, time, bessel):
     """
     Args:
         g (xmldom.Node): The SVG node to add move animation into.
+        animate (xmldom.Node): The animate node to be added into node g.
         move (tuple(float, float)): (delt_x, delt_y) The delt move distance along x axis and y axis for this element.
         time (tuple(float, float)): (begin, end) The begin and end time of this animation.
         bessel (bool): Whether to set the path of this move animation as bezier curve.
@@ -176,6 +179,7 @@ def add_animate_move_into_node(g, animate, move, time, bessel):
 def add_animate_appear_into_node(g, animate, time, appear=True):
     """
         g (xmldom.Node): The SVG node to add appear animation into.
+        animate (xmldom.Node): The animate node to be added into node g.
         time (tuple(float, float)) (begin, end) The begin and end time of this animation.
         appear (bool): True for appear animation; False for disappear animation.
     """
