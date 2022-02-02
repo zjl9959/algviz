@@ -59,7 +59,7 @@ def test_visit_elements():
                  visit_elems, vec_data)
     # Test random visit elements.
     visit_elems = list()
-    index_list = [3, 9, -2, 6, 1, 4]
+    index_list = [3, 3, 4, 0, 1, 4]
     expect_results = [4, 4, 5, 1, 2, 5]
     for i in index_list:
         visit_elems.append(vec[i])
@@ -83,7 +83,7 @@ def test_update_elements():
     # Test repeat update one elements multi-times.
     expect_results = [3, -4, 7, -2, 'str', 3]
     vec[1] = 6; vec[1] = -4
-    vec[-1] = 9; vec[-1] = 3; vec[-1] = 3
+    vec[len(vec)-1] = 9; vec[len(vec)-1] = 3; vec[len(vec)-1] = 3
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_elems, expect_results), 'Repeat update',
                  vec_elems, expect_results)
@@ -103,7 +103,7 @@ def test_modify_vectors():
     res.add_case(equal(vec_elems, expect_results), 'Insert element',
                  vec_elems, expect_results)
     # Test pop element.
-    vec.pop(-1)
+    vec.pop()
     vec._repr_svg_()
     vec_elems = get_vector_elements(vec._repr_svg_())
     expect_results = [1, -2, 2]

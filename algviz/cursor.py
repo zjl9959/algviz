@@ -168,30 +168,23 @@ class _CursorManager:
         """
         self._new_cursors_index[cursor_id] = new_index
 
-    def refresh_cursors_animation(self, max_index, time, strict=True):
+    def refresh_cursors_animation(self, max_index, time):
         """Refresh all the animations in cursors node.
         
         Args:
             max_index (int): Used to check the max value of the cursor.
             time (tuple(float, float)): (begin, end) The begin and end time of cursor move animation.
-            strict (boolean): Wheather the index value of cursor can be rounded by max_index.
         """
         self._cursor_moves.clear()
         for cursor_id in self._new_cursors_index.keys():
             move_delt_x, move_delt_y = 0, 0
             old_index = self._old_cursors_index[cursor_id]
             if old_index < 0 or old_index >= max_index:
-                if not strict:
-                    old_index %= max_index
-                else:
-                    # The cursor should move out of range if in strict mode.
-                    old_index = -1 if old_index < 0 else max_index
+                # The cursor should move out of range if in strict mode.
+                old_index = -1 if old_index < 0 else max_index
             new_index = self._new_cursors_index[cursor_id]
             if new_index < 0 or new_index >= max_index:
-                if not strict:
-                    new_index %= max_index
-                else:
-                    new_index = -1 if new_index < 0 else max_index
+                new_index = -1 if new_index < 0 else max_index
             if self._dir == 'R':
                 move_delt_y = (new_index - old_index) * (self._cell_size + self._cell_margin)
             else:

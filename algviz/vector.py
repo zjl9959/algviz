@@ -76,8 +76,12 @@ class Vector():
         """
         if len(self._data) == 0:
             self.append(val)
+        if type(index) is cursor.Cursor:
+            index = index._index
+        elif type(index) is not int:
+            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+            raise RuntimeError('Vector index={} out of range!'.format(index))
         # Add a new rectangle node and animation to SVG.
         rect_pos_x = self._cell_size*index+self._cell_margin*(index+1)
         rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
@@ -114,7 +118,7 @@ class Vector():
         self._data.append(val)
     
 
-    def pop(self, index = -1):
+    def pop(self, index=None):
         """Pop a value from vector. Pop vector's tail value as default. 
         
         Args:
@@ -123,10 +127,16 @@ class Vector():
         Raises:
             Exception: No item in vector to pop!
         """
+        if index == None:
+            index = len(self._data) - 1
+        elif type(index) is cursor.Cursor:
+            index = index._index
+        elif type(index) is not int:
+            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if len(self._data) == 0:
             raise Exception('No item in vector to pop!')
         if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+            raise RuntimeError('Vector index={} out of range!'.format(index))
         rid = self._index2rect[index]
         for i in range(index, len(self._data)-1):
             rrid = self._index2rect[i+1]
@@ -243,7 +253,7 @@ class Vector():
         elif type(index) is not int:
             raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+            raise RuntimeError('Vector index={} out of range!'.format(index))
         rid = self._index2rect[index]
         self._cell_tcs[rid].add(util._getElemColor)
         self._frame_trace.append((rid, util._getElemColor, False))
@@ -264,7 +274,7 @@ class Vector():
         elif type(index) is not int:
             raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
-            index %= len(self._data)
+            raise RuntimeError('Vector index={} out of range!'.format(index))
         rid = self._index2rect[index]
         self._cell_tcs[rid].add(util._setElemColor)
         self._frame_trace.append((rid, util._setElemColor, False))
@@ -335,7 +345,7 @@ class Vector():
             elif len(self._index2text) < len(self._data):
                 self._create_new_subscripts_(len(self._index2text), len(self._data))
         self._rect_move.clear()
-        self._cursor_manager.refresh_cursors_animation(all_data_num, (0, self._delay), False)
+        self._cursor_manager.refresh_cursors_animation(all_data_num, (0, self._delay))
         res = self._svg._repr_svg_()
         # Clear the animation effect, update the SVG content, and prepare for the next frame.
         self._svg.clear_animates()
