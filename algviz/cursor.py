@@ -101,9 +101,11 @@ def _get_rhs_index(rhs):
 
 
 class _CursorManager:
-    def __init__(self, cell_size, svg, dir):
+    def __init__(self, cell_size, svg, dir, margins=(0, 0)):
         self._next_cursor_id = 0
         self._cell_size = cell_size
+        self._svg_margin = margins[0]            # The margin between cell and SVG.
+        self._cell_margin = margins[1]           # The margin between cells.
         self._svg = svg                         # The SVGTable object in Vector or Table.
         self._dir = dir                         # The direction of the cursor's arrow (U:up, D:down, L:left, R:right).
         self._cursor_height = 0.5 * self._cell_size     # The total height of a cursor (arrow and label).
@@ -113,19 +115,25 @@ class _CursorManager:
         self._new_cursors_index = dict()        # key:cursor_id; value:cursor_index.
         self._cursor_moves = dict()             # Cache the cursor move since last frame. key:cursor_id; value:(cursor_move_delt_x, cursor_move_delt_y).
 
-    def new_cursor(self, name, offset, anchor):
+    def new_cursor(self, name, offset):
         """Create a new cursor object and track it.
         """
+        # Update old cursor's position.
+        for gid in self._cursors_info.values():
+            if self._dir == 'R':
+                self._svg.update_cursor_element(gid, (self._cursor_height, 0))
+            else:
+                self._svg.update_cursor_element(gid, (0, self._cursor_height))
         cursor_id = self._next_cursor_id
         self._next_cursor_id += 1
         # Calculate cursor's position information according to it's index.
         offset_sign = 1 if cursor_id % 2 else -1
         cursor_offset = cursor_id*self._cursor_offset*offset_sign
-        cursor_pos_x = anchor[0] + offset*self._cell_size + self._cell_size*0.5
-        cursor_pos_y = anchor[1]
-        if self._dir == 'L' or self._dir == 'R':
-            cursor_pos_x = anchor[0]
-            cursor_pos_y = anchor[1] + offset*self._cell_size
+        cursor_pos_x = self._svg_margin + offset*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+        cursor_pos_y = self.get_cursors_occupy()
+        if self._dir == 'R':
+            cursor_pos_x = self.get_cursors_occupy()
+            cursor_pos_y = self._svg_margin + offset*(self._cell_size + self._cell_margin) + self._cell_size*0.5
         cursor_height = self._cursor_height * (cursor_id + 1)
         cursor_pos = (cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height)
         cursor_color = kcursor_colors[cursor_id % len(kcursor_colors)]
@@ -146,19 +154,12 @@ class _CursorManager:
         if cursor_id in self._new_cursors_index:
             self._new_cursors_index.pop(cursor_id)
 
-    def get_cursors_margin(self):
+    def get_cursors_occupy(self):
         """
         Returns:
             float: The sum of all the cursors height.
         """
-        return len(self._cursors_info) * self._cursor_height
-
-    def get_cursor_height(self):
-        """
-        Returns:
-            float: Single cursor's height.
-        """
-        return self._cursor_height
+        return self._next_cursor_id * self._cursor_height + self._svg_margin
 
     def on_cursor_updated(self, cursor_id, new_index):
         """Called when cursor's index changed.
@@ -189,10 +190,10 @@ class _CursorManager:
                     new_index %= max_index
                 else:
                     new_index = -1 if new_index < 0 else max_index
-            if self._dir == 'L' or self._dir == 'R':
-                move_delt_y = (new_index - old_index)*self._cell_size
+            if self._dir == 'R':
+                move_delt_y = (new_index - old_index) * (self._cell_size + self._cell_margin)
             else:
-                move_delt_x = (new_index - old_index)*self._cell_size
+                move_delt_x = (new_index - old_index) * (self._cell_size + self._cell_margin)
             cursor_gid = self._cursors_info[cursor_id]
             self._svg.add_animate_move(cursor_gid, (move_delt_x, move_delt_y), time, False)
             self._cursor_moves[cursor_id] = (move_delt_x, move_delt_y)

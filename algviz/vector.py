@@ -55,8 +55,10 @@ class Vector():
         self._label_font_size = int(min(12, self._cell_size*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
         self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
-        cursor_dir = 'D' if self._show_index else 'U'
-        self._cursor_manager = cursor._CursorManager(self._cell_size, self._svg, cursor_dir)
+        # Initial cursor manager.
+        self._cursor_manager = cursor._CursorManager(
+            self._cell_size, self._svg, 'D', (self._cell_margin, self._cell_margin))
+        # Update SVG and rects size.
         self._update_svg_size_(len(self._data))
         self._create_new_rects_()
         if self._show_histogram:
@@ -78,7 +80,7 @@ class Vector():
             index %= len(self._data)
         # Add a new rectangle node and animation to SVG.
         rect_pos_x = self._cell_size*index+self._cell_margin*(index+1)
-        rect_pos_y = self._cell_margin + self._get_cursor_offset_()
+        rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
         rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
         rid = self._svg.add_rect_element(rect, text=val)
         # Record the cells need to be move after the insert postion.
@@ -103,7 +105,7 @@ class Vector():
         """
         index = len(self._data)
         rect_pos_x = self._cell_size*index+self._cell_margin*(index+1)
-        rect_pos_y = self._cell_margin + self._get_cursor_offset_()
+        rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
         rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
         rid = self._svg.add_rect_element(rect, text=val)
         self._index2rect[index] = rid
@@ -213,12 +215,7 @@ class Vector():
         Returns:
             Cursor: Return the new created Cursor object.
         """
-        cursor_anchor = [self._cell_margin, 0]
-        if self._show_index:
-            cursor_anchor[1] = self._cursor_manager.get_cursor_height()
-        else:
-            cursor_anchor[1] = self._svg_height
-        res_cursor = self._cursor_manager.new_cursor(name, offset, cursor_anchor)
+        res_cursor = self._cursor_manager.new_cursor(name, offset)
         self._update_svg_size_(len(self._data))
         if self._show_index:
             self._update_rects_position_()
@@ -348,7 +345,7 @@ class Vector():
         else:
             for i in range(len(self._data)):
                 rect_pos_x = self._cell_size*i + self._cell_margin*(i+1)
-                rect_pos_y = self._cell_margin + self._get_cursor_offset_()
+                rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
                 rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
                 rid = self._index2rect[i]
                 self._svg.update_rect_element(rid, rect=rect)
@@ -383,7 +380,7 @@ class Vector():
             if self._show_index:
                 useful_height -= self._label_font_size
             ratio = useful_height/(max_data-mmax_data)
-        baseline = max_data*ratio + self._cell_margin + self._get_cursor_offset_()
+        baseline = max_data*ratio + self._cell_margin + self._cursor_manager.get_cursors_occupy()
         # Update the position coordinates of cells.
         for i in range(len(self._data)):
             if self._data[i] is None:
@@ -415,14 +412,14 @@ class Vector():
             self._svg_height = self._cell_size + 2*self._cell_margin
             if self._show_index:
                 self._svg_height += self._label_font_size
-        self._svg_height += self._cursor_manager.get_cursors_margin()
+        self._svg_height += self._cursor_manager.get_cursors_occupy()
         self._svg_width = data_num*self._cell_size+(data_num+1)*self._cell_margin
         self._svg.update_svg_size(self._svg_width, self._svg_height)
 
     def _create_new_rects_(self):
         for i in range(len(self._data)):
             rect_pos_x = self._cell_size*i+self._cell_margin*(i+1)
-            rect_pos_y = self._cell_margin + self._get_cursor_offset_()
+            rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
             rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
             rid = self._svg.add_rect_element(rect, text=self._data[i])
             self._cell_tcs[rid] = util.TraceColorStack()
@@ -431,7 +428,7 @@ class Vector():
     def _update_rects_position_(self):
         for i, gid in self._index2rect.items():
             rect_pos_x = self._cell_size*i+self._cell_margin*(i+1)
-            rect_pos_y = self._cell_margin + self._get_cursor_offset_()
+            rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
             rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
             if self._svg:
                 self._svg.update_rect_element(gid, rect)
@@ -449,8 +446,3 @@ class Vector():
             pos_x = self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25
             pos_y = self._svg_height - self._cell_margin
             self._svg.update_text_element(gid, (pos_x, pos_y))
-
-    def _get_cursor_offset_(self):
-        if self._show_index and self._cursor_manager:
-            return self._cursor_manager.get_cursors_margin()
-        return 0
