@@ -326,7 +326,6 @@ class SvgTable():
             txt_pos_x, txt_pos_y = cursor[0], cursor[1] + cursor[4] - txt_font_size*0.5
             if dir == 'D':
                 txt_pos_y = cursor[1] - cursor[4] + txt_font_size*0.5
-                t.setAttribute('transform', 'rotate(180, {}, {})'.format(txt_pos_x, txt_pos_y))
             elif dir == 'L':
                 txt_pos_x = cursor[0] + cursor[4] - txt_font_size*0.5
                 txt_pos_y = cursor[1]
@@ -347,14 +346,14 @@ class SvgTable():
         svg_line.setAttribute('x1', '{:.2f}'.format(arrow_top_x))
         svg_line.setAttribute('y1', '{:.2f}'.format(arrow_top_y))
         svg_line.setAttribute('stroke', util.rgbcolor2str(color))
-        line_x2, line_y2 = arrow_top_x, max(arrow_top_y + cursor[4] - txt_font_size * 0.6, arrow_top_y)
+        line_x2, line_y2 = arrow_top_x, max(arrow_top_y + cursor[4] - txt_font_size * 1.1, arrow_top_y)
         if dir == 'D':
-            line_y2 = min(arrow_top_y - cursor[4] + txt_font_size*0.6, arrow_top_y)
+            line_y2 = min(arrow_top_y - cursor[4] + txt_font_size*1.1, arrow_top_y)
         elif dir == 'L':
-            line_x2 = max(arrow_top_x + cursor[4] - txt_font_size*0.6, arrow_top_x)
+            line_x2 = max(arrow_top_x + cursor[4] - txt_font_size*1.1, arrow_top_x)
             line_y2 = arrow_top_y
         elif dir == 'R':
-            line_x2 = min(arrow_top_x - cursor[4] + txt_font_size*0.6, arrow_top_x)
+            line_x2 = min(arrow_top_x - cursor[4] + txt_font_size*1.1, arrow_top_x)
             line_y2 = arrow_top_y
         svg_line.setAttribute('x2', '{:.2f}'.format(line_x2))
         svg_line.setAttribute('y2', '{:.2f}'.format(line_y2))

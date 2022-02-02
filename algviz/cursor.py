@@ -31,45 +31,45 @@ class Cursor:
     The lhs is this cursor object and the rhs is a integer number or a cursor object.
 
     """
-    def __init__(self, table, id, offset=0):
-        self._table = table             # This cursor's related Vector or Table object.
+    def __init__(self, manager, id, offset=0):
+        self._manager = manager         # This cursor's related manager.
         self._id = id                   # The unique id of the cursor in it's related Vector or Table.
-        self._index = offset            # The current index of cursor (0 <= index < max_val).
+        self._index = offset            # The current index of cursor.
 
-    def _on_cursor_changed(self, new_index):
-        if self._table:
-            self._table._on_cursor_changed(self._id, new_index)
+    def _on_cursor_updated_(self, new_index):
+        if self._manager:
+            self._manager.on_cursor_updated(self._id, new_index)
 
     # Mathmatics operators.
     def __add__(self, other):
         new_index = self._index + _get_rhs_index(other)
-        self._on_cursor_changed(new_index)
-        return Cursor(self._table, self._id, new_index)
+        self._on_cursor_updated_(new_index)
+        return Cursor(self._manager, self._id, new_index)
 
     def __sub__(self, other):
         new_index = self._index - _get_rhs_index(other)
-        self._on_cursor_changed(new_index)
-        return Cursor(self._table, self._id, new_index)
+        self._on_cursor_updated_(new_index)
+        return Cursor(self._manager, self._id, new_index)
 
     def __mul__(self, other):
         new_index = self._index * _get_rhs_index(other)
-        self._on_cursor_changed(new_index)
-        return Cursor(self._table, self._id, new_index)
+        self._on_cursor_updated_(new_index)
+        return Cursor(self._manager, self._id, new_index)
 
     def __pow__(self, other):
         new_index = self._index ** _get_rhs_index(other)
-        self._on_cursor_changed(new_index)
-        return Cursor(self._table, self._id, new_index)
+        self._on_cursor_updated_(new_index)
+        return Cursor(self._manager, self._id, new_index)
 
     def __floordiv__(self, other):
         new_index = self._index // _get_rhs_index(other)
-        self._on_cursor_changed(new_index)
-        return Cursor(self._table, self._id, new_index)
+        self._on_cursor_updated_(new_index)
+        return Cursor(self._manager, self._id, new_index)
 
     def __mod__(self, other):
         new_index = self._index % _get_rhs_index(other)
-        self._on_cursor_changed(new_index)
-        return Cursor(self._table, self._id, new_index)
+        self._on_cursor_updated_(new_index)
+        return Cursor(self._manager, self._id, new_index)
 
     # Compare operators.
     def __lt__(self, other):
@@ -101,19 +101,18 @@ def _get_rhs_index(rhs):
 
 
 class _CursorManager:
-    def __init__(self, cell_size, svg, dir, anchor):
+    def __init__(self, cell_size, svg, dir):
         self._next_cursor_id = 0
         self._cell_size = cell_size
         self._svg = svg                         # The SVGTable object in Vector or Table.
         self._dir = dir                         # The direction of the cursor's arrow (U:up, D:down, L:left, R:right).
-        self._anchor = anchor                   # Cursor's anchor (pos_x:float, pos_y:float).
         self._cursor_height = 0.5 * self._cell_size     # The total height of a cursor (arrow and label).
         self._cursor_offset = 0.1 * self._cell_size     # Cursor_offset = cursor_id*self._cursor_offset.
         self._cursors_info = dict()             # key:cursor_id; value:cursor_gid in SVG.
         self._old_cursors_index = dict()        # key:cursor_id; value:cursor_index.
         self._new_cursors_index = dict()        # key:cursor_id; value:cursor_index.
 
-    def new_cursor(self, table, name, offset):
+    def new_cursor(self, name, offset, anchor):
         """Create a new cursor object and track it.
         """
         cursor_id = self._next_cursor_id
@@ -121,18 +120,18 @@ class _CursorManager:
         # Calculate cursor's position information according to it's index.
         offset_sign = 1 if cursor_id % 2 else -1
         cursor_offset = cursor_id*self._cursor_offset*offset_sign
-        cursor_pos_x = self._anchor[0] + offset*self._cell_size
-        cursor_pos_y = self._anchor[1]
+        cursor_pos_x = anchor[0] + offset*self._cell_size + self._cell_size*0.5
+        cursor_pos_y = anchor[1]
         if self._dir == 'L' or self._dir == 'R':
-            cursor_pos_x = self._anchor[0]
-            cursor_pos_y = self._anchor[1] + offset*self._cell_size
+            cursor_pos_x = anchor[0]
+            cursor_pos_y = anchor[1] + offset*self._cell_size
         cursor_height = self._cursor_height * (cursor_id + 1)
         cursor_pos = (cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height)
         cursor_color = kcursor_colors[cursor_id % len(kcursor_colors)]
         cursor_node = self._svg.add_cursor_element(cursor_pos, cursor_color, name, self._dir)
         self._cursors_info[cursor_id] = cursor_node
         self._old_cursors_index[cursor_id] = offset
-        return Cursor(table, cursor_id, offset)
+        return Cursor(self, cursor_id, offset)
 
     def remove_cursor(self, cursor_id):
         """Untrack the specific cursor from this cursor manager.
@@ -149,7 +148,10 @@ class _CursorManager:
     def get_cursors_margin(self):
         return len(self._cursors_info) * self._cursor_height
 
-    def on_update_cursor(self, cursor_id, new_index):
+    def get_cursor_height(self):
+        return self._cursor_height
+
+    def on_cursor_updated(self, cursor_id, new_index):
         self._new_cursors_index[cursor_id] = new_index
 
     def refresh_cursors(self, max_index, time, strict=True):
@@ -185,4 +187,4 @@ class _CursorManager:
             self._svg.add_animate_move(cursor_gid, (move_delt_x, move_delt_y), time, False)
         # Update the cached data.
         for cursor_id in self._new_cursors_index:
-            self._old_cursors_index = self._new_cursors_index[cursor_id]
+            self._old_cursors_index[cursor_id] = self._new_cursors_index[cursor_id]

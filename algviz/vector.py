@@ -51,17 +51,12 @@ class Vector():
         self._rect_disappear = list()   # Record the index of disappearing cells in the next frame.
         self._rect_appear = list()      # Record the index of appearing cells in the next frame.
         self._index2rect = dict()       # The mapping relationship from vector index to the cell object.
-        self._index2text = list()       # The mapping relationship from vector index to the text object.
+        self._index2text = dict()       # The mapping relationship from vector index to the text object.
         self._label_font_size = int(min(12, self._cell_size*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
-        self._cursor_manager = None
         self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
-        self._update_svg_size_(len(self._data))
         cursor_dir = 'D' if self._show_index else 'U'
-        cursor_anchor = [self._cell_margin, 0]
-        if not self._show_index:
-            cursor_anchor[1] = self._svg_height
-        self._cursor_manager = cursor._CursorManager(self._cell_size, self._svg, cursor_dir, cursor_anchor)
+        self._cursor_manager = cursor._CursorManager(self._cell_size, self._svg, cursor_dir)
         self._update_svg_size_(len(self._data))
         self._create_new_rects_()
         if self._show_histogram:
@@ -218,19 +213,39 @@ class Vector():
         Returns:
             Cursor: Return the new created Cursor object.
         """
-        res_cursor = self._cursor_manager.new_cursor(self, name, offset)
+        cursor_anchor = [self._cell_margin, 0]
+        if self._show_index:
+            cursor_anchor[1] = self._cursor_manager.get_cursor_height()
+        else:
+            cursor_anchor[1] = self._svg_height
+        res_cursor = self._cursor_manager.new_cursor(name, offset, cursor_anchor)
         self._update_svg_size_(len(self._data))
         if self._show_index:
             self._update_rects_position_()
             self._update_subscripts_position_()
         return res_cursor
 
+    def remove_cursor(self, cursor):
+        """Remove one cursor from Vector and it's SVG representation.
+
+        Args:
+            cursor (Cursor): The cursor object to be removed.
+        """
+        self._cursor_manager.remove_cursor(cursor._id)
+
 
     def __getitem__(self, index):
         """
         Args:
             index (int): The index position of the cell to be accessed.
+
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
         """
+        if type(index) is cursor.Cursor:
+            index = index._index
+        elif type(index) is not int:
+            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
             index %= len(self._data)
         rid = self._index2rect[index]
@@ -244,7 +259,14 @@ class Vector():
         Args:
             index (int): The index position of the cell to be updated.
             val (printable): New value for the cell.
+        
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
         """
+        if type(index) is cursor.Cursor:
+            index = index._index
+        elif type(index) is not int:
+            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
             index %= len(self._data)
         rid = self._index2rect[index]
@@ -283,7 +305,8 @@ class Vector():
             str: The SVG representation of current Vector.
         """
         # Update the color of the cell tracker.
-        self._update_svg_size_(len(self._data) + len(self._rect_disappear))
+        all_data_num = len(self._data) + len(self._rect_disappear)
+        self._update_svg_size_(all_data_num)
         for (rid, color) in self._frame_trace_old:
             if rid not in self._cell_tcs.keys():
                 continue
@@ -310,12 +333,13 @@ class Vector():
             self._svg.add_animate_move(rid, (self._rect_move[rid]*(self._cell_size+self._cell_margin), 0) , (0, self._delay), bessel=False)
         if self._show_index:
             if len(self._index2text) > len(self._data):
-                for i in range(len(self._index2text)-len(self._data)):
-                    self._svg.delete_element(self._index2text[-1])
-                    self._index2text.pop()
+                for i in range(len(self._data), len(self._index2text)):
+                    self._svg.delete_element(self._index2text[i])
+                    self._index2text.pop(i)
             elif len(self._index2text) < len(self._data):
                 self._create_new_subscripts_(len(self._index2text), len(self._data))
         self._rect_move.clear()
+        self._cursor_manager.refresh_cursors(all_data_num, (0, self._delay), False)
         res = self._svg._repr_svg_()
         # Clear the animation effect, update the SVG content, and prepare for the next frame.
         self._svg.clear_animates()
@@ -390,11 +414,9 @@ class Vector():
             self._svg_height = self._cell_size + 2*self._cell_margin
             if self._show_index:
                 self._svg_height += self._label_font_size
-        if self._cursor_manager:
-            self._svg_height += self._cursor_manager.get_cursors_margin()
+        self._svg_height += self._cursor_manager.get_cursors_margin()
         self._svg_width = data_num*self._cell_size+(data_num+1)*self._cell_margin
         self._svg.update_svg_size(self._svg_width, self._svg_height)
-
 
     def _create_new_rects_(self):
         for i in range(len(self._data)):
@@ -416,15 +438,15 @@ class Vector():
     def _create_new_subscripts_(self, st, ed):
         for i in range(st, ed):
             pos_x = self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25
-            pos_y = self._svg_height - self._cell_margin + self._get_cursor_offset_()
+            pos_y = self._svg_height - self._cell_margin
             tid = self._svg.add_text_element((pos_x, pos_y), i, font_size=self._label_font_size)
-            self._index2text.append(tid)
+            self._index2text[i] = tid
 
     def _update_subscripts_position_(self):
-        for i in range(len(self._index2text)):
+        for i, gid in self._index2text.items():
             gid = self._index2text[i]
             pos_x = self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25
-            pos_y = self._svg_height - self._cell_margin + self._get_cursor_offset_()
+            pos_y = self._svg_height - self._cell_margin
             self._svg.update_text_element(gid, (pos_x, pos_y))
 
     def _get_cursor_offset_(self):
