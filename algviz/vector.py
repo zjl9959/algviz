@@ -73,6 +73,10 @@ class Vector():
         Args:
             index (int): The subscript index to insert value. (Insert before index)
             val (printable): The value to insert into vector.
+
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
         if len(self._data) == 0:
             self.append(val)
@@ -125,6 +129,8 @@ class Vector():
             index (int): The index position of value to pop out.
 
         Raises:
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
             Exception: No item in vector to pop!
         """
         if index == None:
@@ -247,6 +253,7 @@ class Vector():
 
         Raises:
             TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
         if type(index) is cursor.Cursor:
             index = index._index
@@ -268,6 +275,7 @@ class Vector():
         
         Raises:
             TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
         if type(index) is cursor.Cursor:
             index = index._index

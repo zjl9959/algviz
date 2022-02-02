@@ -65,6 +65,20 @@ def test_visit_elements():
         visit_elems.append(vec[i])
     res.add_case(equal(expect_results, visit_elems), 'Random visit',
                  visit_elems, expect_results)
+    # Test index out of range.
+    case_ok = False
+    try:
+        vec[-1] = 2
+    except RuntimeError:
+        case_ok = True
+    res.add_case(case_ok, 'Index out of range.')
+    # Test invalid index type.
+    case_ok = False
+    try:
+        vec['abc'] = 3
+    except TypeError:
+        case_ok = True
+    res.add_case(case_ok, 'Invalid index type.')
     return res
 
 
