@@ -111,6 +111,7 @@ class _CursorManager:
         self._cursors_info = dict()             # key:cursor_id; value:cursor_gid in SVG.
         self._old_cursors_index = dict()        # key:cursor_id; value:cursor_index.
         self._new_cursors_index = dict()        # key:cursor_id; value:cursor_index.
+        self._cursor_moves = dict()             # Cache the cursor move since last frame. key:cursor_id; value:(cursor_move_delt_x, cursor_move_delt_y).
 
     def new_cursor(self, name, offset, anchor):
         """Create a new cursor object and track it.
@@ -146,15 +147,25 @@ class _CursorManager:
             self._new_cursors_index.pop(cursor_id)
 
     def get_cursors_margin(self):
+        """
+        Returns:
+            float: The sum of all the cursors height.
+        """
         return len(self._cursors_info) * self._cursor_height
 
     def get_cursor_height(self):
+        """
+        Returns:
+            float: Single cursor's height.
+        """
         return self._cursor_height
 
     def on_cursor_updated(self, cursor_id, new_index):
+        """Called when cursor's index changed.
+        """
         self._new_cursors_index[cursor_id] = new_index
 
-    def refresh_cursors(self, max_index, time, strict=True):
+    def refresh_cursors_animation(self, max_index, time, strict=True):
         """Refresh all the animations in cursors node.
         
         Args:
@@ -162,9 +173,8 @@ class _CursorManager:
             time (tuple(float, float)): (begin, end) The begin and end time of cursor move animation.
             strict (boolean): Wheather the index value of cursor can be rounded by max_index.
         """
-        for cursor_id in self._cursors_info.keys():
-            if cursor_id not in self._new_cursors_index:
-                continue
+        self._cursor_moves.clear()
+        for cursor_id in self._new_cursors_index.keys():
             move_delt_x, move_delt_y = 0, 0
             old_index = self._old_cursors_index[cursor_id]
             if old_index < 0 or old_index >= max_index:
@@ -185,6 +195,15 @@ class _CursorManager:
                 move_delt_x = (new_index - old_index)*self._cell_size
             cursor_gid = self._cursors_info[cursor_id]
             self._svg.add_animate_move(cursor_gid, (move_delt_x, move_delt_y), time, False)
+            self._cursor_moves[cursor_id] = (move_delt_x, move_delt_y)
         # Update the cached data.
         for cursor_id in self._new_cursors_index:
             self._old_cursors_index[cursor_id] = self._new_cursors_index[cursor_id]
+
+    def update_cursors_position(self):
+        """Update all the cursors position to the latest state.
+        """
+        for cursor_id in self._new_cursors_index.keys():
+            cursor_move = self._cursor_moves[cursor_id]
+            cursor_gid = self._cursors_info[cursor_id]
+            self._svg.update_cursor_element(cursor_gid, cursor_move)

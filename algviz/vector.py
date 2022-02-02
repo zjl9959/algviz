@@ -339,7 +339,7 @@ class Vector():
             elif len(self._index2text) < len(self._data):
                 self._create_new_subscripts_(len(self._index2text), len(self._data))
         self._rect_move.clear()
-        self._cursor_manager.refresh_cursors(all_data_num, (0, self._delay), False)
+        self._cursor_manager.refresh_cursors_animation(all_data_num, (0, self._delay), False)
         res = self._svg._repr_svg_()
         # Clear the animation effect, update the SVG content, and prepare for the next frame.
         self._svg.clear_animates()
@@ -359,6 +359,7 @@ class Vector():
         for rid in self._rect_appear:
             self._svg.update_rect_element(rid, opacity=True)
         self._rect_appear.clear()
+        self._cursor_manager.update_cursors_position()
         return res
     
 

@@ -361,6 +361,46 @@ class SvgTable():
         return int(gid)
 
 
+    def update_cursor_element(self, gid, new_pos):
+        """Update the cursor's position.
+
+        Args:
+            gid (int): The unique ID of the cursor to be updated.
+            new_pos (delt_x:float, delt_y:float): New position of the cursor's arrow top, relative to cursor's old position.
+        """
+        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        if g is None:
+            return
+        # Update cursor arrow polyine's position.
+        arrows = g.getElementsByTagName('polyline')
+        for svg_arrow in arrows:
+            arrow_points = svg_arrow.getAttribute('points')
+            new_arrow_points = ''
+            for points in arrow_points.split(' '):
+                (point_x, point_y) = points.split(',')
+                new_arrow_points += '{:.2f},{:.2f} '.format(
+                    float(point_x)+new_pos[0], float(point_y)+new_pos[1])
+            svg_arrow.setAttribute('points', new_arrow_points.strip(' '))
+        # Update cursor text's position.
+        txts = g.getElementsByTagName('text')
+        for t in txts:
+            text_pos_x = float(t.getAttribute('x')) + new_pos[0]
+            text_pos_y = float(t.getAttribute('y')) + new_pos[1]
+            t.setAttribute('x', '{:.2f}'.format(text_pos_x))
+            t.setAttribute('y', '{:.2f}'.format(text_pos_y))
+        # Update cursor tail line's position.
+        lines = g.getElementsByTagName('line')
+        for svg_line in lines:
+            line_x1  = float(svg_line.getAttribute('x1')) + new_pos[0]
+            line_y1  = float(svg_line.getAttribute('y1')) + new_pos[1]
+            line_x2  = float(svg_line.getAttribute('x2')) + new_pos[0]
+            line_y2  = float(svg_line.getAttribute('y2')) + new_pos[1]
+            svg_line.setAttribute('x1', '{:.2f}'.format(line_x1))
+            svg_line.setAttribute('y1', '{:.2f}'.format(line_y1))
+            svg_line.setAttribute('x2', '{:.2f}'.format(line_x2))
+            svg_line.setAttribute('y2', '{:.2f}'.format(line_y2))
+
+
     def clear_animates(self):
         """Clear all the animations in this SvgTable.
         """
