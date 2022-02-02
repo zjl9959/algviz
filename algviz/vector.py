@@ -217,9 +217,8 @@ class Vector():
         """
         res_cursor = self._cursor_manager.new_cursor(name, offset)
         self._update_svg_size_(len(self._data))
-        if self._show_index:
-            self._update_rects_position_()
-            self._update_subscripts_position_()
+        self._update_rects_position_()
+        self._update_subscripts_position_()
         return res_cursor
 
     def remove_cursor(self, cursor):

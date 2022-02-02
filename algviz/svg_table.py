@@ -318,9 +318,9 @@ class SvgTable():
         svg_arrow.setAttribute('stroke', util.rgbcolor2str(color))
         g.appendChild(svg_arrow)
         # Create the text name node.
-        txt_font_size = 0
-        if name is not None:
-            txt_font_size = util.text_font_size(cursor[3], '{}'.format(name))
+        txt_font_size = util.text_font_size(cursor[3], '{}'.format(name))
+        txt_font_size = min(14, txt_font_size)
+        if name is not None and txt_font_size < cursor[4]:
             t = self._dom.createElement('text')
             t.setAttribute('class', 'txt')
             txt_pos_x, txt_pos_y = cursor[0], cursor[1] + cursor[4] - txt_font_size*0.5

@@ -108,8 +108,10 @@ class _CursorManager:
         self._cell_margin = margins[1]           # The margin between cells.
         self._svg = svg                         # The SVGTable object in Vector or Table.
         self._dir = dir                         # The direction of the cursor's arrow (U:up, D:down, L:left, R:right).
-        self._cursor_height = 0.5 * self._cell_size     # The total height of a cursor (arrow and label).
-        self._cursor_offset = 0.1 * self._cell_size     # Cursor_offset = cursor_id*self._cursor_offset.
+        # The total height of a cursor (arrow and label).
+        self._cursor_height = min(20, 0.4 * self._cell_size)
+        # Cursor_offset = cursor_id*self._cursor_offset.
+        self._cursor_offset = 1
         self._cursors_info = dict()             # key:cursor_id; value:cursor_gid in SVG.
         self._old_cursors_index = dict()        # key:cursor_id; value:cursor_index.
         self._new_cursors_index = dict()        # key:cursor_id; value:cursor_index.
