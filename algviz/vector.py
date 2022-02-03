@@ -81,7 +81,7 @@ class Vector():
         if len(self._data) == 0:
             self.append(val)
         if type(index) is cursor.Cursor:
-            index = index._index
+            index = index.index()
         elif type(index) is not int:
             raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
@@ -136,7 +136,7 @@ class Vector():
         if index == None:
             index = len(self._data) - 1
         elif type(index) is cursor.Cursor:
-            index = index._index
+            index = index.index()
         elif type(index) is not int:
             raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if len(self._data) == 0:
@@ -256,7 +256,7 @@ class Vector():
             RuntimeError:  Vector index=xxx out of range!
         """
         if type(index) is cursor.Cursor:
-            index = index._index
+            index = index.index()
         elif type(index) is not int:
             raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
@@ -278,7 +278,7 @@ class Vector():
             RuntimeError:  Vector index=xxx out of range!
         """
         if type(index) is cursor.Cursor:
-            index = index._index
+            index = index.index()
         elif type(index) is not int:
             raise TypeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):

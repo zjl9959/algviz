@@ -25,12 +25,38 @@ kcursor_colors = (
 )
 
 class Cursor:
-    """Random access cursor class.
+    """A cursor is a display object to show the current index of Vector or Table(row/column).
 
-    Provide common mathematics operators like +,-,*,//,==,!=,>,<.
-    The lhs is this cursor object and the rhs is a integer number or a cursor object.
+    A cursor object must be created from it's related Vector/Table object.
+    Otherwise the disaplyed SVG can not track it's index change.
+    You can access an element in it's related Vector/Table object.
+    The index in cursor's should be an integer number.
+    
+    For example:
+        i = vector.new_cursor('i')  # Create a cursor point to vector object.
+        vector[i] = 3               # Set the cursor's index(0) element to 3 in vector.
+    
+    This class provide mathematics operations like: +, -, *, //.
+    So you can change the cursor's index by do these operators on itself.
+    But you can not assgin a integer number into a cursor directly.
+    And you should only assign the result of mathematics operations into the cursor itself.
+    Instead, use update method in cursor to update it's index.
+    
+    For example:
+        i = vector.new_cursor('i')  # The index in cursor i is 0.
+        i = i + 1                   # The index in cursor i is 1.
+        i.update(10)                # The index in cursor i is 10.
 
+    This class provide compare operations like: >, <, >=, <=, ==, !=.
+    So you can do these operations between a cursor and an integer number or other cursor.
+
+    For example:
+        i = vector.new_cursor('i', 3)   # The index in cursor i is 3.
+        j = vector.new_cursor('j', 5)   # The index in cursor j is 5.
+        i < 10                          # True: 3 < 10 is true.
+        i > j                           # False: 3 > 5 is false.
     """
+
     def __init__(self, manager, id, offset=0):
         self._manager = manager         # This cursor's related manager.
         self._id = id                   # The unique id of the cursor in it's related Vector or Table.
@@ -39,6 +65,22 @@ class Cursor:
     def _on_cursor_updated_(self, new_index):
         if self._manager:
             self._manager.on_cursor_updated(self._id, new_index)
+
+    def index(self):
+        """
+        Returns:
+            int: The cursor's current index value.
+        """
+        return self._index
+
+    def update(self, new_index):
+        """Update the cursor's index manually.
+
+        Args:
+            new_index (int): The new index assigned to the cursor.
+        """
+        self._index = _get_rhs_index(new_index)
+        self._on_cursor_updated_(self._index)
 
     # Mathmatics operators.
     def __add__(self, other):
