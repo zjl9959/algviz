@@ -35,17 +35,6 @@ class Cursor:
     For example:
         i = vector.new_cursor('i')  # Create a cursor point to vector object.
         vector[i] = 3               # Set the cursor's index(0) element to 3 in vector.
-    
-    This class provide mathematics operations like: +, -, *, //.
-    So you can change the cursor's index by do these operators on itself.
-    But you can not assgin a integer number into a cursor directly.
-    And you should only assign the result of mathematics operations into the cursor itself.
-    Instead, use update method in cursor to update it's index.
-    
-    For example:
-        i = vector.new_cursor('i')  # The index in cursor i is 0.
-        i = i + 1                   # The index in cursor i is 1.
-        i.update(10)                # The index in cursor i is 10.
 
     This class provide compare operations like: >, <, >=, <=, ==, !=.
     So you can do these operations between a cursor and an integer number or other cursor.
@@ -83,35 +72,31 @@ class Cursor:
         self._on_cursor_updated_(self._index)
 
     # Mathmatics operators.
-    def __add__(self, other):
-        new_index = self._index + _get_rhs_index(other)
-        self._on_cursor_updated_(new_index)
-        return Cursor(self._manager, self._id, new_index)
+    def inc(self, other=1):
+        """Increase the index value in cursor.
+        
+        Args:
+            other: The increment value, can be int or Cursor.
 
-    def __sub__(self, other):
-        new_index = self._index - _get_rhs_index(other)
-        self._on_cursor_updated_(new_index)
-        return Cursor(self._manager, self._id, new_index)
+        Returns:
+            int: The new index value in cursor.
+        """
+        self._index += _get_rhs_index(other)
+        self._on_cursor_updated_(self._index)
+        return self._index
 
-    def __mul__(self, other):
-        new_index = self._index * _get_rhs_index(other)
-        self._on_cursor_updated_(new_index)
-        return Cursor(self._manager, self._id, new_index)
+    def dec(self, other=1):
+        """Decrease the index value in cursor.
+        
+        Args:
+            other: The decrement value, can be int or Cursor.
 
-    def __pow__(self, other):
-        new_index = self._index ** _get_rhs_index(other)
-        self._on_cursor_updated_(new_index)
-        return Cursor(self._manager, self._id, new_index)
-
-    def __floordiv__(self, other):
-        new_index = self._index // _get_rhs_index(other)
-        self._on_cursor_updated_(new_index)
-        return Cursor(self._manager, self._id, new_index)
-
-    def __mod__(self, other):
-        new_index = self._index % _get_rhs_index(other)
-        self._on_cursor_updated_(new_index)
-        return Cursor(self._manager, self._id, new_index)
+        Returns:
+            int: The new index value in cursor.
+        """
+        self._index -= _get_rhs_index(other)
+        self._on_cursor_updated_(self._index)
+        return self._index
 
     # Compare operators.
     def __lt__(self, other):
