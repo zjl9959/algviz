@@ -78,14 +78,7 @@ class Vector():
             TypeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
-        if len(self._data) == 0:
-            self.append(val)
-        if type(index) is cursor.Cursor:
-            index = index.index()
-        elif type(index) is not int:
-            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
-        if index < 0 or index >= len(self._data):
-            raise RuntimeError('Vector index={} out of range!'.format(index))
+        index = self._check_index_type_and_range_(index)
         # Add a new rectangle node and animation to SVG.
         rect_pos_x = self._cell_size*index+self._cell_margin*(index+1)
         rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
@@ -131,18 +124,11 @@ class Vector():
         Raises:
             TypeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
-            Exception: No item in vector to pop!
         """
         if index == None:
             index = len(self._data) - 1
-        elif type(index) is cursor.Cursor:
-            index = index.index()
-        elif type(index) is not int:
-            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
-        if len(self._data) == 0:
-            raise Exception('No item in vector to pop!')
-        if index < 0 or index >= len(self._data):
-            raise RuntimeError('Vector index={} out of range!'.format(index))
+        else:
+            index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
         for i in range(index, len(self._data)-1):
             rrid = self._index2rect[i+1]
@@ -172,7 +158,13 @@ class Vector():
         """Swap the two cells positon in Vector.
         Args:
             index1, index2 (int): The two index positions to be swapped.
+        
+        Raises:
+            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError:  Vector index=xxx out of range!
         """
+        index1 = self._check_index_type_and_range_(index1)
+        index2 = self._check_index_type_and_range_(index2)
         rid1 = self._index2rect[index1]
         rid2 = self._index2rect[index2]
         self._index2rect[index1] = rid2
@@ -244,6 +236,9 @@ class Vector():
             cursor (Cursor): The cursor object to be removed.
         """
         self._cursor_manager.remove_cursor(cursor._id)
+        self._update_svg_size_(len(self._data))
+        self._update_rects_position_()
+        self._update_subscripts_position_()
 
 
     def __getitem__(self, index):
@@ -255,12 +250,7 @@ class Vector():
             TypeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
-        if type(index) is cursor.Cursor:
-            index = index.index()
-        elif type(index) is not int:
-            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
-        if index < 0 or index >= len(self._data):
-            raise RuntimeError('Vector index={} out of range!'.format(index))
+        index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
         self._cell_tcs[rid].add(util._getElemColor)
         self._frame_trace.append((rid, util._getElemColor, False))
@@ -277,12 +267,7 @@ class Vector():
             TypeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
-        if type(index) is cursor.Cursor:
-            index = index.index()
-        elif type(index) is not int:
-            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
-        if index < 0 or index >= len(self._data):
-            raise RuntimeError('Vector index={} out of range!'.format(index))
+        index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
         self._cell_tcs[rid].add(util._setElemColor)
         self._frame_trace.append((rid, util._setElemColor, False))
@@ -463,3 +448,15 @@ class Vector():
             pos_x = self._cell_size*(i+0.5)+self._cell_margin*(i+1)-self._label_font_size*len(str(i))*0.25
             pos_y = self._svg_height - self._cell_margin
             self._svg.update_text_element(gid, (pos_x, pos_y))
+
+    def _check_index_type_and_range_(self, index):
+        res = None
+        if type(index) is int:
+            res = index
+        elif type(index) is cursor.Cursor:
+            res = index.index()
+        else:
+            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
+        if index < 0 or index >= len(self._data):
+            raise RuntimeError('Vector index={} out of range!'.format(index))
+        return res

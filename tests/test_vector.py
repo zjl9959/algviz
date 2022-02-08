@@ -186,6 +186,45 @@ def test_mark_elements():
     return res
 
 
+def test_vector_cursor():
+    res = TestResult()
+    viz = algviz.Visualizer()
+    vec_data = [1, 2, 3, 4, 5]
+    vec = viz.createVector(vec_data)
+    # Test access elements by vector cursor.
+    results, expect_results = list(), [2, 1, 4, 5]
+    i = vec.new_cursor('i', 1)
+    results.append(vec[i])
+    results.append(vec[i.dec()])
+    results.append(vec[i.inc(3)])
+    i.update(4)
+    results.append(vec[i])
+    res.add_case(equal(results, expect_results), 'Access elements', results, expect_results)
+    # Test modify elements by vector cursor.
+    j = vec.new_cursor('j', 3)
+    expect_results = [2, 3, 4, 7, -5]
+    if j < i:
+        j.update(i.index())
+        if j == 4:
+            vec[j] = -5
+        if j != i.index()-1:
+            vec.insert(j, 7)
+        if j <= 4:
+            vec.pop(j.dec(4))
+    vec._repr_svg_()        # Call this to skip animation frame.
+    vec_elems = get_vector_elements(vec._repr_svg_())
+    res.add_case(equal(vec_elems, expect_results), 'Modify vector',
+                 vec_elems, expect_results)
+    # Test index out of range.
+    case_ok = False
+    try:
+        vec[j.dec()] = 2
+    except RuntimeError:
+        case_ok = True
+    res.add_case(case_ok, 'Index out of range.')
+    return res
+
+
 def get_vector_elements(svg_str):
     '''
     @function: Parse vector elements from it's display SVG string.

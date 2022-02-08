@@ -46,10 +46,10 @@ class Cursor:
         i > j                           # False: 3 > 5 is false.
     """
 
-    def __init__(self, manager, id, offset=0):
+    def __init__(self, manager, id, index=0):
         self._manager = manager         # This cursor's related manager.
         self._id = id                   # The unique id of the cursor in it's related Vector or Table.
-        self._index = offset            # The current index of cursor.
+        self._index = index             # The current index of cursor.
 
     def _on_cursor_updated_(self, new_index):
         if self._manager:
@@ -139,56 +139,84 @@ class _CursorManager:
         self._cursor_height = min(20, 0.4 * self._cell_size)
         # Cursor_offset = cursor_id*self._cursor_offset.
         self._cursor_offset = 1
-        self._cursors_info = dict()             # key:cursor_id; value:cursor_gid in SVG.
+        self._cursors_info = dict()             # key:cursor_id; value:(cursor_gid, cursor_color, cursor_name) in SVG.
+        self._cursors_id_list = list()          # Keep the sequence of cursors id by create time.
         self._old_cursors_index = dict()        # key:cursor_id; value:cursor_index.
         self._new_cursors_index = dict()        # key:cursor_id; value:cursor_index.
         self._cursor_moves = dict()             # Cache the cursor move since last frame. key:cursor_id; value:(cursor_move_delt_x, cursor_move_delt_y).
 
-    def new_cursor(self, name, offset):
+    def new_cursor(self, name, index):
         """Create a new cursor object and track it.
         """
         # Update old cursor's position.
-        for gid in self._cursors_info.values():
+        for cid in self._cursors_id_list:
+            gid = self._cursors_info[cid][0]
             if self._dir == 'R':
                 self._svg.update_cursor_element(gid, (self._cursor_height, 0))
             else:
                 self._svg.update_cursor_element(gid, (0, self._cursor_height))
+        # Create a new cursor and setup it's position and color.
         cursor_id = self._next_cursor_id
         self._next_cursor_id += 1
-        # Calculate cursor's position information according to it's index.
-        offset_sign = 1 if cursor_id % 2 else -1
-        cursor_offset = cursor_id*self._cursor_offset*offset_sign
-        cursor_pos_x = self._svg_margin + offset*(self._cell_size + self._cell_margin) + self._cell_size*0.5
-        cursor_pos_y = self.get_cursors_occupy()
-        if self._dir == 'R':
-            cursor_pos_x = self.get_cursors_occupy()
-            cursor_pos_y = self._svg_margin + offset*(self._cell_size + self._cell_margin) + self._cell_size*0.5
-        cursor_height = self._cursor_height * (cursor_id + 1)
-        cursor_pos = (cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height)
-        cursor_color = kcursor_colors[cursor_id % len(kcursor_colors)]
+        cursor_seq = len(self._cursors_id_list)
+        cursor_pos = self._calculate_cursor_position_(cursor_seq, index)
+        cursor_color = kcursor_colors[cursor_seq % len(kcursor_colors)]
         cursor_node = self._svg.add_cursor_element(cursor_pos, cursor_color, name, self._dir)
-        self._cursors_info[cursor_id] = cursor_node
-        self._old_cursors_index[cursor_id] = offset
-        return Cursor(self, cursor_id, offset)
+        # Record the cursor's position and offset information.
+        self._cursors_id_list.append(cursor_id)
+        self._cursors_info[cursor_id] = (cursor_node, cursor_color, name)
+        self._old_cursors_index[cursor_id] = index
+        return Cursor(self, cursor_id, index)
 
     def remove_cursor(self, cursor_id):
         """Untrack the specific cursor from this cursor manager.
         """
+        if cursor_id not in self._cursors_id_list:
+            return
+        cursor_seq = self._cursors_id_list.index(cursor_id)
+        # Update the cursors who's sequence ahead of the cursor to be removed.
+        for i in range(cursor_seq):
+            cid = self._cursors_id_list[i]
+            if cid not in self._cursors_info:
+                print('[WARNING] _CursorManager.remove_cursor cursor {} not found in cursors_info.'.format(cid))
+                continue
+            gid = self._cursors_info[cid][0]
+            if self._dir == 'R':
+                self._svg.update_cursor_element(gid, (-self._cursor_height, 0))
+            else:
+                self._svg.update_cursor_element(gid, (0, -self._cursor_height))
+        # Update the cursors who's sequence behind the cursor to be removed.
+        for i in range(cursor_seq, len(self._cursors_id_list)):
+            cid = self._cursors_id_list[i]
+            if cid not in self._cursors_info:
+                print('[WARNING] _CursorManager.remove_cursor cursor {} not found in cursors_info.'.format(cid))
+                continue
+            cursor_info = self._cursors_info[cid]
+            # The SVGTable class don't provide a update cursor's information interface,
+            # so we need to delete the cursor node in SVG and create a new one with updated information.
+            self._svg.delete_element(cursor_info[0])
+            cursor_index = 0
+            if cid in self._old_cursors_index:
+                cursor_index = self._old_cursors_index[cid]
+            cursor_pos = self._calculate_cursor_position_(i, cursor_index)
+            cursor_node = self._svg.add_cursor_element(cursor_pos, cursor_info[1], cursor_info[2], self._dir)
+            self._cursors_info[cid] = (cursor_node, cursor_info[1], cursor_info[2])
+        # Remove the cursor in SVG.
         if cursor_id in self._cursors_info:
-            gid = self._cursors_info[cursor_id]
-            self._svg.remove_element(gid)
-            self._cursors_info.pop(cursor_id)
+            gid = self._cursors_info[cursor_id][0]
+            self._svg.delete_element(gid)
         if cursor_id in self._old_cursors_index:
             self._old_cursors_index.pop(cursor_id)
         if cursor_id in self._new_cursors_index:
             self._new_cursors_index.pop(cursor_id)
+        self._cursors_id_list.remove(cursor_id)
 
     def get_cursors_occupy(self):
         """
         Returns:
             float: The sum of all the cursors height.
         """
-        return self._next_cursor_id * self._cursor_height + self._svg_margin
+        return len(self._cursors_id_list) * self._cursor_height + self._svg_margin
 
     def on_cursor_updated(self, cursor_id, new_index):
         """Called when cursor's index changed.
@@ -216,7 +244,7 @@ class _CursorManager:
                 move_delt_y = (new_index - old_index) * (self._cell_size + self._cell_margin)
             else:
                 move_delt_x = (new_index - old_index) * (self._cell_size + self._cell_margin)
-            cursor_gid = self._cursors_info[cursor_id]
+            cursor_gid = self._cursors_info[cursor_id][0]
             self._svg.add_animate_move(cursor_gid, (move_delt_x, move_delt_y), time, False)
             self._cursor_moves[cursor_id] = (move_delt_x, move_delt_y)
         # Update the cached data.
@@ -228,5 +256,16 @@ class _CursorManager:
         """
         for cursor_id in self._new_cursors_index.keys():
             cursor_move = self._cursor_moves[cursor_id]
-            cursor_gid = self._cursors_info[cursor_id]
+            cursor_gid = self._cursors_info[cursor_id][0]
             self._svg.update_cursor_element(cursor_gid, cursor_move)
+
+    def _calculate_cursor_position_(self, cursor_seq, index):
+        offset_sign = 1 if cursor_seq % 2 else -1
+        cursor_offset = cursor_seq*self._cursor_offset*offset_sign
+        cursor_pos_x = self._svg_margin + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+        cursor_pos_y = self._cursor_height * (cursor_seq + 1)
+        if self._dir == 'R':
+            cursor_pos_x = cursor_pos_y
+            cursor_pos_y = self._svg_margin + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+        cursor_height = self._cursor_height * (cursor_seq + 1)
+        return (cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height)
