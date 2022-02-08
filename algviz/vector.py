@@ -55,12 +55,19 @@ class Vector():
         self._label_font_size = int(min(12, self._cell_size*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
         self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
+        # Create rect elements for initial data.
+        for i in range(len(self._data)):
+            rect_pos_x = self._cell_size*i+self._cell_margin*(i+1)
+            rect_pos_y = self._cell_margin
+            rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
+            rid = self._svg.add_rect_element(rect, text=self._data[i])
+            self._cell_tcs[rid] = util.TraceColorStack()
+            self._index2rect[i] = rid
         # Initial cursor manager.
         self._cursor_manager = cursor._CursorManager(
             self._cell_size, self._svg, 'D', (self._cell_margin, self._cell_margin))
         # Update SVG and rects size.
         self._update_svg_size_(len(self._data))
-        self._create_new_rects_()
         if self._show_histogram:
             self._update_bar_height_()
         if self._show_index:
@@ -229,13 +236,15 @@ class Vector():
         self._update_subscripts_position_()
         return res_cursor
 
-    def remove_cursor(self, cursor):
+    def remove_cursor(self, cursor_obj):
         """Remove one cursor from Vector and it's SVG representation.
 
         Args:
-            cursor (Cursor): The cursor object to be removed.
+            cursor_obj (Cursor): The cursor object to be removed.
         """
-        self._cursor_manager.remove_cursor(cursor._id)
+        if type(cursor_obj) != cursor.Cursor:
+            return
+        self._cursor_manager.remove_cursor(cursor_obj._id)
         self._update_svg_size_(len(self._data))
         self._update_rects_position_()
         self._update_subscripts_position_()
@@ -417,15 +426,6 @@ class Vector():
         self._svg_height += self._cursor_manager.get_cursors_occupy()
         self._svg_width = data_num*self._cell_size+(data_num+1)*self._cell_margin
         self._svg.update_svg_size(self._svg_width, self._svg_height)
-
-    def _create_new_rects_(self):
-        for i in range(len(self._data)):
-            rect_pos_x = self._cell_size*i+self._cell_margin*(i+1)
-            rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
-            rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
-            rid = self._svg.add_rect_element(rect, text=self._data[i])
-            self._cell_tcs[rid] = util.TraceColorStack()
-            self._index2rect[i] = rid
 
     def _update_rects_position_(self):
         for i, gid in self._index2rect.items():

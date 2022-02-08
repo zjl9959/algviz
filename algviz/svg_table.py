@@ -124,7 +124,7 @@ class SvgTable():
     
 
     def update_text_element(self, gid, pos=None, text=None, font_size=None, fill=None):
-        """Add a new text element into this SvgTable.
+        """Update the text element's position and text string/font/color in this SvgTable.
         
         Args:
             gid (int): The unique ID of the rectangle to be updated.
