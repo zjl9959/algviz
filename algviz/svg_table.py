@@ -333,7 +333,7 @@ class SvgTable():
             elif dir == 'R':
                 txt_pos_x = cursor[0] - cursor[4] + txt_font_size*0.5
                 txt_pos_y = cursor[1]
-                t.setAttribute('transform', 'rotate(90, {}, {})'.format(txt_pos_x, txt_pos_y))
+                t.setAttribute('transform', 'rotate(-90, {}, {})'.format(txt_pos_x, txt_pos_y))
             t.setAttribute('x', '{:.2f}'.format(txt_pos_x))
             t.setAttribute('y', '{:.2f}'.format(txt_pos_y))
             t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
@@ -384,8 +384,12 @@ class SvgTable():
         # Update cursor text's position.
         txts = g.getElementsByTagName('text')
         for t in txts:
-            text_pos_x = float(t.getAttribute('x')) + new_pos[0]
-            text_pos_y = float(t.getAttribute('y')) + new_pos[1]
+            if t.hasAttribute('transform'):
+                text_pos_x = float(t.getAttribute('x')) - new_pos[1]
+                text_pos_y = float(t.getAttribute('y')) + new_pos[0]
+            else:
+                text_pos_x = float(t.getAttribute('x')) + new_pos[0]
+                text_pos_y = float(t.getAttribute('y')) + new_pos[1]
             t.setAttribute('x', '{:.2f}'.format(text_pos_x))
             t.setAttribute('y', '{:.2f}'.format(text_pos_y))
         # Update cursor tail line's position.

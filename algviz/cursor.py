@@ -138,7 +138,7 @@ class _CursorManager:
         # The total height of a cursor (arrow and label).
         self._cursor_height = min(20, 0.4 * self._cell_size)
         # Cursor_offset = cursor_id*self._cursor_offset.
-        self._cursor_offset = 1
+        self._cursor_offset = 2
         self._cursors_info = dict()             # key:cursor_id; value:(cursor_gid, cursor_color, cursor_name) in SVG.
         self._cursors_id_list = list()          # Keep the sequence of cursors id by create time.
         self._old_cursors_index = dict()        # key:cursor_id; value:cursor_index.
@@ -261,7 +261,7 @@ class _CursorManager:
 
     def _calculate_cursor_position_(self, cursor_seq, index):
         offset_sign = 1 if cursor_seq % 2 else -1
-        cursor_offset = cursor_seq*self._cursor_offset*offset_sign
+        cursor_offset = ((cursor_seq+1)//2)*self._cursor_offset*offset_sign
         cursor_pos_x = self._svg_margin + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
         cursor_pos_y = self._cursor_height * (cursor_seq + 1)
         if self._dir == 'R':
