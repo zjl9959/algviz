@@ -128,9 +128,9 @@ class Table():
                 self._col_index2text[c] = gid
         # Add row and column cursor managers for table.
         self._row_cursor_mgr = cursor._CursorManager(self._cell_size,
-            self._svg, 'R', (self._cell_margin, self._cell_margin))
+            self._svg, 'R', (self._cell_margin, 0))
         self._col_cursor_mgr = cursor._CursorManager(self._cell_size,
-            self._svg, 'D', (self._cell_margin, self._cell_margin))
+            self._svg, 'D', (self._cell_margin, 0))
         self._update_svg_size_()
     
 
@@ -222,26 +222,38 @@ class Table():
         raise Exception("[ERROR]Not implement!")
 
 
-    def new_cursor(self, name=None, offset=0, is_row=True):
-        """Create a new cursor to track the rows or columns in table.
+    def new_row_cursor(self, name=None, offset=0):
+        """Create a new cursor to track the rows in table.
         
         Args:
             name (str): The cursor's name to be displayed.
             offset (int): The cursor's initital index offset.
-            is_row (bool): Wheather this cursor index to the row in table.
-                True: this cursor displayed in the left side of table to index the row.
-                False: this cursor displayed in the top side of table to index the columns.
         
         Returns:
             Cursor: Return the new created Cursor object.
         """
         res_cursor = None
-        if is_row:
-            res_cursor = self._row_cursor_mgr.new_cursor(name, offset)
-            res_cursor._dir = 'R'
-        else:
-            res_cursor = self._col_cursor_mgr.new_cursor(name, offset)
-            res_cursor._dir = 'U'
+        res_cursor = self._row_cursor_mgr.new_cursor(name, offset)
+        res_cursor._dir = 'R'
+        self._update_svg_size_()
+        self._update_rects_position_()
+        self._update_subscripts_position_()
+        return res_cursor
+
+
+    def new_col_cursor(self, name=None, offset=0):
+        """Create a new cursor to track the columns in table.
+        
+        Args:
+            name (str): The cursor's name to be displayed.
+            offset (int): The cursor's initital index offset.
+        
+        Returns:
+            Cursor: Return the new created Cursor object.
+        """
+        res_cursor = None
+        res_cursor = self._col_cursor_mgr.new_cursor(name, offset)
+        res_cursor._dir = 'U'
         self._update_svg_size_()
         self._update_rects_position_()
         self._update_subscripts_position_()
@@ -308,10 +320,11 @@ class Table():
                 self._frame_trace_old.append((gid, color))
         self._row_cursor_mgr.refresh_cursors_animation(self._row, (0, self._delay))
         self._col_cursor_mgr.refresh_cursors_animation(self._col, (0, self._delay))
+        res_svg = self._svg._repr_svg_()
         self._frame_trace.clear()
         self._row_cursor_mgr.update_cursors_position()
         self._col_cursor_mgr.update_cursors_position()
-        return self._svg._repr_svg_()
+        return res_svg
 
 
     def _update_svg_size_(self):
