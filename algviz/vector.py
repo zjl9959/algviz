@@ -64,8 +64,8 @@ class Vector():
             self._cell_tcs[rid] = util.TraceColorStack()
             self._index2rect[i] = rid
         # Initial cursor manager.
-        self._cursor_manager = cursor._CursorManager(
-            self._cell_size, self._svg, 'D', (self._cell_margin, self._cell_margin))
+        self._cursor_manager = cursor._CursorManager(self._cell_size, self._svg, 'D',
+            (self._cell_margin, self._cell_margin), self._cell_margin)
         # Update SVG and rects size.
         self._update_svg_size_(len(self._data))
         if self._show_histogram:
