@@ -195,7 +195,7 @@ class _CursorManager:
             else:
                 self._svg.update_cursor_element(gid, (0, -self._cursor_height))
         # Update the cursors who's sequence behind the cursor to be removed.
-        for i in range(cursor_seq, len(self._cursors_id_list)):
+        for i in range(cursor_seq+1, len(self._cursors_id_list)):
             cid = self._cursors_id_list[i]
             if cid not in self._cursors_info:
                 print('[WARNING] _CursorManager.remove_cursor cursor {} not found in cursors_info.'.format(cid))
@@ -207,7 +207,12 @@ class _CursorManager:
             cursor_index = 0
             if cid in self._old_cursors_index:
                 cursor_index = self._old_cursors_index[cid]
-            cursor_pos = self._calculate_cursor_position_(i, cursor_index)
+            cursor_pos = self._calculate_cursor_position_(i-1, cursor_index)
+            cursor_pos_correct = (len(self._cursors_id_list)-i-1)*self._cursor_height
+            if self._dir == 'R':
+                cursor_pos[0] += cursor_pos_correct
+            else:
+                cursor_pos[1] += cursor_pos_correct
             cursor_node = self._svg.add_cursor_element(cursor_pos, cursor_info[1], cursor_info[2], self._dir)
             self._cursors_info[cid] = (cursor_node, cursor_info[1], cursor_info[2])
         # Remove the cursor in SVG.
@@ -290,4 +295,4 @@ class _CursorManager:
             cursor_pos_x = self._svg_margin[0] + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
             cursor_pos_y = self._cursor_height * (cursor_seq + 1) + self._cursor_margin
         cursor_height = self._cursor_height * (cursor_seq + 1)
-        return (cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height)
+        return [cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height]
