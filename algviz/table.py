@@ -88,7 +88,7 @@ class Table():
         self._delay = 0                     # Animation frame delay time, used to adapt Visualizer class.
         self._next_row = 0                  # Used to mark which row the current iterated is on for the table.
         self._cell_size = cell_size         # The rectangle cells size(width and height) in table.
-        self._cell_margin = 3               # The cell margin between the elements in table.
+        self._cell_margin = 3               # The cell margin between cell and SVG side.
         self._show_index = show_index       # Wheather to show subscript of rows and columns index in table.
         self._label_font_size = 0           # The font size of the subscript labels in table.
         self._index2rect = dict()           # Map the row and column index into rectangle's gid in SVG.
@@ -128,9 +128,9 @@ class Table():
                 self._col_index2text[c] = gid
         # Add row and column cursor managers for table.
         self._row_cursor_mgr = cursor._CursorManager(self._cell_size,
-            self._svg, 'R', (self._cell_margin, 0))
+            self._svg, 'R', (self._cell_margin, self._cell_margin), 0)
         self._col_cursor_mgr = cursor._CursorManager(self._cell_size,
-            self._svg, 'D', (self._cell_margin, 0))
+            self._svg, 'D', (self._cell_margin, self._cell_margin), 0)
         self._update_svg_size_()
     
 
@@ -235,6 +235,8 @@ class Table():
         res_cursor = None
         res_cursor = self._row_cursor_mgr.new_cursor(name, offset)
         res_cursor._dir = 'R'
+        self._col_cursor_mgr.on_svg_margin_changed((
+            self._cell_margin+self._row_cursor_mgr.get_cursors_occupy(), self._cell_margin))
         self._update_svg_size_()
         self._update_rects_position_()
         self._update_subscripts_position_()
@@ -254,6 +256,8 @@ class Table():
         res_cursor = None
         res_cursor = self._col_cursor_mgr.new_cursor(name, offset)
         res_cursor._dir = 'U'
+        self._row_cursor_mgr.on_svg_margin_changed((
+            self._cell_margin, self._cell_margin+self._col_cursor_mgr.get_cursors_occupy()))
         self._update_svg_size_()
         self._update_rects_position_()
         self._update_subscripts_position_()
@@ -270,8 +274,12 @@ class Table():
             return
         if cursor_obj._dir == 'R':
             self._row_cursor_mgr.remove_cursor(cursor_obj._id)
+            self._col_cursor_mgr.on_svg_margin_changed((
+                self._cell_margin+self._row_cursor_mgr.get_cursors_occupy(), self._cell_margin))
         elif cursor_obj._dir == 'U':
             self._col_cursor_mgr.remove_cursor(cursor_obj._id)
+            self._row_cursor_mgr.on_svg_margin_changed((
+                self._cell_margin, self._cell_margin+self._col_cursor_mgr.get_cursors_occupy()))
         else:
             return
         self._update_svg_size_()

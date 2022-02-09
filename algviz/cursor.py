@@ -128,15 +128,24 @@ def _get_rhs_index(rhs):
 
 
 class _CursorManager:
-    def __init__(self, cell_size, svg, dir, margins=(0, 0)):
+    def __init__(self, cell_size, svg, dir, svg_margin=(0, 0), cell_margin=0):
+        """
+        Args:
+            cell_size (float): The rectangle cell size in SVG.
+            svg (SvgTable): The SvgTable object to add cursors on.
+            dir (str): The direction of cursors. (Support 'D':down, 'R':right)
+            svg_margin (float, float): The margin between SVG side and cursor's start.
+            cell_margin (float): The margin between rectangle cells.
+        """
         self._next_cursor_id = 0
         self._cell_size = cell_size
-        self._svg_margin = margins[0]            # The margin between cell and SVG.
-        self._cell_margin = margins[1]           # The margin between cells.
+        self._svg_margin = svg_margin           # The margin between cell and SVG.
+        self._cell_margin = cell_margin         # The margin between cells.
         self._svg = svg                         # The SVGTable object in Vector or Table.
         self._dir = dir                         # The direction of the cursor's arrow (U:up, D:down, L:left, R:right).
         # The total height of a cursor (arrow and label).
         self._cursor_height = min(20, 0.4 * self._cell_size)
+        self._cursor_margin = 3                 # The margin between cursor manager and SVG.
         # Cursor_offset = cursor_id*self._cursor_offset.
         self._cursor_offset = 2
         self._cursors_info = dict()             # key:cursor_id; value:(cursor_gid, cursor_color, cursor_name) in SVG.
@@ -216,7 +225,7 @@ class _CursorManager:
         Returns:
             float: The sum of all the cursors height.
         """
-        return len(self._cursors_id_list) * self._cursor_height + self._svg_margin
+        return len(self._cursors_id_list) * self._cursor_height + self._cursor_margin
 
     def on_cursor_updated(self, cursor_id, new_index):
         """Called when cursor's index changed.
@@ -259,13 +268,26 @@ class _CursorManager:
             cursor_gid = self._cursors_info[cursor_id][0]
             self._svg.update_cursor_element(cursor_gid, cursor_move)
 
+    def on_svg_margin_changed(self, svg_margin):
+        """Called when svg margin changed.
+        Args:
+            svg_margin (float, float): The margin between SVG side and cursor's start.
+        """
+        delt_svg_margin = (svg_margin[0] - self._svg_margin[0], svg_margin[1] - self._svg_margin[1])
+        self._svg_margin = svg_margin
+        for cursor_id in self._cursors_id_list:
+            cursor_gid = self._cursors_info[cursor_id][0]
+            self._svg.update_cursor_element(cursor_gid, delt_svg_margin)
+
     def _calculate_cursor_position_(self, cursor_seq, index):
         offset_sign = 1 if cursor_seq % 2 else -1
         cursor_offset = ((cursor_seq+1)//2)*self._cursor_offset*offset_sign
-        cursor_pos_x = self._svg_margin + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
-        cursor_pos_y = self._cursor_height * (cursor_seq + 1)
+        cursor_pos_x, cursor_pos_y = 0, 0
         if self._dir == 'R':
-            cursor_pos_x = cursor_pos_y
-            cursor_pos_y = self._svg_margin + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+            cursor_pos_x = self._cursor_height * (cursor_seq + 1) + self._cursor_margin
+            cursor_pos_y = self._svg_margin[1] + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+        else:
+            cursor_pos_x = self._svg_margin[0] + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+            cursor_pos_y = self._cursor_height * (cursor_seq + 1) + self._cursor_margin
         cursor_height = self._cursor_height * (cursor_seq + 1)
         return (cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height)
