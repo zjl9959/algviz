@@ -252,8 +252,6 @@ class _CursorManager:
                 # The cursor should move out of range if in strict mode.
                 old_index = -1 if old_index < 0 else max_index
             new_index = self._new_cursors_index[cursor_id]
-            if new_index < 0 or new_index >= max_index:
-                new_index = -1 if new_index < 0 else max_index
             if self._dir == 'R':
                 move_delt_y = (new_index - old_index) * (self._cell_size + self._cell_margin)
             else:
