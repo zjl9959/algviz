@@ -11,7 +11,7 @@ License: GPLv3
 
 _getElemColor = (0, 255, 127)       # SpringGreen
 _setElemColor = (255, 165, 0)       # Orange
-_version = '0.1.0'                  # algviz version
+_version = '0.1.1'                  # algviz version
 _url = 'https://algviz.com'         # The homepage for algviz
 
 # Parameter limit for display data objects.
