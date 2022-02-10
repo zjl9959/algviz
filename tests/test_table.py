@@ -36,14 +36,14 @@ def test_create_table():
     try:
         table = viz.createTable(-1, 3, table_data)
         table = viz.createTable(1, 0, table_data)
-    except:
+    except Exception:
         case_ok = True
     res.add_case(case_ok, 'Invalid input row/col')
     # Test invalid input table_data.
     case_ok = True
     try:
         table = viz.createTable(3, 2, [[1, 2], [2]])
-    except:
+    except Exception:
         case_ok = False
     res.add_case(case_ok, 'Invalid input table_data')
     return res
@@ -75,7 +75,7 @@ def test_visit_element():
     case_ok = False
     try:
         table[-1][3]
-    except:
+    except RuntimeError:
         case_ok = True
     res.add_case(case_ok, 'Invalid visit index')
     return res
@@ -106,7 +106,7 @@ def test_update_element():
     case_ok = False
     try:
         table[1][9] = 3
-    except:
+    except RuntimeError:
         case_ok = True
     res.add_case(case_ok, 'Invalid update index')
     return res
@@ -159,6 +159,72 @@ def test_mark_element():
     table_bgcolors = get_table_bgcolors(table._repr_svg_())
     res.add_case(equal_table(table_bgcolors, expect_colors), 'Remove mark',
                  table_bgcolors, expect_colors)
+    return res
+
+
+def test_table_cursor():
+    res = TestResult()
+    viz = algviz.Visualizer()
+    table = viz.createTable(3, 3)
+    # Test modify elements by table cursor.
+    r = table.new_row_cursor('r')
+    c = table.new_col_cursor('c')
+    while r < 3:
+        c.update(0)
+        while c < 3:
+            table[r][c] = r.index()*3+c.index()
+            c.inc()
+        r.inc()
+    expect_results = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8]
+    ]
+    table_elems = get_table_elements(table._repr_svg_())
+    res.add_case(equal_table(table_elems, expect_results), 'Modify elements',
+        table_elems, expect_results)
+    # Test visit elements by table cursor.
+    expect_results = [8, 7, 6, 5, 4, 3, 2, 1, 0]
+    table_elems = list()
+    r.dec(); c.dec()
+    while r >= 0:
+        c.update(2)
+        while c >= 0:
+            table_elems.append(table[r][c])
+            c.dec()
+        r.dec()
+    res.add_case(equal(table_elems, expect_results), 'Visit elements',
+        table_elems, expect_results)
+    # Test index out of range.
+    case_ok = False
+    try:
+        table[r.dec()][c] = 3
+    except RuntimeError:
+        case_ok = True
+    res.add_case(case_ok, 'Index out of range.')
+    return res
+
+
+def test_reshape_table():
+    res = TestResult()
+    viz = algviz.Visualizer()
+    table = viz.createTable(1, 1, [[0]])
+    # Test extend table row and columns.
+    table.reshape(3, 2)
+    table[0][1] = 1
+    table[1][1] = 3
+    assert(table.shape()==(3, 2))
+    expect_results = [[0, 1], [None, 3], [None, None]]
+    table_elems = get_table_elements(table._repr_svg_())
+    res.add_case(equal_table(table_elems, expect_results), 'Extend row and col',
+        table_elems, expect_results)
+    # Test remove row and col.
+    table.reshape(1, 2)
+    assert(table.shape()==(1, 2))
+    expect_results = [[0, 1]]
+    table_elems = get_table_elements(table._repr_svg_())
+    res.add_case(equal_table(table_elems, expect_results), 'Remove row and col',
+        table_elems, expect_results)
     return res
 
 
