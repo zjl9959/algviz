@@ -69,6 +69,13 @@ algviz.logger module
    :undoc-members:
    :show-inheritance:
 
+algviz.cursor module
+--------------------
+.. automodule:: algviz.cursor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 algviz.graph\_node\_base module
 -------------------------------
 
