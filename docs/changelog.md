@@ -3,12 +3,15 @@
 ## algviz 0.1.1
 
 + Add cursor support for Vector and Table.
-    + Add [Cursor]() class to display the cursor position change in Vector and Table.
-    + Add interface [new_cursor](), [remove_cursor]() in Vector.
-    + Add interface [new_row_cursor](), [new_col_cursor]() in Table.
-+ Add [reshape]() interface in Table.
+
+    ![cursor_example](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/vector_cursor_example.svg)
+
+    + Add [Cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.cursor.Cursor) class to display the cursor position change in Vector and Table.
+    + Add interface [new_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.new_cursor), [remove_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.remove_cursor) in Vector.
+    + Add interface [new_row_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.table.Table.new_col_cursor), [new_col_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.table.Table.new_row_cursor) in Table.
++ Add [reshape](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.table.Table.reshape) interface in Table.
 + Compress SVG size for tables with very many cells.
-+ Changed the index range check rule for [insert](), [pop](), [swap]() interfaces in Vector, raise exception when index out of range.
++ Changed the index range check rule for [insert](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.insert), [pop](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.pop), [swap](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.swap) interfaces in Vector, raise exception when index out of range.
 
 ## algviz 0.1.0
 
