@@ -34,6 +34,7 @@ class Cursor:
     
     For example:
         i = vector.new_cursor('i')  # Create a cursor point to vector object.
+
         vector[i] = 3               # Set the cursor's index(0) element to 3 in vector.
 
     This class provide compare operations like: >, <, >=, <=, ==, !=.
@@ -41,8 +42,11 @@ class Cursor:
 
     For example:
         i = vector.new_cursor('i', 3)   # The index in cursor i is 3.
+
         j = vector.new_cursor('j', 5)   # The index in cursor j is 5.
+
         i < 10                          # True: 3 < 10 is true.
+        
         i > j                           # False: 3 > 5 is false.
     """
 
