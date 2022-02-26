@@ -327,18 +327,27 @@ class Vector():
             if not hold:
                 self._frame_trace_old.append((rid, color))
         self._frame_trace.clear()
-        # Add animations of the appearance and disappearance of cells.
-        for rid in self._rect_appear:
-            self._svg.add_animate_appear(rid, (0, self._delay))
+        # Add animations of the disappearance of cells.
+        disappear_animate_end_time = self._delay*0.2
         for rid in self._rect_disappear:
-            self._svg.add_animate_appear(rid, (0, self._delay), appear=False)
+            self._svg.add_animate_appear(rid, (0, disappear_animate_end_time), appear=False)
+        has_move_animate = False
+        move_animate_start_time = disappear_animate_end_time if len(self._rect_disappear) else 0
+        move_animate_end_time = move_animate_start_time + (self._delay-move_animate_start_time)*0.6
         # Add animations of cells movement.
         if self._show_histogram > 0:
             self._update_bar_height_()
         for rid in self._rect_move.keys():
             if self._rect_move[rid] == 0:
                 continue
-            self._svg.add_animate_move(rid, (self._rect_move[rid]*(self._cell_size+self._cell_margin), 0) , (0, self._delay), bessel=False)
+            self._svg.add_animate_move(rid, (self._rect_move[rid]*(self._cell_size+self._cell_margin), 0),
+                                        (move_animate_start_time, move_animate_end_time), bessel=False)
+            has_move_animate = True
+        # Add animations of the appearance of cells.
+        appear_animate_start_time = move_animate_end_time if has_move_animate else move_animate_start_time
+        for rid in self._rect_appear:
+            self._svg.add_animate_appear(rid, (appear_animate_start_time, self._delay))
+        # Update subscript index of vector cells.
         if self._show_index:
             if len(self._index2text) > len(self._data):
                 for i in range(len(self._data), len(self._index2text)):

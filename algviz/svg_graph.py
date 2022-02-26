@@ -309,8 +309,7 @@ class SvgGraph():
         (new_svg, node_idmap, edge_idmap) = self._create_svg_()
         util.add_desc_into_svg(new_svg)
         self._update_svg_size_(new_svg)
-        self._update_svg_nodes_(new_svg, node_idmap)
-        self._update_svg_edges_(new_svg, edge_idmap)
+        self._update_svg_(new_svg, node_idmap, edge_idmap)
         self._update_trace_color_()
         res = self._svg.toxml()
         # Update the SVG content and prepare for the next frame.
@@ -464,22 +463,73 @@ class SvgGraph():
         old_svg_node.appendChild(clone_graph)
     
 
-    def _update_svg_edges_(self, new_svg, edge_idmap):
-        """Add all edge-related animations to SVG.
+    def _update_svg_(self, new_svg, node_idmap, edge_idmap):
+        """Add all node and edge related animations into SVG.
         
         Args:
             new_svg (xmldom.Doucment): The latest SVG object to be updated.
+            node_idmap (ConsecutiveIdMap): The two-way mapping relationship between the node ID in the memory and the ID in the SVG.
             edge_idmap (ConsecutiveIdMap): The two-way mapping relationship between the edge ID in the memory and the ID in the SVG.
         """
+        old_pos = self._get_node_pos_(self._svg)
+        new_pos = self._get_node_pos_(new_svg)
         old_edges = self._get_svg_edges_(self._svg)
         new_edges = self._get_svg_edges_(new_svg)
+        has_disappear_animate = False
+        disappear_animate_end_time = self._delay*0.2
+        # Add the disappearing animation effect for the graph nodes.
+        for old_node_id in old_pos.keys():
+            old_node = self._node_idmap.toAttributeId(old_node_id)
+            if old_node in self._node_disappear:
+                g = old_pos[old_node_id][0]
+                animate = self._svg.createElement('animate')
+                util.add_animate_appear_into_node(g, animate, (0, disappear_animate_end_time), False)
+                has_disappear_animate = True
+        # Update self._node_move because we need to use it when add disappearing animation effor for edges.
+        for old_node_id in old_pos.keys():
+            old_node = self._node_idmap.toAttributeId(old_node_id)
+            if old_node in node_idmap._attr2id.keys():
+                new_node_id = node_idmap.toConsecutiveId(old_node)
+                delt_x = new_pos[new_node_id][1] - old_pos[old_node_id][1]
+                delt_y = new_pos[new_node_id][2] - old_pos[old_node_id][2]
+                if abs(delt_x) > 0.001 or abs(delt_y) > 0.001:  # Minimum delt move check.
+                    self._node_move.add(old_node)
+        # Add the disappearing animation effect for the edge.
         for old_edge_id in old_edges.keys():
             (node1, node2) = self._edge_idmap.toAttributeId(old_edge_id)  # The ID value of the edge (start_node, end_node) in the memory.
-            # Add the disappearing animation effect for the edge.
             if (node1, node2) in self._edge_disappear or node1 in self._node_move or node2 in self._node_move:
                 g = old_edges[old_edge_id]
                 animate = self._svg.createElement('animate')
-                util.add_animate_appear_into_node(g, animate, (0, self._delay), False)
+                util.add_animate_appear_into_node(g, animate, (0, disappear_animate_end_time), False)
+                has_disappear_animate = True
+        # Add the moving animation effect for the graph nodes.
+        has_move_animate = False
+        move_animate_start_time = disappear_animate_end_time if has_disappear_animate else 0
+        move_animate_end_time = move_animate_start_time + (self._delay-move_animate_start_time)*0.6
+        for old_node_id in old_pos.keys():
+            old_node = self._node_idmap.toAttributeId(old_node_id)
+            if old_node in node_idmap._attr2id.keys():
+                new_node_id = node_idmap.toConsecutiveId(old_node)
+                delt_x = new_pos[new_node_id][1] - old_pos[old_node_id][1]
+                delt_y = new_pos[new_node_id][2] - old_pos[old_node_id][2]
+                if abs(delt_x) > 0.001 or abs(delt_y) > 0.001:  # Minimum delt move check.
+                    g = old_pos[old_node_id][0]
+                    animate = self._svg.createElement('animateMotion')
+                    move = (delt_x, delt_y)
+                    util.add_animate_move_into_node(g, animate, move, (move_animate_start_time, move_animate_end_time), False)
+                    has_move_animate = True
+        # Add the appearing animation effect for the graph nodes.
+        graph = util.find_tag_by_id(self._svg, 'g', 'graph1')
+        appear_animate_start_time = move_animate_end_time if has_move_animate else move_animate_start_time
+        for old_node in self._node_appear:
+            new_node_id = node_idmap.toConsecutiveId(old_node)
+            old_node_id = self._node_idmap.toConsecutiveId(old_node)
+            clone_node = new_pos[new_node_id][0].cloneNode(deep=True)
+            clone_node.setAttribute('id', 'node{}'.format(old_node_id))
+            graph.appendChild(clone_node)
+            animate = self._svg.createElement('animate')
+            util.add_animate_appear_into_node(clone_node, animate, (appear_animate_start_time, self._delay), True)
+        # Add the appearing animation effect for the graph edges.
         graph = util.find_tag_by_id(self._svg, 'g', 'graph1')
         for new_edge_id in new_edges.keys():
             (node1, node2) = edge_idmap.toAttributeId(new_edge_id)
@@ -489,47 +539,7 @@ class SvgGraph():
                 clone_edge.setAttribute('id', 'edge{}'.format(old_edge_id))
                 graph.appendChild(clone_edge)
                 animate = self._svg.createElement('animate')
-                util.add_animate_appear_into_node(clone_edge, animate, (0, self._delay), True)
-    
-
-    def _update_svg_nodes_(self, new_svg, node_idmap):
-        """Add all node-related animations to SVG.
-        
-        Args:
-            new_svg (xmldom.Doucment): The latest SVG object to be updated.
-            node_idmap (ConsecutiveIdMap): The two-way mapping relationship between the node ID in the memory and the ID in the SVG.
-        """
-        old_pos = self._get_node_pos_(self._svg)
-        new_pos = self._get_node_pos_(new_svg)
-        for old_node_id in old_pos.keys():
-            old_node = self._node_idmap.toAttributeId(old_node_id)
-            if old_node in node_idmap._attr2id.keys():
-                # Add the moving animation effect for the graph nodes.
-                new_node_id = node_idmap.toConsecutiveId(old_node)
-                delt_x = new_pos[new_node_id][1] - old_pos[old_node_id][1]
-                delt_y = new_pos[new_node_id][2] - old_pos[old_node_id][2]
-                if abs(delt_x) > 0.001 or abs(delt_y) > 0.001:  # Minimum delt move check.
-                    g = old_pos[old_node_id][0]
-                    animate = self._svg.createElement('animateMotion')
-                    move = (delt_x, delt_y)
-                    time = (0, self._delay)
-                    util.add_animate_move_into_node(g, animate, move, time, False)
-                    self._node_move.add(old_node)
-            elif old_node in self._node_disappear:
-                # Add the disappearing animation effect for the graph nodes.
-                g = old_pos[old_node_id][0]
-                animate = self._svg.createElement('animate')
-                util.add_animate_appear_into_node(g, animate, (0, self._delay), False)
-        graph = util.find_tag_by_id(self._svg, 'g', 'graph1')
-        for old_node in self._node_appear:
-            # Add the appearing animation effect for the graph nodes.
-            new_node_id = node_idmap.toConsecutiveId(old_node)
-            old_node_id = self._node_idmap.toConsecutiveId(old_node)
-            clone_node = new_pos[new_node_id][0].cloneNode(deep=True)
-            clone_node.setAttribute('id', 'node{}'.format(old_node_id))
-            graph.appendChild(clone_node)
-            animate = self._svg.createElement('animate')
-            util.add_animate_appear_into_node(clone_node, animate, (0, self._delay), True)
+                util.add_animate_appear_into_node(clone_edge, animate, (appear_animate_start_time, self._delay), True)
     
 
     def _get_node_pos_(self, svg):
