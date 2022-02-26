@@ -18,7 +18,7 @@ Because the algorithm including some recursive operations on a binary tree, whic
 
 This animation below shows one swap subtrees operation in mirror binary tree algorithm:
 
-![mirror_tree_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/mirror_tree_animation.svg)
+![mirror_tree_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/mirror_tree_animation2.svg)
 
 Furthermore, algviz provides some encapsulated data classes which support operations like python builtin class. For example, you can iterate on the [algviz.Vector](https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector) class just like Python list:
 
@@ -43,7 +43,7 @@ These animations below shows multiple operations in one render output:
 + Modify two edges on graph. ([Add](https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode.add) node7 into node5's neighbors;
 [Remove](https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode.remove) nodes4 from node5's neighbors).
 
-    ![graph_move_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/graph_move_animation.svg)
+    ![graph_move_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/graph_move_animation2.svg)
 
 All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/) string format. You can export the animation frames and review it in browser or embedded it in your slides.
 
