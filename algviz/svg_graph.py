@@ -615,6 +615,7 @@ class SvgGraph():
             dot = graphviz.Graph(format='svg')
         if self._type.rankdir == 'LR':
             dot.graph_attr['rankdir'] = 'LR'
+        dot.graph_attr['bgcolor'] = '#00000000'
         dot.node_attr.update(shape='circle', fixedsize='shape', color='#7B7B7B')
         dot.edge_attr.update(arrowhead='vee', color='#7B7B7B')
         for node in self._node_seq:
