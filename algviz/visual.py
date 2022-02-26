@@ -29,16 +29,23 @@ _next_display_id = 0
 
 class Visualizer(): 
 
-    def __init__(self, delay=3.0, wait=False):
+    def __init__(self, delay=2.0, wait=0.5):
         """
         Args:
             delay (float): Animation delay time (in seconds).
-            wait (bool): Whether to wait for the key input to continue execute the code.
+            wait (True/float/int): (True) wait for the key input to continue execute the code.
+                                   (float/int) the wait time before start the next frame of animation.
         """
-        self._delay = 3.0               # Set default delay time for animation as 3.0 seconds.
+        self._delay = 2.0               # Set default delay time for animation as 3.0 seconds.
         if delay > 0:
             self._delay = delay
         self._wait = wait
+        if type(self._wait) != bool and type(self._wait) != float and type(self._wait) != int:
+            self._wait = 0.5
+        if type(self._wait) == bool and self._wait == False:
+            self._wait = 0.5
+        if type(self._wait) != bool and self._wait < 0:
+            self._wait = 0
         
         # The mapping relationship between the display object and the display id.
         self._element2display = weakref.WeakKeyDictionary()
@@ -58,7 +65,7 @@ class Visualizer():
         """
         if delay == None:
             delay = self._delay
-        if self._wait == False:
+        if type(self._wait) == float or type(self._wait) == int:
             for elem in self._element2display.keyrefs():
                 did = self._element2display[elem()]
                 if did not in self._displayed:
@@ -85,7 +92,7 @@ class Visualizer():
                         display.update_display(_NoDisplay(), display_id='algviz_{}'.format(did))
                     display.update_display(_NoDisplay(), display_id='algviz{}'.format(did))
                     self._displayed.remove(did)
-            time.sleep(delay)
+            time.sleep(delay + self._wait)
             return None
         else:
             display.clear_output(wait=True)
