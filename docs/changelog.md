@@ -4,7 +4,7 @@
 
 + Add cursor support for Vector and Table.
 
-    ![cursor_example](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/vector_cursor_example.svg)
+    ![cursor_example](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/vector_cursor_example2.svg)
 
     + Add [Cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.cursor.Cursor) class to display the cursor position change in Vector and Table.
     + Add interface [new_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.new_cursor), [remove_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.remove_cursor) in Vector.

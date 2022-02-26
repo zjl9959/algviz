@@ -8,7 +8,7 @@ Algviz can generate visualize animations for `vector`, `table`, `linked list`, `
 You can bring your code to life after insert a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) into code. All the animations were 
 generated in real time, so you can easily preview the changes of the data with animation like that:
 
-![vector_swap_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/vector_swap_animation.svg)
+![vector_swap_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/vector_swap_animation.svg)
 
 If you come up with a good algorithm that can solve a problem, but don't know how to describe it to your friends. At this point, you can use algviz to create an intuitive animation demo to show to working process of your algorithm. The point is, you don't need to know about fundamentals of animation at all. Leave the dirty work to algviz and just focus on how to implement your algorithm.
 
@@ -18,7 +18,7 @@ Because the algorithm including some recursive operations on a binary tree, whic
 
 This animation below shows one swap subtrees operation in mirror binary tree algorithm:
 
-![mirror_tree_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/mirror_tree_animation.svg)
+![mirror_tree_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/mirror_tree_animation.svg)
 
 Furthermore, algviz provides some encapsulated data classes which support operations like python builtin class. For example, you can iterate on the [algviz.Vector](https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector) class just like Python list:
 
@@ -38,12 +38,12 @@ These animations below shows multiple operations in one render output:
 
 + Two [insert](https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector.insert) operations on vector. (Insert two elements "0" and "1" into vector ["a", "b", "c"].)
 
-    ![vector_move_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/vector_move_animation.svg)
+    ![vector_move_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/vector_move_animation.svg)
 
 + Modify two edges on graph. ([Add](https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode.add) node7 into node5's neighbors;
 [Remove](https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode.remove) nodes4 from node5's neighbors).
 
-    ![graph_move_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz/docs/animation_images/graph_move_animation.svg)
+    ![graph_move_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/graph_move_animation.svg)
 
 All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/) string format. You can export the animation frames and review it in browser or embedded it in your slides.
 
