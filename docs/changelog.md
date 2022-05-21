@@ -3,13 +3,13 @@
 ## algviz 0.1.2
 
 + SVG animation visual effection optimization: divide the animation of disappearing, moving and appearing into different animation sequences.
-+ Add exceptions system for algviz: TODO
++ Add new exceptions: [AlgvizParamError](https://algviz.readthedocs.io/en/latest/api.html#algviz.AlgvizParamError), [AlgvizRuntimeError](https://algviz.readthedocs.io/en/latest/api.html#algviz.AlgvizRuntimeError), [AlgvizFatalError](https://algviz.readthedocs.io/en/latest/api.html#algviz.AlgvizFatalError).
 
 ## algviz 0.1.1
 
 + Add cursor support for Vector and Table.
 
-    ![cursor_example](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/vector_cursor_example2.svg)
+    ![cursor_example](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/vector_cursor_example.svg)
 
     + Add [Cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.cursor.Cursor) class to display the cursor position change in Vector and Table.
     + Add interface [new_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.new_cursor), [remove_cursor](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.vector.Vector.remove_cursor) in Vector.
