@@ -10,9 +10,10 @@ License: GPLv3
 """
 
 
-from . import svg_table
-from . import cursor
-from . import utility as util
+from algviz.svg_table import SvgTable
+from algviz.cursor import Cursor, _CursorManager
+from algviz.utility import TraceColorStack, clamp, _getElemColor, _setElemColor
+from algviz.utility import kMinAnimDelay, kMaxAnimDelay, kMinCellWidth, kMaxCellWidth, kMaxBarHight
 
 
 class Vector():
@@ -36,12 +37,12 @@ class Vector():
         if data is not None:
             for i in range(len(data)):
                 self._data.append(data[i])
-        self._delay = util.clamp(delay, util.kMinAnimDelay, util.kMaxAnimDelay)                 # Animation delay time.
-        self._cell_size = util.clamp(cell_size, util.kMinCellWidth, util.kMaxCellWidth)         # Vector cell size.
+        self._delay = clamp(delay, kMinAnimDelay, kMaxAnimDelay)                 # Animation delay time.
+        self._cell_size = clamp(cell_size, kMinCellWidth, kMaxCellWidth)         # Vector cell size.
         self._show_histogram = False
         if bar > 0:
             self._show_histogram = True            
-        self._bar = util.clamp(bar, util.kMinCellWidth, util.kMaxBarHight)                      # Vector histogram height.
+        self._bar = clamp(bar, kMinCellWidth, kMaxBarHight)                      # Vector histogram height.
         self._show_index = show_index   # Whether to display the vector index label.
         self._cell_margin = 3           # Margin between two adjacent cells.
         self._cell_tcs = dict()         # Record the trajectory access information (node_index: ColorStack) of all cells.
@@ -54,17 +55,17 @@ class Vector():
         self._index2text = dict()       # The mapping relationship from vector index to the text object.
         self._label_font_size = int(min(12, self._cell_size*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
-        self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
+        self._svg = SvgTable(self._cell_margin, self._cell_margin)
         # Create rect elements for initial data.
         for i in range(len(self._data)):
             rect_pos_x = self._cell_size*i+self._cell_margin*(i+1)
             rect_pos_y = self._cell_margin
             rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
             rid = self._svg.add_rect_element(rect, text=self._data[i])
-            self._cell_tcs[rid] = util.TraceColorStack()
+            self._cell_tcs[rid] = TraceColorStack()
             self._index2rect[i] = rid
         # Initial cursor manager.
-        self._cursor_manager = cursor._CursorManager(self._cell_size, self._svg, 'D',
+        self._cursor_manager = _CursorManager(self._cell_size, self._svg, 'D',
             (self._cell_margin, self._cell_margin), self._cell_margin)
         # Update SVG and rects size.
         self._update_svg_size_(len(self._data))
@@ -82,7 +83,7 @@ class Vector():
             val (printable): The value to insert into vector.
 
         Raises:
-            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
         index = self._check_index_type_and_range_(index)
@@ -100,7 +101,7 @@ class Vector():
             else:
                 self._rect_move[rrid] = 1
         self._index2rect[index] = rid
-        self._cell_tcs[rid] = util.TraceColorStack()
+        self._cell_tcs[rid] = TraceColorStack()
         self._rect_appear.append(rid)
         self._data.insert(index, val)
     
@@ -117,7 +118,7 @@ class Vector():
         rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
         rid = self._svg.add_rect_element(rect, text=val)
         self._index2rect[index] = rid
-        self._cell_tcs[rid] = util.TraceColorStack()
+        self._cell_tcs[rid] = TraceColorStack()
         self._rect_appear.append(rid)
         self._data.append(val)
     
@@ -129,7 +130,7 @@ class Vector():
             index (int): The index position of value to pop out.
 
         Raises:
-            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
         if index == None:
@@ -167,7 +168,7 @@ class Vector():
             index1, index2 (int): The two index positions to be swapped.
         
         Raises:
-            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
         index1 = self._check_index_type_and_range_(index1)
@@ -242,7 +243,7 @@ class Vector():
         Args:
             cursor_obj (Cursor): The cursor object to be removed.
         """
-        if type(cursor_obj) != cursor.Cursor:
+        if type(cursor_obj) != Cursor:
             return
         self._cursor_manager.remove_cursor(cursor_obj._id)
         self._update_svg_size_(len(self._data))
@@ -256,13 +257,13 @@ class Vector():
             index (int): The index position of the cell to be accessed.
 
         Raises:
-            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
         index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
-        self._cell_tcs[rid].add(util._getElemColor)
-        self._frame_trace.append((rid, util._getElemColor, False))
+        self._cell_tcs[rid].add(_getElemColor)
+        self._frame_trace.append((rid, _getElemColor, False))
         return self._data[index]
     
 
@@ -273,13 +274,13 @@ class Vector():
             val (printable): New value for the cell.
         
         Raises:
-            TypeError: Index:xxx type is not int or Cursor.
+            RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
         index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
-        self._cell_tcs[rid].add(util._setElemColor)
-        self._frame_trace.append((rid, util._setElemColor, False))
+        self._cell_tcs[rid].add(_setElemColor)
+        self._frame_trace.append((rid, _setElemColor, False))
         label = val
         if val is None:
             label = ''
@@ -462,10 +463,10 @@ class Vector():
         res = None
         if type(index) is int:
             res = index
-        elif type(index) is cursor.Cursor:
+        elif type(index) is Cursor:
             res = index.index()
         else:
-            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
+            raise RuntimeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= len(self._data):
             raise RuntimeError('Vector index={} out of range!'.format(index))
         return res

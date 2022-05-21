@@ -8,15 +8,15 @@ License: GPLv3
 
 """
 
-import weakref
-import time
+from weakref import WeakKeyDictionary
+from time import sleep
 from IPython import display
 
-from . import table
-from . import vector
-from . import svg_graph
-from . import svg_table
-from . import logger
+from algviz.table import Table
+from algviz.vector import Vector
+from algviz.svg_graph import SvgGraph
+from algviz.svg_table import SvgTable
+from algviz.logger import Logger
 
 
 class _NoDisplay():
@@ -48,7 +48,7 @@ class Visualizer():
             self._wait = 0
         
         # The mapping relationship between the display object and the display id.
-        self._element2display = weakref.WeakKeyDictionary()
+        self._element2display = WeakKeyDictionary()
         
         # Record the displayed id. If object is not displayed, call the display interface, otherwise call the update interface.
         self._displayed = set()
@@ -70,7 +70,7 @@ class Visualizer():
                 did = self._element2display[elem()]
                 if did not in self._displayed:
                     if did in self._displayid2name:
-                        svg_title = svg_table.SvgTable(400, 17)
+                        svg_title = SvgTable(400, 17)
                         title_name = '{}:'.format(self._displayid2name[did])
                         svg_title.add_text_element((4, 14), title_name, font_size=14, fill=(0,0,0))
                         display.display(svg_title, display_id='algviz_{}'.format(did))
@@ -79,7 +79,7 @@ class Visualizer():
                     self._displayed.add(did)
                 else:
                     if did in self._displayid2name:
-                        svg_title = svg_table.SvgTable(400, 17)
+                        svg_title = SvgTable(400, 17)
                         title_name = '{}:'.format(self._displayid2name[did])
                         svg_title.add_text_element((4, 14), title_name, font_size=14, fill=(0,0,0))
                         display.update_display(svg_title, display_id='algviz_{}'.format(did))
@@ -92,14 +92,14 @@ class Visualizer():
                         display.update_display(_NoDisplay(), display_id='algviz_{}'.format(did))
                     display.update_display(_NoDisplay(), display_id='algviz{}'.format(did))
                     self._displayed.remove(did)
-            time.sleep(delay + self._wait)
+            sleep(delay + self._wait)
             return None
         else:
             display.clear_output(wait=True)
             for elem in self._element2display.keyrefs():
                 did = self._element2display[elem()]
                 if did in self._displayid2name:
-                    svg_title = svg_table.SvgTable(400, 17)
+                    svg_title = SvgTable(400, 17)
                     title_name = '{}:'.format(self._displayid2name[did])
                     svg_title.add_text_element((4, 14), title_name, font_size=14, fill=(0,0,0))
                     display.display(svg_title, display_id='algviz_{}'.format(did))
@@ -122,7 +122,7 @@ class Visualizer():
             Table: New created Table object.
         """
         global _next_display_id
-        tab = table.Table(row, col, data, cell_size, show_index)
+        tab = Table(row, col, data, cell_size, show_index)
         self._element2display[tab] = _next_display_id
         if name is not None:
             self._displayid2name[_next_display_id] = name
@@ -143,7 +143,7 @@ class Visualizer():
             Vector: New created Vector object.
         """
         global _next_display_id
-        vec = vector.Vector(data, self._delay, cell_size, bar, show_index)
+        vec = Vector(data, self._delay, cell_size, bar, show_index)
         self._element2display[vec] = _next_display_id
         if name is not None:
             self._displayid2name[_next_display_id] = name
@@ -162,7 +162,7 @@ class Visualizer():
             SvgGraph: Created SvgGraph object.
         """
         global _next_display_id
-        gra = svg_graph.SvgGraph(data, directed, self._delay)
+        gra = SvgGraph(data, directed, self._delay)
         self._element2display[gra] = _next_display_id
         if name is not None:
             self._displayid2name[_next_display_id] = name
@@ -180,7 +180,7 @@ class Visualizer():
             Logger: Created Logger object.
         """
         global _next_display_id
-        logg = logger.Logger(buffer_lines)
+        logg = Logger(buffer_lines)
         self._element2display[logg] = _next_display_id
         if name is not None:
             self._displayid2name[_next_display_id] = name

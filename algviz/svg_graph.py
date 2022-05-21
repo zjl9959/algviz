@@ -11,13 +11,18 @@ License: GPLv3
 
 """
 
-import graphviz
-import xml.dom.minidom as xmldom
+from algviz.utility import str2rgbcolor, text_font_size, auto_text_color, rgbcolor2str
+from algviz.utility import add_animate_appear_into_node, add_animate_move_into_node
+from algviz.utility import TraceColorStack, ConsecutiveIdMap, AlgvizFatalError
+from algviz.utility import add_desc_into_svg, find_tag_by_id
+from algviz.graph import GraphNode
+from algviz.tree import BinaryTreeNode, TreeNode
+from algviz.linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 
-from . import utility as util
-from . import graph
-from . import tree
-from . import linked_list
+from graphviz import Digraph as graphviz_Digraph
+from graphviz import Graph as graphviz_Graph
+from graphviz import __version__ as graphviz_version
+from xml.dom.minidom import parseString as mindom_parseString
 
 
 class _SvgGraphType:
@@ -46,19 +51,19 @@ def _get_graph_type_by_data_(data):
         data = data[0]
     layout = _SvgGraphType()
     # Check the data type and specific the layout parameter.
-    if type(data) == graph.GraphNode:
+    if type(data) == GraphNode:
         # For normal graph layout.
         layout = _SvgGraphType('LR')
-    elif type(data) == tree.BinaryTreeNode:
+    elif type(data) == BinaryTreeNode:
         # For binary tree layout.
         layout = _SvgGraphType()
-    elif type(data) == tree.TreeNode:
+    elif type(data) == TreeNode:
         # For normal tree layout.
         layout = _SvgGraphType()
-    elif type(data) == linked_list.ForwardLinkedListNode:
+    elif type(data) == ForwardLinkedListNode:
         # For forward linked list layout.
         layout = _SvgGraphType('LR')
-    elif type(data) == linked_list.DoublyLinkedListNode:
+    elif type(data) == DoublyLinkedListNode:
         # For doubly linked list layout.
         layout = _SvgGraphType('LR')
     return layout
@@ -103,7 +108,7 @@ class SvgGraph():
         # Init graph nodes and svg.
         (self._svg, self._node_idmap, self._edge_idmap) = self._create_svg_()
         self._init_graph_nodes(data)    # Traverse the data and add nodes into this graph.
-        util.add_desc_into_svg(self._svg)
+        add_desc_into_svg(self._svg)
 
 
     def addNode(self, node):
@@ -192,7 +197,7 @@ class SvgGraph():
         """
         if node is not None:
             if node not in self._node_tcs.keys():
-                self._node_tcs[node] = util.TraceColorStack()
+                self._node_tcs[node] = TraceColorStack()
             self._node_tcs[node].add(color)
             self._frame_trace.append((node, color, hold))
     
@@ -209,7 +214,7 @@ class SvgGraph():
         if node1 is not None and node2 is not None:
             edge_key = self._make_edge_tuple_(node1, node2)
             if edge_key not in self._edge_tcs.keys():
-                self._edge_tcs[edge_key] = util.TraceColorStack(bgcolor=(123, 123, 123))
+                self._edge_tcs[edge_key] = TraceColorStack(bgcolor=(123, 123, 123))
             self._edge_tcs[edge_key].add(color)
             self._frame_trace.append((edge_key, color, hold))
     
@@ -224,12 +229,12 @@ class SvgGraph():
         for k in self._node_seq:
             if self._node_tcs[k].remove(color):
                 node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(k))
-                node = util.find_tag_by_id(self._svg, 'g', node_id)
+                node = find_tag_by_id(self._svg, 'g', node_id)
                 self._update_node_color_(node, self._node_tcs[k].color())
         for k in self._edge_label.keys():
             if self._edge_tcs[k].remove(color):
                 edge_id = 'edge{}'.format(self._edge_idmap.toConsecutiveId(k))
-                edge = util.find_tag_by_id(self._svg, 'g', edge_id)
+                edge = find_tag_by_id(self._svg, 'g', edge_id)
                 self._update_edge_color_(edge, self._edge_tcs[k].color())
     
 
@@ -254,14 +259,14 @@ class SvgGraph():
             label (printable): New label content.
         """
         node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(node))
-        svg_node = util.find_tag_by_id(self._svg, 'g', node_id)
+        svg_node = find_tag_by_id(self._svg, 'g', node_id)
         if svg_node is None or label is None:
             return
         ellipse = svg_node.getElementsByTagName('ellipse')[0]
         cx = float(ellipse.getAttribute('cx'))
         cy = float(ellipse.getAttribute('cy'))
         rx = float(ellipse.getAttribute('rx'))
-        fc = util.str2rgbcolor(ellipse.getAttribute('fill'))
+        fc = str2rgbcolor(ellipse.getAttribute('fill'))
         text_svg = svg_node.getElementsByTagName('text')
         if text_svg is not None:
             svg_node.removeChild(text_svg[0])
@@ -271,9 +276,9 @@ class SvgGraph():
         t.setAttribute('font-family', 'Times,serif')
         t.setAttribute('x', '{:.2f}'.format(cx))
         t.setAttribute('y', '{:.2f}'.format(cy))
-        font_size = min(14, util.text_font_size(32, '{}'.format(label)))
+        font_size = min(14, text_font_size(32, '{}'.format(label)))
         t.setAttribute('font-size', '{:.2f}'.format(font_size))
-        t.setAttribute('fill', util.auto_text_color(fc))
+        t.setAttribute('fill', auto_text_color(fc))
         tt = self._svg.createTextNode('{}'.format(label))
         t.appendChild(tt)
         svg_node.appendChild(t)
@@ -288,7 +293,7 @@ class SvgGraph():
         """
         edge_key = self._make_edge_tuple_(node1, node2)
         edge_id = 'edge{}'.format(self._edge_idmap.toConsecutiveId(edge_key))
-        svg_node = util.find_tag_by_id(self._svg, 'g', edge_id)
+        svg_node = find_tag_by_id(self._svg, 'g', edge_id)
         if svg_node is None or label is None:
             return
         text = svg_node.getElementsByTagName('text')[0]
@@ -307,7 +312,7 @@ class SvgGraph():
         # Sequence the graph and add animation effects.
         self._traverse_graph_()
         (new_svg, node_idmap, edge_idmap) = self._create_svg_()
-        util.add_desc_into_svg(new_svg)
+        add_desc_into_svg(new_svg)
         self._update_svg_size_(new_svg)
         self._update_svg_(new_svg, node_idmap, edge_idmap)
         self._update_trace_color_()
@@ -365,10 +370,10 @@ class SvgGraph():
         # Update the cached track color information.
         for node in self._node_appear:
             if node not in self._node_tcs.keys():
-                self._node_tcs[node] = util.TraceColorStack()
+                self._node_tcs[node] = TraceColorStack()
         for edge in self._edge_appear:
             if edge not in self._edge_tcs.keys():
-                self._edge_tcs[edge] = util.TraceColorStack(bgcolor=(123, 123, 123))
+                self._edge_tcs[edge] = TraceColorStack(bgcolor=(123, 123, 123))
         # Update other auxiliary data.
         self._node_seq = new_node_seq
         self._edge_label = new_edge_label
@@ -386,10 +391,10 @@ class SvgGraph():
         """
         if node is not None:
             ellipse = node.getElementsByTagName('ellipse')[0]
-            ellipse.setAttribute('fill', util.rgbcolor2str(color))
+            ellipse.setAttribute('fill', rgbcolor2str(color))
             text = node.getElementsByTagName('text')[0]
             if text is not None:
-                text.setAttribute('fill', util.auto_text_color(color))
+                text.setAttribute('fill', auto_text_color(color))
     
 
     def _update_edge_color_(self, edge, color):
@@ -402,11 +407,11 @@ class SvgGraph():
         """
         if edge is not None:
             path = edge.getElementsByTagName('path')[0]
-            path.setAttribute('stroke', util.rgbcolor2str(color))
+            path.setAttribute('stroke', rgbcolor2str(color))
             polygons = edge.getElementsByTagName('polygon')
             if len(polygons) > 0:
-                polygons[0].setAttribute('fill', util.rgbcolor2str(color))
-                polygons[0].setAttribute('stroke', util.rgbcolor2str(color))
+                polygons[0].setAttribute('fill', rgbcolor2str(color))
+                polygons[0].setAttribute('stroke', rgbcolor2str(color))
     
 
     def _update_trace_color_(self):
@@ -417,23 +422,23 @@ class SvgGraph():
                 if (k, color, False) not in self._frame_trace and (k, color, True) not in self._frame_trace:
                     self._edge_tcs[k].remove(color)
                 edge_id = 'edge{}'.format(self._edge_idmap.toConsecutiveId(k))
-                edge = util.find_tag_by_id(self._svg, 'g', edge_id)
+                edge = find_tag_by_id(self._svg, 'g', edge_id)
                 self._update_edge_color_(edge, self._edge_tcs[k].color())
             elif k in self._node_tcs.keys():
                 if (k, color, False) not in self._frame_trace and (k, color, True) not in self._frame_trace:
                     self._node_tcs[k].remove(color)
                 node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(k))
-                node = util.find_tag_by_id(self._svg, 'g', node_id)
+                node = find_tag_by_id(self._svg, 'g', node_id)
                 self._update_node_color_(node, self._node_tcs[k].color())
         self._frame_trace_old.clear()
         for k, color, hold in self._frame_trace:
             if type(k) == tuple:
                 edge_id = 'edge{}'.format(self._edge_idmap.toConsecutiveId(k))
-                edge = util.find_tag_by_id(self._svg, 'g', edge_id)
+                edge = find_tag_by_id(self._svg, 'g', edge_id)
                 self._update_edge_color_(edge, self._edge_tcs[k].color())
             else:
                 node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(k))
-                node = util.find_tag_by_id(self._svg, 'g', node_id)
+                node = find_tag_by_id(self._svg, 'g', node_id)
                 self._update_node_color_(node, self._node_tcs[k].color())
             if not hold:
                 self._frame_trace_old.append((k, color))
@@ -457,7 +462,7 @@ class SvgGraph():
         old_svg_node.setAttribute('width', '{}pt'.format(width))
         old_svg_node.setAttribute('height', '{}pt'.format(height))
         old_svg_node.setAttribute('viewBox', '0.00 0.00 {:.2f} {:.2f}'.format(width, height))
-        graph = util.find_tag_by_id(new_svg, 'g', 'graph0')
+        graph = find_tag_by_id(new_svg, 'g', 'graph0')
         clone_graph = graph.cloneNode(deep=False)
         clone_graph.setAttribute('id', 'graph1')
         old_svg_node.appendChild(clone_graph)
@@ -483,7 +488,7 @@ class SvgGraph():
             if old_node in self._node_disappear:
                 g = old_pos[old_node_id][0]
                 animate = self._svg.createElement('animate')
-                util.add_animate_appear_into_node(g, animate, (0, disappear_animate_end_time), False)
+                add_animate_appear_into_node(g, animate, (0, disappear_animate_end_time), False)
                 has_disappear_animate = True
         # Update self._node_move because we need to use it when add disappearing animation effor for edges.
         for old_node_id in old_pos.keys():
@@ -500,7 +505,7 @@ class SvgGraph():
             if (node1, node2) in self._edge_disappear or node1 in self._node_move or node2 in self._node_move:
                 g = old_edges[old_edge_id]
                 animate = self._svg.createElement('animate')
-                util.add_animate_appear_into_node(g, animate, (0, disappear_animate_end_time), False)
+                add_animate_appear_into_node(g, animate, (0, disappear_animate_end_time), False)
                 has_disappear_animate = True
         # Add the moving animation effect for the graph nodes.
         has_move_animate = False
@@ -516,10 +521,10 @@ class SvgGraph():
                     g = old_pos[old_node_id][0]
                     animate = self._svg.createElement('animateMotion')
                     move = (delt_x, delt_y)
-                    util.add_animate_move_into_node(g, animate, move, (move_animate_start_time, move_animate_end_time), False)
+                    add_animate_move_into_node(g, animate, move, (move_animate_start_time, move_animate_end_time), False)
                     has_move_animate = True
         # Add the appearing animation effect for the graph nodes.
-        graph = util.find_tag_by_id(self._svg, 'g', 'graph1')
+        graph = find_tag_by_id(self._svg, 'g', 'graph1')
         appear_animate_start_time = move_animate_end_time if has_move_animate else move_animate_start_time
         for old_node in self._node_appear:
             new_node_id = node_idmap.toConsecutiveId(old_node)
@@ -528,9 +533,9 @@ class SvgGraph():
             clone_node.setAttribute('id', 'node{}'.format(old_node_id))
             graph.appendChild(clone_node)
             animate = self._svg.createElement('animate')
-            util.add_animate_appear_into_node(clone_node, animate, (appear_animate_start_time, self._delay), True)
+            add_animate_appear_into_node(clone_node, animate, (appear_animate_start_time, self._delay), True)
         # Add the appearing animation effect for the graph edges.
-        graph = util.find_tag_by_id(self._svg, 'g', 'graph1')
+        graph = find_tag_by_id(self._svg, 'g', 'graph1')
         for new_edge_id in new_edges.keys():
             (node1, node2) = edge_idmap.toAttributeId(new_edge_id)
             if (node1, node2) in self._edge_appear or node1 in self._node_move or node2 in self._node_move:
@@ -539,7 +544,7 @@ class SvgGraph():
                 clone_edge.setAttribute('id', 'edge{}'.format(old_edge_id))
                 graph.appendChild(clone_edge)
                 animate = self._svg.createElement('animate')
-                util.add_animate_appear_into_node(clone_edge, animate, (appear_animate_start_time, self._delay), True)
+                add_animate_appear_into_node(clone_edge, animate, (appear_animate_start_time, self._delay), True)
     
 
     def _get_node_pos_(self, svg):
@@ -552,7 +557,7 @@ class SvgGraph():
             dict(int:tuple(xmldom.Node,float,float)): The map from SVG_node_id to the SVG_node_object and node position.
                 Key is SVG_node_id, value is (SVG_node_object, position_x, position_y).
         """
-        graph = util.find_tag_by_id(svg, 'g', 'graph0')
+        graph = find_tag_by_id(svg, 'g', 'graph0')
         transform = graph.getAttribute('transform')
         translate_index = transform.find('translate')
         delt_x, delt_y = 0, 0
@@ -617,12 +622,12 @@ class SvgGraph():
             AlgvizFatalError: Unsupported graphviz version xxx.
         """
         dot = None
-        node_idmap = util.ConsecutiveIdMap(1)
-        edge_idmap = util.ConsecutiveIdMap(1)
+        node_idmap = ConsecutiveIdMap(1)
+        edge_idmap = ConsecutiveIdMap(1)
         if self._directed:
-            dot = graphviz.Digraph(format='svg')
+            dot = graphviz_Digraph(format='svg')
         else:
-            dot = graphviz.Graph(format='svg')
+            dot = graphviz_Graph(format='svg')
         if self._type.rankdir == 'LR':
             dot.graph_attr['rankdir'] = 'LR'
         dot.graph_attr['bgcolor'] = '#00000000'
@@ -633,7 +638,7 @@ class SvgGraph():
             if node is None:
                 dot.node(name='{}'.format(node_id))
             else:
-                fs = min(14, util.text_font_size(32, str(node)))
+                fs = min(14, text_font_size(32, str(node)))
                 dot.node(name='{}'.format(node_id), label='{}'.format(str(node)), fontsize='{:.2f}'.format(fs))
         for (node1, node2) in self._edge_label.keys():
             label = self._edge_label[(node1, node2)]
@@ -654,5 +659,5 @@ class SvgGraph():
                 callable(getattr(dot, '_repr_image_svg_xml'))
                 raw_svg_str = dot._repr_image_svg_xml()
             except:
-                raise util.AlgvizFatalError('Unsupported graphviz version {}'.format(graphviz.__version__))
-        return (xmldom.parseString(raw_svg_str), node_idmap, edge_idmap)
+                raise AlgvizFatalError('Unsupported graphviz version {}'.format(graphviz_version))
+        return (mindom_parseString(raw_svg_str), node_idmap, edge_idmap)

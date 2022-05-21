@@ -1,5 +1,10 @@
 # Changelog
 
+## algviz 0.1.2
+
++ SVG animation visual effection optimization: divide the animation of disappearing, moving and appearing into different animation sequences.
++ Add exceptions system for algviz: TODO
+
 ## algviz 0.1.1
 
 + Add cursor support for Vector and Table.

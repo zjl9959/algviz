@@ -9,8 +9,7 @@ License: GPLv3
 """
 
 from algviz.utility import AlgvizParamError
-from . import graph_node_base
-NodeBase = graph_node_base.GraphNodeBase
+from algviz.graph_node_base import GraphNodeBase as NodeBase
 
 
 class BinaryTreeNode(NodeBase):

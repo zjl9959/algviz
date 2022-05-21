@@ -12,9 +12,11 @@ License: GPLv3
 
 """
 
-import xml.dom.minidom as xmldom
+from xml.dom.minidom import Document
+from algviz.utility import add_desc_into_svg, add_default_text_style, rgbcolor2str, text_font_size 
+from algviz.utility import auto_text_color, find_tag_by_id, str2rgbcolor, clamp
+from algviz.utility import add_animate_move_into_node, add_animate_appear_into_node, clear_svg_animates
 
-from . import utility as util
 
 class SvgTable():
     def __init__(self, width, height):
@@ -24,7 +26,7 @@ class SvgTable():
             width (float): The width of svg table.
             heigt (float): The height of svg table.
         """
-        self._dom = xmldom.Document()
+        self._dom = Document()
         self._cur_id = 0
         self._svg = self._dom.createElement('svg')
         self._svg.setAttribute('width', '{:.0f}pt'.format(width))
@@ -32,8 +34,8 @@ class SvgTable():
         self._svg.setAttribute('viewBox', '0.00 0.00 {:.2f} {:.2f}'.format(width, height))
         self._svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
         self._dom.appendChild(self._svg)
-        util.add_desc_into_svg(self._dom)
-        util.add_default_text_style(self._dom)
+        add_desc_into_svg(self._dom)
+        add_default_text_style(self._dom)
 
 
     def update_svg_size(self, width, height):
@@ -77,16 +79,16 @@ class SvgTable():
         if angle is True:
             r.setAttribute('rx', '{:.2f}'.format(min(rect[2], rect[3])*0.1))
             r.setAttribute('ry', '{:.2f}'.format(min(rect[2], rect[3])*0.1))
-        r.setAttribute('fill', util.rgbcolor2str(fill))
-        r.setAttribute('stroke', util.rgbcolor2str(stroke))
+        r.setAttribute('fill', rgbcolor2str(fill))
+        r.setAttribute('stroke', rgbcolor2str(stroke))
         g.appendChild(r)
         if text is not None:
             t = self._dom.createElement('text')
             t.setAttribute('class', 'txt')
             t.setAttribute('x', '{:.2f}'.format(rect[0]+rect[2]*0.5))
             t.setAttribute('y', '{:.2f}'.format(rect[1]+rect[3]*0.5))
-            t.setAttribute('font-size', '{:.2f}'.format(util.text_font_size(rect[2], '{}'.format(text))))
-            t.setAttribute('fill', util.auto_text_color(fill))
+            t.setAttribute('font-size', '{:.2f}'.format(text_font_size(rect[2], '{}'.format(text))))
+            t.setAttribute('fill', auto_text_color(fill))
             tt = self._dom.createTextNode('{}'.format(text))
             t.appendChild(tt)
             g.appendChild(t)
@@ -116,7 +118,7 @@ class SvgTable():
         t.setAttribute('y', '{:.2f}'.format(pos[1]))
         t.setAttribute('font-size', '{:.2f}'.format(font_size))
         t.setAttribute('font-family', 'Times,serif')
-        t.setAttribute('fill', util.rgbcolor2str(fill))
+        t.setAttribute('fill', rgbcolor2str(fill))
         tt = self._dom.createTextNode('{}'.format(text))
         t.appendChild(tt)
         g.appendChild(t)
@@ -134,7 +136,7 @@ class SvgTable():
             fill ((R,G,B)): Stroke color of this text element. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 0, 0)
         """
-        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        g = find_tag_by_id(self._svg, 'g', str(gid))
         if g is None:
             return
         t = g.getElementsByTagName('text')
@@ -152,7 +154,7 @@ class SvgTable():
         if font_size != None:
             txt.setAttribute('font-size', '{:.2f}'.format(font_size))
         if fill != None:
-            txt.setAttribute('fill', util.rgbcolor2str(fill))
+            txt.setAttribute('fill', rgbcolor2str(fill))
 
 
     def update_rect_element(self, gid, rect=None, text=None, fill=None, stroke=None, opacity=None):
@@ -166,7 +168,7 @@ class SvgTable():
             stroke ((R,G,B) or None): New stroke color for this rectangle. Keep old stroke color if stroke is None.
             opacity (float or None): New opacity arrtibute for this rectangle. Keep old opacity if opacity is None.
         """
-        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        g = find_tag_by_id(self._svg, 'g', str(gid))
         if g is None:
             return
         rects = g.getElementsByTagName('rect')
@@ -177,9 +179,9 @@ class SvgTable():
         if opacity is not None:
             g.setAttribute('style', 'opacity:{:.0f}'.format(opacity))
         if fill is not None:
-            r.setAttribute('fill', util.rgbcolor2str(fill))
+            r.setAttribute('fill', rgbcolor2str(fill))
             if len(t):
-                t[0].setAttribute('fill', util.auto_text_color(fill))
+                t[0].setAttribute('fill', auto_text_color(fill))
         if rect is not None:
             r.setAttribute('x', '{:.2f}'.format(rect[0]))
             r.setAttribute('y', '{:.2f}'.format(rect[1]))
@@ -191,7 +193,7 @@ class SvgTable():
             if len(t):
                 t[0].setAttribute('x', '{:.2f}'.format(rect[0]+rect[2]*0.5))
                 t[0].setAttribute('y', '{:.2f}'.format(rect[1]+rect[3]*0.5))
-                new_font = util.text_font_size(rect[2], '{}'.format(t[0].firstChild.nodeValue))
+                new_font = text_font_size(rect[2], '{}'.format(t[0].firstChild.nodeValue))
                 t[0].setAttribute('font-size', '{:.2f}'.format(new_font))
         if text is not None:
             if len(t) == 0:
@@ -203,18 +205,18 @@ class SvgTable():
             ry = float(r.getAttribute('y'))
             width = float(r.getAttribute('width'))
             height = float(r.getAttribute('height'))
-            fc = util.str2rgbcolor(r.getAttribute('fill'))
+            fc = str2rgbcolor(r.getAttribute('fill'))
             t.setAttribute('class', 'txt')
             t.setAttribute('x', '{:.2f}'.format(rx+width*0.5))
             t.setAttribute('y', '{:.2f}'.format(ry+height*0.5))
-            t.setAttribute('font-size', '{:.2f}'.format(util.text_font_size(width, '{}'.format(text))))
-            t.setAttribute('fill', util.auto_text_color(fc))
+            t.setAttribute('font-size', '{:.2f}'.format(text_font_size(width, '{}'.format(text))))
+            t.setAttribute('fill', auto_text_color(fc))
             for t_child in t.childNodes:
                 t.removeChild(t_child)
             tt = self._dom.createTextNode('{}'.format(text))
             t.appendChild(tt)
         if stroke is not None:
-            r.setAttribute('stroke', util.rgbcolor2str(stroke))
+            r.setAttribute('stroke', rgbcolor2str(stroke))
     
 
     def delete_element(self, gid):
@@ -223,7 +225,7 @@ class SvgTable():
         Args:
             gid (int): The unique ID of the element to be deleted.
         """
-        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        g = find_tag_by_id(self._svg, 'g', str(gid))
         if g is not None:
             self._svg.removeChild(g)
     
@@ -237,10 +239,10 @@ class SvgTable():
             time (tuple(float, float)): (begin, end) The begin and end time of this animation.
             bessel (bool): Whether to set the path of this move animation as bezier curve.
         """
-        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        g = find_tag_by_id(self._svg, 'g', str(gid))
         if g is not None:
             animate = self._dom.createElement('animateMotion')
-            util.add_animate_move_into_node(g, animate, move, time, bessel)
+            add_animate_move_into_node(g, animate, move, time, bessel)
     
 
     def add_animate_appear(self, gid, time, appear=True):
@@ -251,10 +253,10 @@ class SvgTable():
             time ((begin, end)): The begin and end time of this animation.
             appear (bool): True for appear animation; False for disappear animation.
         """
-        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        g = find_tag_by_id(self._svg, 'g', str(gid))
         if g is not None:
             animate = self._dom.createElement('animate')
-            util.add_animate_appear_into_node(g, animate, time, appear)
+            add_animate_appear_into_node(g, animate, time, appear)
 
 
     def add_cursor_element(self, cursor, color=(123,123,123), name=None, dir='U'):
@@ -281,7 +283,7 @@ class SvgTable():
         g.setAttribute('id', gid)
         self._svg.appendChild(g)
         # Create the arrow "^" node of the cursor.
-        arrow_width = util.clamp(cursor[2]*0.2, 4, 10)*0.5
+        arrow_width = clamp(cursor[2]*0.2, 4, 10)*0.5
         arrow_top_x = cursor[0] + cursor[2]
         arrow_top_y = cursor[1]
         arrow_left_x = arrow_top_x - arrow_width
@@ -315,10 +317,10 @@ class SvgTable():
         svg_arrow = self._dom.createElement('polyline')
         svg_arrow.setAttribute('points', arrow_points)
         svg_arrow.setAttribute('fill', 'none')
-        svg_arrow.setAttribute('stroke', util.rgbcolor2str(color))
+        svg_arrow.setAttribute('stroke', rgbcolor2str(color))
         g.appendChild(svg_arrow)
         # Create the text name node.
-        txt_font_size = util.text_font_size(cursor[3], '{}'.format(name))
+        txt_font_size = text_font_size(cursor[3], '{}'.format(name))
         txt_font_size = min(14, txt_font_size)
         if name is not None and txt_font_size < cursor[4]:
             t = self._dom.createElement('text')
@@ -337,7 +339,7 @@ class SvgTable():
             t.setAttribute('x', '{:.2f}'.format(txt_pos_x))
             t.setAttribute('y', '{:.2f}'.format(txt_pos_y))
             t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
-            t.setAttribute('fill', util.rgbcolor2str(color))
+            t.setAttribute('fill', rgbcolor2str(color))
             tt = self._dom.createTextNode('{}'.format(name))
             t.appendChild(tt)
             g.appendChild(t)
@@ -345,7 +347,7 @@ class SvgTable():
         svg_line = self._dom.createElement('line')
         svg_line.setAttribute('x1', '{:.2f}'.format(arrow_top_x))
         svg_line.setAttribute('y1', '{:.2f}'.format(arrow_top_y))
-        svg_line.setAttribute('stroke', util.rgbcolor2str(color))
+        svg_line.setAttribute('stroke', rgbcolor2str(color))
         line_x2, line_y2 = arrow_top_x, max(arrow_top_y + cursor[4] - txt_font_size * 1.1, arrow_top_y)
         if dir == 'D':
             line_y2 = min(arrow_top_y - cursor[4] + txt_font_size*1.1, arrow_top_y)
@@ -368,7 +370,7 @@ class SvgTable():
             gid (int): The unique ID of the cursor to be updated.
             new_pos (delt_x:float, delt_y:float): New position of the cursor's arrow top, relative to cursor's old position.
         """
-        g = util.find_tag_by_id(self._svg, 'g', str(gid))
+        g = find_tag_by_id(self._svg, 'g', str(gid))
         if g is None:
             return
         # Update cursor arrow polyine's position.
@@ -408,7 +410,7 @@ class SvgTable():
     def clear_animates(self):
         """Clear all the animations in this SvgTable.
         """
-        util.clear_svg_animates(self._svg)
+        clear_svg_animates(self._svg)
     
 
     def _repr_svg_(self):

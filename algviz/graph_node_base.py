@@ -11,7 +11,7 @@ License: GPLv3
 
 """
 
-from . import utility as util
+from algviz.utility import _getElemColor, _setElemColor
 
 
 class GraphNodeBase:
@@ -64,7 +64,7 @@ class GraphNodeBase:
         """
         bind_graphs = object.__getattribute__(self, '_bind_graphs')
         for graph in bind_graphs:
-            graph.markNode(util._getElemColor, self, hold=False)
+            graph.markNode(_getElemColor, self, hold=False)
 
 
     def _on_update_value_(self, value):
@@ -76,7 +76,7 @@ class GraphNodeBase:
         bind_graphs = object.__getattribute__(self, '_bind_graphs')
         for graph in bind_graphs:
             graph._updateNodeLabel(self, value)
-            graph.markNode(util._setElemColor, self, hold=False)
+            graph.markNode(_setElemColor, self, hold=False)
 
 
     def _on_visit_neighbor_(self, neighbor):
@@ -84,7 +84,7 @@ class GraphNodeBase:
         """
         bind_graphs = object.__getattribute__(self, '_bind_graphs')
         for graph in bind_graphs:
-            graph.markEdge(util._getElemColor, self, neighbor, hold=False)
+            graph.markEdge(_getElemColor, self, neighbor, hold=False)
 
     
     def _on_update_neighbor_(self, old_neighbor, new_neighbor):
@@ -102,12 +102,12 @@ class GraphNodeBase:
             return
         if old_neighbor:
             for graph in bind_graphs:
-                graph.markEdge(util._setElemColor, self, old_neighbor, hold=False)
+                graph.markEdge(_setElemColor, self, old_neighbor, hold=False)
         # Mark edge between this node and it's new_neighbor.
         if new_neighbor:
             for graph in bind_graphs:
                 graph.addNode(new_neighbor)
-                graph.markEdge(util._setElemColor, self, new_neighbor, hold=False)
+                graph.markEdge(_setElemColor, self, new_neighbor, hold=False)
 
 
     def bind_graphs(self):

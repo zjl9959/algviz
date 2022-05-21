@@ -76,7 +76,7 @@ def test_visit_elements():
     case_ok = False
     try:
         vec['abc'] = 3
-    except TypeError:
+    except RuntimeError:
         case_ok = True
     res.add_case(case_ok, 'Invalid index type.')
     return res

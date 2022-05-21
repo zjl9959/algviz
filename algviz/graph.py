@@ -8,10 +8,8 @@ License: GPLv3
 
 """
 
-from . import utility as util
-from . import graph_node_base
-
-NodeBase = graph_node_base.GraphNodeBase
+from algviz.utility import AlgvizRuntimeError, _setElemColor
+from algviz.graph_node_base import GraphNodeBase as NodeBase
 
 
 class GraphNeighborIter():
@@ -104,14 +102,14 @@ def updateGraphEdge(node1, node2, edge):
         node1_bind_graphs = node1.bind_graphs()
         for graph in node1_bind_graphs:
             graph._updateEdgeLabel(node1, node2, edge)
-            graph.markEdge(util._setElemColor, node1, node2, hold=False)
+            graph.markEdge(_setElemColor, node1, node2, hold=False)
     node2_neighbors = node2._neighbors
     if node1 in node2_neighbors:
         node2_neighbors[node1] = edge
         node2_bind_graphs = node2.bind_graphs()
         for graph in node2_bind_graphs:
             graph._updateEdgeLabel(node2, node1, edge)
-            graph.markEdge(util._setElemColor, node2, node1, hold=False)
+            graph.markEdge(_setElemColor, node2, node1, hold=False)
 
 
 def parseGraph(nodes, edges, nodes_label=None, directed=True):
@@ -153,5 +151,5 @@ def parseGraph(nodes, edges, nodes_label=None, directed=True):
             if directed == False:
                 nodes_dict[node2].add(nodes_dict[node1], edge_val)
         else:
-            raise util.AlgvizRuntimeError('(paraseGraph) can not find node object for edge {}.'.format(edge))
+            raise AlgvizRuntimeError('(paraseGraph) can not find node object for edge {}.'.format(edge))
     return nodes_dict

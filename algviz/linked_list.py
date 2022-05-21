@@ -19,8 +19,7 @@ License: GPLv3
 
 """
 
-from . import graph_node_base
-NodeBase = graph_node_base.GraphNodeBase
+from algviz.graph_node_base import GraphNodeBase as NodeBase
 
 
 class ForwardLinkedListNode(NodeBase):

@@ -8,9 +8,10 @@ License: GPLv3
 
 """
 
-from . import svg_table
-from . import cursor
-from . import utility
+from algviz.svg_table import SvgTable
+from algviz.cursor import Cursor, _CursorManager
+from algviz.utility import AlgvizParamError, TraceColorStack
+from algviz.utility import _getElemColor, _setElemColor
 
 
 class TableRowIter():
@@ -79,7 +80,7 @@ class Table():
             AlgvizParamError: Table row or col number should > 0.
         """
         if row <=0 or col <=0:
-            raise utility.AlgvizParamError('Table row or col number should > 0.')
+            raise AlgvizParamError('Table row or col number should > 0.')
         self._row = row
         self._col = col
         self._cell_tcs = dict()             # Record the trajectory access information (node_index: ColorStack) of all cells.
@@ -93,7 +94,7 @@ class Table():
         self._label_font_size = 0           # The font size of the subscript labels in table.
         self._index2rect = dict()           # Map the row and column index into rectangle's gid in SVG.
         self._data = [[None for _ in range(self._col)] for _ in range(self._row)]
-        self._svg = svg_table.SvgTable(self._cell_margin, self._cell_margin)
+        self._svg = SvgTable(self._cell_margin, self._cell_margin)
         # Copy data into table.
         if data is not None:
             for r in range(self._row):
@@ -103,9 +104,9 @@ class Table():
                     except:
                         self._data[r][c] = None
         # Add row and column cursor managers for table.
-        self._row_cursor_mgr = cursor._CursorManager(self._cell_size,
+        self._row_cursor_mgr = _CursorManager(self._cell_size,
             self._svg, 'R', (self._cell_margin, self._cell_margin), 0)
-        self._col_cursor_mgr = cursor._CursorManager(self._cell_size,
+        self._col_cursor_mgr = _CursorManager(self._cell_size,
             self._svg, 'D', (self._cell_margin, self._cell_margin), 0)
         self._update_svg_size_()
         # Initial rectangle elemenets in SVG.
@@ -133,7 +134,7 @@ class Table():
             hold (bool): Whether to keep the mark color in future animation frames.
         
         Raises:
-            TypeError: Index:xx type is not int or Cursor.
+            RuntimeError: Index:xx type is not int or Cursor.
             RuntimeError: Table index=xxx out of range.
         """
         r = self._check_index_type_and_range_(r, self._row)
@@ -165,14 +166,14 @@ class Table():
             printable: The value in the specific cell.
 
         Raises:
-            TypeError: Index:xx type is not int or Cursor.
+            RuntimeError: Index:xx type is not int or Cursor.
             RuntimeError: Table index=xxx out of range.
         """
         r = self._check_index_type_and_range_(r, self._row)
         c = self._check_index_type_and_range_(c, self._col)
         gid = self._index2rect[(r, c)]
-        self._cell_tcs[gid].add(utility._getElemColor)
-        self._frame_trace.append((gid, utility._getElemColor, False))
+        self._cell_tcs[gid].add(_getElemColor)
+        self._frame_trace.append((gid, _getElemColor, False))
         return self._data[r][c]
     
 
@@ -184,14 +185,14 @@ class Table():
             val (printable): New value for the cell.
 
         Raises:
-            TypeError: Index:xx type is not int or Cursor.
+            RuntimeError: Index:xx type is not int or Cursor.
             RuntimeError: Table index=xxx out of range.
         """
         r = self._check_index_type_and_range_(r, self._row)
         c = self._check_index_type_and_range_(c, self._col)
         gid = self._index2rect[(r, c)]
-        self._cell_tcs[gid].add(utility._setElemColor)
-        self._frame_trace.append((gid, utility._setElemColor, False))
+        self._cell_tcs[gid].add(_setElemColor)
+        self._frame_trace.append((gid, _setElemColor, False))
         label = val
         if val is None:
             label = ''
@@ -215,7 +216,7 @@ class Table():
             AlgvizParamError: Table row or col number should > 0.
         """
         if row <=0 or col <=0:
-            raise utility.AlgvizParamError('Table row or col number should > 0.')
+            raise AlgvizParamError('Table row or col number should > 0.')
         if row > self._row:
             # Add new rows into table.
             for r in range(self._row, row):
@@ -303,7 +304,7 @@ class Table():
         Args:
             cursor_obj (Cursor): The cursor object to be removed.
         """
-        if type(cursor_obj) != cursor.Cursor:
+        if type(cursor_obj) != Cursor:
             return
         if cursor_obj._dir == 'R':
             self._row_cursor_mgr.remove_cursor(cursor_obj._id)
@@ -329,7 +330,7 @@ class Table():
             TabRowIter: The iterator object for the row in the table.
 
         Raises:
-            TypeError: Index:xx type is not int or Cursor.
+            RuntimeError: Index:xx type is not int or Cursor.
             RuntimeError: Table index=xxx out of range.
         """
         return TableRowOperator(r, self)
@@ -407,10 +408,10 @@ class Table():
         res = None
         if type(index) is int:
             res = index
-        elif type(index) is cursor.Cursor:
+        elif type(index) is Cursor:
             res = index.index()
         else:
-            raise TypeError('Index:{} type is not int or Cursor.'.format(index))
+            raise RuntimeError('Index:{} type is not int or Cursor.'.format(index))
         if index < 0 or index >= max_val:
             raise RuntimeError('Table index={} out of range!'.format(index))
         return res
@@ -421,7 +422,7 @@ class Table():
         rect = (rect_pos_x, rect_pos_y, self._cell_size, self._cell_size)
         gid = self._svg.add_rect_element(rect, self._data[r][c], angle=False)
         self._index2rect[(r, c)] = gid
-        self._cell_tcs[gid] = utility.TraceColorStack()
+        self._cell_tcs[gid] = TraceColorStack()
 
     def _new_row_index_text_in_svg_(self, r):
         pos_x = self._col*self._cell_size+self._cell_margin*2+self._row_cursor_mgr.get_cursors_occupy()

@@ -8,11 +8,11 @@ License: GPLv3
 
 """
 
-import os
+from os import path
 from setuptools import setup
 
-script_path = os.path.split(os.path.realpath(__file__))[0]
-readme_filepath = os.path.join(script_path, 'README.md')
+script_path = path.split(path.realpath(__file__))[0]
+readme_filepath = path.join(script_path, 'README.md')
 long_description_data = ''
 with open(readme_filepath, encoding='utf-8') as f:
     long_description_data = f.read()

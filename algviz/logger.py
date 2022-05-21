@@ -9,9 +9,9 @@ License: GPLv3
 """
 
 
-import xml.dom.minidom as xmldom
+from algviz.utility import get_text_width
 
-from . import utility as util
+from xml.dom.minidom import Document
 
 
 class Logger():
@@ -32,7 +32,7 @@ class Logger():
         self._logs = list()
         self._log_text_nodes = list()
         self._log_text_width = list()
-        self._dom = xmldom.Document()
+        self._dom = Document()
         self._svg = self._dom.createElement('svg')
         self._svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
         self._dom.appendChild(self._svg)
@@ -77,7 +77,7 @@ class Logger():
             text = self._dom.createTextNode('{}'.format(log))
             txt.appendChild(text)
             self._svg.appendChild(txt)
-            self._log_text_width.append(util.get_text_width(log, self._font_size))
+            self._log_text_width.append(get_text_width(log, self._font_size))
             self._log_text_nodes.append(txt)
         # Update svg width and height.
         svg_width = max(self._log_text_width+[0])*0.6 + 10
