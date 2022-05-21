@@ -8,6 +8,7 @@ License: GPLv3
 
 """
 
+from algviz.utility import AlgvizParamError
 from . import graph_node_base
 NodeBase = graph_node_base.GraphNodeBase
 
@@ -202,8 +203,8 @@ def parseTree(tree_info, nodes_label=None):
         TreeNode: The root node of this tree.
 
     Raises:
-        Exception: [ERROR] parseTree: Invalid tree_info, node xxx have more than one parent node!
-        Exception: [ERROR] parseTree: Invalid tree_info, tree has more than one root node.
+        AlgvizParamError: (parseTree) node xxx have more than one parent node!
+        AlgvizParamError: (parseTree) tree has more than one root node.
     """
     # Create TreeNode objects.
     nodes_dict = dict()
@@ -223,7 +224,7 @@ def parseTree(tree_info, nodes_label=None):
                     node_val = nodes_label[child]
                 nodes_dict[child] = TreeNode(node_val)
             else:
-                raise Exception('[ERROR] parseTree: Invalid tree_info, node {} have more than one parent node!'.format(child))
+                raise AlgvizParamError('(parseTree) node {} have more than one parent node!'.format(child))
     # Check and find the root node of this tree.
     root = None
     for node in tree_info.keys():
@@ -231,7 +232,7 @@ def parseTree(tree_info, nodes_label=None):
             if not root:
                 root = node
             else:
-                raise Exception('[ERROR] parseTree: Invalid tree_info, tree has more than one({}, {}) root node.'.format(root, node))
+                raise AlgvizParamError('(parseTree) tree has more than one({}, {}) root node.'.format(root, node))
     # Link the edge between root and it's child.
     for node, children in tree_info.items():
         parent_node = nodes_dict[node]

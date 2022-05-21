@@ -76,10 +76,10 @@ class Table():
             show_index (bool): Whether to display table row and column labels.
         
         Raises:
-            Exception: Table row or col error!
+            AlgvizParamError: Table row or col number should > 0.
         """
         if row <=0 or col <=0:
-            raise Exception('Table row or col error!')
+            raise utility.AlgvizParamError('Table row or col number should > 0.')
         self._row = row
         self._col = col
         self._cell_tcs = dict()             # Record the trajectory access information (node_index: ColorStack) of all cells.
@@ -212,10 +212,10 @@ class Table():
         row, col (int): The new row and column number of the table.
 
         Raises:
-            Exception: Table row or col error!
+            AlgvizParamError: Table row or col number should > 0.
         """
         if row <=0 or col <=0:
-            raise Exception('Table row or col error!')
+            raise utility.AlgvizParamError('Table row or col number should > 0.')
         if row > self._row:
             # Add new rows into table.
             for r in range(self._row, row):

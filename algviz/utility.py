@@ -14,12 +14,32 @@ _setElemColor = (255, 165, 0)       # Orange
 _version = '0.1.1'                  # algviz version
 _url = 'https://algviz.com'         # The homepage for algviz
 
+# Define exceptions for algviz runtime.
+class AlgvizParamError(Exception):
+    def __init__(self, message):
+        super().__init__('[AlgvizParamError] {}'.format(message))
+
+
+class AlgvizRuntimeError(Exception):
+    def __init__(self, message):
+        super().__init__('[AlgvizRuntimeError] {}'.format(message))
+
+
+class AlgvizFatalError(Exception):
+    KFATAL_HELP_INFO = """You can report this bug from link: https://github.com/zjl9959/algviz/issues"""
+    def __init__(self, message):
+        super().__init__('[AlgvizFatalError] {}\n{}'.format(message, self.KFATAL_HELP_INFO))
+
+
 # Parameter limit for display data objects.
 kMinAnimDelay = 0.1         # The minimum animation delay time is 0.1 seconds.
 kMaxAnimDelay = 100.0       # The maximum animation delay time is 100.0 seconds.
 kMinCellWidth = 10.0        # The minimum vector/table cell display width.
 kMaxCellWidth = 100.0       # The maximum vector/table cell display height.
 kMaxBarHight = 1000.0       # The maximum histogram bar height.
+kMaxCharNumInSVGElememt = 10    # The maximum display characters number in SVG elements.
+kMaxCharNumInLogLine = 100   # For each line of log, allow to display more characters.
+
 
 class TraceColorStack():
     """Manage multiple colors on an element, perform color fusion operations.

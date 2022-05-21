@@ -614,7 +614,7 @@ class SvgGraph():
             xmldom.Document: The xmldom.Document object of the SVG.
 
         Raises:
-            Exception: Unsupported graphviz version xxx.
+            AlgvizFatalError: Unsupported graphviz version xxx.
         """
         dot = None
         node_idmap = util.ConsecutiveIdMap(1)
@@ -654,5 +654,5 @@ class SvgGraph():
                 callable(getattr(dot, '_repr_image_svg_xml'))
                 raw_svg_str = dot._repr_image_svg_xml()
             except:
-                raise Exception('Unsupported graphviz version {}'.format(graphviz.__version__))
+                raise util.AlgvizFatalError('Unsupported graphviz version {}'.format(graphviz.__version__))
         return (xmldom.parseString(raw_svg_str), node_idmap, edge_idmap)

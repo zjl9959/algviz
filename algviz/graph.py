@@ -131,7 +131,7 @@ def parseGraph(nodes, edges, nodes_label=None, directed=True):
         dict(printable): All the graph nodes in this graph. Key is node label in nodes parameter, Value is GraphNode object.
     
     Raises:
-        Exception: [ERROR] paraseGraph: can not find node object for edge xxx.
+        AlgvizRuntimeError: (paraseGraph) can not find node object for edge xxx.
 
     """
     # Create nodes for this graph.
@@ -153,5 +153,5 @@ def parseGraph(nodes, edges, nodes_label=None, directed=True):
             if directed == False:
                 nodes_dict[node2].add(nodes_dict[node1], edge_val)
         else:
-            raise Exception('[ERROR] paraseGraph: can not find node object for edge {}.'.format(edge))
+            raise util.AlgvizRuntimeError('(paraseGraph) can not find node object for edge {}.'.format(edge))
     return nodes_dict

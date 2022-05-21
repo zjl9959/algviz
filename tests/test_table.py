@@ -5,6 +5,7 @@
 @license: GPLv3
 '''
 
+from algviz.utility import AlgvizParamError
 from utility import TestCustomPrintableClass, equal, equal_table
 from result import TestResult
 import algviz
@@ -31,19 +32,19 @@ def test_create_table():
     # Test the shape interface of table.
     row, col = table.shape()
     res.add_case(row==3 and col==3, 'Table shape', (row, col), (3, 3))
-    # Test invalid input row/col. (Throw exception if input row, col is invalid)
+    # Test invalid input row/col. (Throw AlgvizParamError if input row, col is invalid)
     case_ok = False
     try:
         table = viz.createTable(-1, 3, table_data)
         table = viz.createTable(1, 0, table_data)
-    except Exception:
+    except AlgvizParamError:
         case_ok = True
     res.add_case(case_ok, 'Invalid input row/col')
     # Test invalid input table_data.
     case_ok = True
     try:
         table = viz.createTable(3, 2, [[1, 2], [2]])
-    except Exception:
+    except AlgvizParamError:
         case_ok = False
     res.add_case(case_ok, 'Invalid input table_data')
     return res

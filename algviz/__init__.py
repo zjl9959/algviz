@@ -18,7 +18,7 @@ from .graph import GraphNode, parseGraph, updateGraphEdge
 from .tree import BinaryTreeNode, TreeNode, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
-from . import utility
+from .utility import _version, AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError
 
 
 colors = {
@@ -64,11 +64,11 @@ __all__ = [
     'BinaryTreeNode', 'TreeNode', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',
-    'colors', 'colorsInfo',
+    'colors', 'colorsInfo', 'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError'
 ]
 
 
 __title__ = 'algviz'
-__version__ = utility._version
+__version__ = _version
 __author__ = 'zjl9959@gmail.com'
 __license__ = 'GNU General Public License (GPLv3)'
