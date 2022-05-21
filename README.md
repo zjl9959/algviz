@@ -7,7 +7,7 @@ Algviz is an algorithm visualization tool for your Python code in Jupyter-notebo
 Algviz can generate visualize animations for `vector`, `table`, `linked list`, `tree` and `graph` data structures.
 You can bring alive animations in your notebook after insert a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) into code. For example, this animation shows a bubble sort algorithm:
 
-![bubble_sort](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/bubble_sort.svg)
+![bubble_sort_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/bubble_sort.svg)
 
 If you come up with a good algorithm that can solve a problem, but don't know how to describe it to your friends. At this point, you can use algviz to create an intuitive animation demo to show to working process of your algorithm. The point is, you don't need to know about fundamentals of animation at all. Leave the dirty work to algviz and just focus on how to implement your algorithm.
 
@@ -31,7 +31,7 @@ for num in vector:              # Iterate over all the elements in vector.
 
 You can modify the data multi-times, and algviz will record all the operations since last time you call the [display](https://algviz.readthedocs.io/en/latest/api.html#algviz.visual.Visualizer.display) interface. Then it will merge all the operations in one animation when you call display next time. So the only thing you need to concern is: `when to call the display interface?`
 
-All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/) string format. You can export the animation frames and review it in browser or embedded it in your slides. *By the way, [algviz.com](https://algviz.com) will support to export the svg with all the display objects and animation sequences for your code in the furture, please stay tuned!*
+All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/) string format. You can export the animation frames and review it in browser or embedded it in your slides. *In the future, [algviz.com](https://algviz.com) will support to export the svg with all the display objects and animation sequences for your code, please stay tuned!*
 
 
 ## Installation
@@ -66,25 +66,17 @@ All the API reference for algviz can be found on [readthedocs](https://algviz.re
 
 ## Examples
 
-There are some example in the [examples](https://github.com/zjl9959/algviz/tree/main/examples) folder. You can download them from github and open the notebook in your local environment.
+The [examples](https://github.com/zjl9959/algviz/tree/main/examples) folder contains some tutorial of how to start with algviz. You can setup your local environment and try them in your notebook. And if you are a google [colab](https://colab.research.google.com/) user, you can try with the google colab links. Try your first cool algviz code and good luck!😀
 
-These is the example notebooks:
 
-+ Example [vector.ipynb](https://github.com/zjl9959/algviz/blob/main/examples/vector.ipynb) shows how to create [Vector](https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector) object and access, modify, mark elements in it.
-+ Example [table.ipynb](https://github.com/zjl9959/algviz/blob/main/examples/table.ipynb) shows how to create [Table](https://algviz.readthedocs.io/en/latest/api.html#algviz.table.Table) object and visit, mark elements in it.
-+ Example [linked_list.ipynb](https://github.com/zjl9959/algviz/blob/main/examples/linked_list.ipynb) shows how to use [ForwardLinkedNode](https://algviz.readthedocs.io/en/latest/api.html#algviz.linked_list.ForwardLinkedListNode) and [DoublyLinkedNode](https://algviz.readthedocs.io/en/latest/api.html#algviz.linked_list.DoublyLinkedListNode) to track and modify different type of linked list.
-+ Example [tree.ipynb](https://github.com/zjl9959/algviz/blob/main/examples/tree.ipynb) shows how to create a [binary tree](https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseBinaryTree) or [normal tree](https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseTree), and use [BinaryTreeNode](https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.BinaryTreeNode) and [TreeNode](https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.TreeNode) to visit, modify the tree.
-+ Example [graph.ipynb](https://github.com/zjl9959/algviz/blob/main/examples/graph.ipynb) shows how to create a directly or undirectly [graph](https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.parseGraph) and use the [GraphNode](https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode) to track or modify graph.
+| Example         |  Github link            | Google Colab link          |  Description                       |
+| :----           | :------                 | :---------                 | :-------                           |
+| **vector**      | [vector.ipynb]          | [vector.ipynb colab]       | Basic operatins on [Vector] class. |
+| **table**       | [table.ipynb]           | [table.ipynb colab]        | Basic operatins on [Table] class.  |
+| **linked list** | [linked_list.ipynb]     | [linked_list.ipynb colab]  | Create linked list and operate [ForwardLinkedNode], [DoublyLinkedNode] classes. |
+| **tree**        | [tree.ipynb]            | [tree.ipynb colab]         | Create [binary tree], [normal tree] and operate [TreeNode], [BinaryTreeNode] classes. |
+| **graph**       | [graph.ipynb]           | [graph.ipynb colab]        | Create [graph] and operate [GraphNode] class. |
 
-### Online Examples
-
-If you are a google [colab](https://colab.research.google.com/) user, you can click the links below to run the notebook on your browser directly.
-
-+ Example [vector.ipynb](https://colab.research.google.com/drive/1RgAoKbiSBXdSvBg65pwu9pJp5bQL1pCs?usp=sharing) on google colab.
-+ Example [table.ipynb](https://colab.research.google.com/drive/1GH6XgKDpUA2GKxiLm5tljp19wUvmnDxO?usp=sharing) on google colab.
-+ Example [linked_list.ipynb](https://colab.research.google.com/drive/1rsg-6irXzQODPi6DUZhtu-pKq_r55hwV?usp=sharing) on google colab.
-+ Example [tree.ipynb](https://colab.research.google.com/drive/138pnzwoS2vdhssZyTx-k5rwBQNb2Hi9N?usp=sharing) on google colab.
-+ Example [graph.ipynb](https://colab.research.google.com/drive/14hF30-N9VGBb5-vkERPuURvmnB9VspU9?usp=sharing) on google colab.
 
 ## Unit Test
 
@@ -113,3 +105,25 @@ Algviz use GNU general pubilc [LICENSE](https://github.com/zjl9959/algviz/blob/m
 + GitHub: https://github.com/zjl9959/algviz
 + PyPi: https://pypi.org/project/algviz/
 + ReadtheDocs: https://algviz.readthedocs.io/en/latest/index.html
+
+
+[Vector]: https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector
+[Table]: https://algviz.readthedocs.io/en/latest/api.html#algviz.table.Table
+[ForwardLinkedNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.linked_list.ForwardLinkedListNode
+[DoublyLinkedNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.linked_list.DoublyLinkedListNode
+[binary tree]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseBinaryTree
+[normal tree]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseTree
+[TreeNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.TreeNode
+[graph]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.parseGraph
+[GraphNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode
+
+[vector.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/vector.ipynb
+[table.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/table.ipynb
+[linked_list.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/linked_list.ipynb
+[tree.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/tree.ipynb
+[graph.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/graph.ipynb
+[vector.ipynb colab]: https://colab.research.google.com/drive/1RgAoKbiSBXdSvBg65pwu9pJp5bQL1pCs?usp=sharing
+[table.ipynb colab]: https://colab.research.google.com/drive/1GH6XgKDpUA2GKxiLm5tljp19wUvmnDxO?usp=sharing
+[linked_list.ipynb colab]: https://colab.research.google.com/drive/1rsg-6irXzQODPi6DUZhtu-pKq_r55hwV?usp=sharing
+[tree.ipynb colab]: https://colab.research.google.com/drive/138pnzwoS2vdhssZyTx-k5rwBQNb2Hi9N?usp=sharing
+[graph.ipynb colab]: https://colab.research.google.com/drive/14hF30-N9VGBb5-vkERPuURvmnB9VspU9?usp=sharing

@@ -10,7 +10,7 @@ License: GPLv3
 
 _getElemColor = (0, 255, 127)       # SpringGreen
 _setElemColor = (255, 165, 0)       # Orange
-_version = '0.1.1'                  # algviz version
+_version = '0.1.2'                  # algviz version
 _url = 'https://algviz.com'         # The homepage for algviz
 KFATAL_HELP_INFO = """You can report this bug from link: https://github.com/zjl9959/algviz/issues"""
 
