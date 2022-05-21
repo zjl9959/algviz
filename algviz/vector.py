@@ -9,7 +9,6 @@ License: GPLv3
 
 """
 
-
 from algviz.svg_table import SvgTable
 from algviz.cursor import Cursor, _CursorManager
 from algviz.utility import TraceColorStack, clamp, _getElemColor, _setElemColor

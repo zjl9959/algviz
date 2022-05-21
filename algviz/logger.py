@@ -8,7 +8,6 @@ License: GPLv3
 
 """
 
-
 from algviz.utility import get_text_width
 
 from xml.dom.minidom import Document

@@ -11,7 +11,8 @@ License: GPLv3
 from algviz.svg_table import SvgTable
 from algviz.cursor import Cursor, _CursorManager
 from algviz.utility import AlgvizParamError, TraceColorStack
-from algviz.utility import _getElemColor, _setElemColor
+from algviz.utility import _getElemColor, _setElemColor, clamp
+from algviz.utility import kMinCellWidth, kMaxCellWidth
 
 
 class TableRowIter():
@@ -88,7 +89,8 @@ class Table():
         self._frame_trace = list()          # Record the relevant information of the cell to be refreshed in the next frame.
         self._delay = 0                     # Animation frame delay time, used to adapt Visualizer class.
         self._next_row = 0                  # Used to mark which row the current iterated is on for the table.
-        self._cell_size = cell_size         # The rectangle cells size(width and height) in table.
+        cell_size = clamp(cell_size, kMinCellWidth, kMaxCellWidth)
+        self._cell_size =  cell_size        # The rectangle cells size(width and height) in table.
         self._cell_margin = 3               # The cell margin between cell and SVG side.
         self._show_index = show_index       # Wheather to show subscript of rows and columns index in table.
         self._label_font_size = 0           # The font size of the subscript labels in table.

@@ -12,7 +12,6 @@ License: GPLv3
 
 """
 
-
 from .visual import Visualizer
 from .graph import GraphNode, parseGraph, updateGraphEdge
 from .tree import BinaryTreeNode, TreeNode, parseBinaryTree, parseTree
