@@ -2,6 +2,8 @@
 
 ## Introduce
 
+![algviz_logo](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg)
+
 Algviz is an algorithm visualization tool for your Python code in Jupyter-notebook.
 
 Algviz can generate visualize animations for `vector`, `table`, `linked list`, `tree` and `graph` data structures.
