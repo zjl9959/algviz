@@ -1,8 +1,8 @@
-# Welcome to Algviz.com
+# Welcome to algviz.com
 
 ## 🎈Algviz editor will be coming soon!
 
-**Algviz editor is an online code runner to run your Python code with algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) in web browser. The editor will support to export the svg with all the display objects and animation sequences for your code, please stay tuned!**
+**`Algviz editor` is an online code runner to run your Python code with algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) in web browser. The editor will support to export the svg with all the display objects and animation sequences for your code, please stay tuned!**
 
 ## Introduce
 
@@ -107,9 +107,9 @@ Algviz use GNU general pubilc [LICENSE](https://github.com/zjl9959/algviz/blob/m
 
 ## Links
 
-+ GitHub: https://github.com/zjl9959/algviz
-+ PyPi: https://pypi.org/project/algviz/
-+ ReadtheDocs: https://algviz.readthedocs.io/en/latest/index.html
++ [GitHub](https://github.com/zjl9959/algviz)
++ [PyPi](https://pypi.org/project/algviz/)
++ [ReadtheDocs](https://algviz.readthedocs.io/en/latest/index.html)
 
 
 [Vector]: https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector
