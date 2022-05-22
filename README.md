@@ -2,12 +2,12 @@
 
 ## Introduce
 
-![algviz_logo](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg)
+<div align=center><img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/></div>
 
 Algviz is an algorithm visualization tool for your Python code in Jupyter-notebook.
 
 Algviz can generate visualize animations for `vector`, `table`, `linked list`, `tree` and `graph` data structures.
-You can bring alive animations in your notebook after insert a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) into code. For example, this animation shows a bubble sort algorithm:
+You can bring alive animations in your notebook after insert a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) into code. For example, this animation shows a [bubble sort algorithm]:
 
 ![bubble_sort_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/bubble_sort.svg)
 
@@ -73,10 +73,10 @@ The [examples](https://github.com/zjl9959/algviz/tree/main/examples) folder cont
 
 | Example         |  Github link            | Google Colab link          |  Description                       |
 | :----           | :------                 | :---------                 | :-------                           |
-| **vector**      | [vector.ipynb]          | [vector.ipynb colab]       | Basic operatins on [Vector] class. |
+| **vector**      | [vector.ipynb]          | [vector.ipynb colab]       | Basic operatins on [Vector] class. <br> Example of `bubble sort algorithm`. |
 | **table**       | [table.ipynb]           | [table.ipynb colab]        | Basic operatins on [Table] class.  |
 | **linked list** | [linked_list.ipynb]     | [linked_list.ipynb colab]  | Create linked list and operate [ForwardLinkedNode], [DoublyLinkedNode] classes. |
-| **tree**        | [tree.ipynb]            | [tree.ipynb colab]         | Create [binary tree], [normal tree] and operate [TreeNode], [BinaryTreeNode] classes. |
+| **tree**        | [tree.ipynb]            | [tree.ipynb colab]         | Create [binary tree], [normal tree] <br> Operate [TreeNode], [BinaryTreeNode] classes. <br> Example of `mirror binary tree`. <br> Example of construct `trie tree`. |
 | **graph**       | [graph.ipynb]           | [graph.ipynb colab]        | Create [graph] and operate [GraphNode] class. |
 
 
@@ -129,3 +129,5 @@ Algviz use GNU general pubilc [LICENSE](https://github.com/zjl9959/algviz/blob/m
 [linked_list.ipynb colab]: https://colab.research.google.com/drive/1rsg-6irXzQODPi6DUZhtu-pKq_r55hwV?usp=sharing
 [tree.ipynb colab]: https://colab.research.google.com/drive/138pnzwoS2vdhssZyTx-k5rwBQNb2Hi9N?usp=sharing
 [graph.ipynb colab]: https://colab.research.google.com/drive/14hF30-N9VGBb5-vkERPuURvmnB9VspU9?usp=sharing
+
+[bubble sort algorithm]: https://en.wikipedia.org/wiki/Bubble_sort
