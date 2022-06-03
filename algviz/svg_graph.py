@@ -346,10 +346,10 @@ class SvgGraph():
         for graph in graphs:
             if graph.getAttribute('class') != 'graph':
                 continue
+            nodes_to_remove = list()
             for node in graph.childNodes:
                 if node.nodeType == node.COMMENT_NODE:
-                    graph.removeChild(node)
-                    pass
+                    nodes_to_remove.append(node)
                 elif node.nodeType == node.ELEMENT_NODE:
                     if node.getAttribute('class') == 'node':
                         titles = node.getElementsByTagName('title')
@@ -365,6 +365,10 @@ class SvgGraph():
                             else:
                                 title_content = title_content.split('--')
                             node.removeChild(title)
+                    elif node.tagName == 'title':
+                        nodes_to_remove.append(node)
+            for node in nodes_to_remove:
+                graph.removeChild(node)
 
 
     def _traverse_graph_(self):
