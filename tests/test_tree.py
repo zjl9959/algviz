@@ -7,7 +7,7 @@
 
 import algviz
 from result import TestResult
-from utility import equal, equal_table, get_graph_elements
+from utility import equal, equal_table, get_graph_elements, hack_graph
 
 def test_binary_tree():
     res = TestResult()
@@ -23,6 +23,7 @@ def test_binary_tree():
     tree_nodes1 = [1, 2, 3, 4, 5, None, 6]
     root1 = algviz.parseBinaryTree(tree_nodes1)
     graph1 = viz.createGraph(root1)
+    hack_graph(graph1)
     expect_nodes1 = ['1', '2', '3', '4', '5', '6']
     expect_edges1 = [
         ('1', '2', None), ('1', '3', None),
@@ -43,6 +44,7 @@ def test_binary_tree():
     tree_nodes2 = [-1, -2, -3, None, -4, -5, None]
     root2 = algviz.parseBinaryTree(tree_nodes2)
     graph2 = viz.createGraph(root2)
+    hack_graph(graph2)
     expect_nodes2 = ['-1', '-2', '-3', '-4', '-5']
     expect_edges2 = [
         ('-1', '-2', None), ('-1', '-3', None),
@@ -85,7 +87,9 @@ def test_modify_binary_tree():
     root = algviz.BinaryTreeNode('root')
     # Test add nodes into binary tree.
     tree = viz.createGraph(root)
+    hack_graph(tree)
     tree2 = viz.createGraph(root)
+    hack_graph(tree2)
     root.left = algviz.BinaryTreeNode('left')
     root.right = algviz.BinaryTreeNode('right')
     expect_nodes = ['left', 'right', 'root']
@@ -128,6 +132,7 @@ def test_traverse_tree():
     }
     root = algviz.parseTree(tree_info, {10:'n10'})
     tree = viz.createGraph(root)
+    hack_graph(tree)
     expect_nodes = [0, 1, 2, 3, 4, 5, 8, 9, 'n10']
     expect_edges = [
         (0, 1, None), (0, 2, None), (0, 3, None),
@@ -164,6 +169,7 @@ def test_modify_tree():
     tree_info = { 0: [1, 2] }
     root = algviz.parseTree(tree_info)
     tree = viz.createGraph(root)
+    hack_graph(tree)
     # Test nodes into tree.
     sub_tree = algviz.parseTree({3: [4, 5, 6], 4:[7, 9]})
     root.add(sub_tree)

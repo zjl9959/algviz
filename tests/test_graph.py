@@ -9,7 +9,7 @@
 import algviz
 from algviz.graph import parseGraph
 from result import TestResult
-from utility import equal, equal_table, get_graph_elements
+from utility import equal, equal_table, get_graph_elements, hack_graph
 from utility import TestCustomPrintableClass
 
 
@@ -25,6 +25,7 @@ def test_create_graph():
     ]
     graph_nodes = algviz.parseGraph(nodes, edges, {7:'node_7'})
     graph = viz.createGraph(graph_nodes)
+    hack_graph(graph)
     svg_nodes, svg_edges = get_graph_elements(graph._repr_svg_())
     expect_nodes = [0, 1, 2, 3, 4, 5, 6, 'node_7']
     res.add_case(equal(expect_nodes, svg_nodes) and equal_table(edges, svg_edges), 'Create directed graph',
@@ -38,6 +39,7 @@ def test_create_graph():
     ]
     graph_nodes = algviz.parseGraph(nodes, edges, {7:'node_7'}, directed=False)
     graph = viz.createGraph(graph_nodes, directed=False)
+    hack_graph(graph)
     svg_nodes, svg_edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, svg_nodes) and equal_table(edges, svg_edges), 'Create undirected graph',
                 'nodes:{};edges:{}'.format(svg_nodes, svg_edges), 'nodes:{};edges:{}'.format(expect_nodes, edges))
@@ -52,6 +54,7 @@ def test_traverse_graph():
     edges = [[0, 3], [1, 0], [2, 0], [3, 5], [4, 6], [4, 1], [5, 4], [5, 2]]
     graph_nodes = algviz.parseGraph(nodes, edges)
     graph = viz.createGraph(graph_nodes)
+    hack_graph(graph)
     visit_res, visited_nodes = list(), set()
     def traverse_graph(root):
         if root and root not in visited_nodes:
@@ -84,6 +87,7 @@ def test_modify_directed_graph():
     graph_nodes = algviz.parseGraph([0, 1, 2],
             [[0, 1, None], [0, 2, 'e0_2'],[2, 1, None]])
     graph = viz.createGraph(graph_nodes)
+    hack_graph(graph)
     # Test add nodes into directed graph.
     node3 = algviz.GraphNode(3)
     node2 = graph_nodes[2]
@@ -148,6 +152,7 @@ def test_modify_undirected_graph():
     edges = [[0, 1, None], [1, 2, None], [2, 3, '2<->3'], [3, 0, '3<->0']]
     graph_nodes = parseGraph(nodes, edges, directed=False)
     graph = viz.createGraph(graph_nodes, directed=False)
+    hack_graph(graph)
     # Test add nodes into undirected graph.
     node4 = algviz.GraphNode(4); node5 = algviz.GraphNode(5)
     graph_nodes[0].add(node4); node4.add(graph_nodes[2])

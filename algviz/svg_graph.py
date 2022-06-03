@@ -316,6 +316,7 @@ class SvgGraph():
         self._update_svg_size_(new_svg)
         self._update_svg_(new_svg, node_idmap, edge_idmap)
         self._update_trace_color_()
+        self._compress_svg_()
         res = self._svg.toxml()
         # Update the SVG content and prepare for the next frame.
         self._svg, self._node_idmap, self._edge_idmap = new_svg, node_idmap, edge_idmap
@@ -337,8 +338,34 @@ class SvgGraph():
         self._edge_appear.clear()
         self._edge_disappear.clear()
         self._node_move.clear()
-        return res
+        return res.replace('\n', '')
     
+
+    def _compress_svg_(self):
+        graphs = self._svg.getElementsByTagName('g')
+        for graph in graphs:
+            if graph.getAttribute('class') != 'graph':
+                continue
+            for node in graph.childNodes:
+                if node.nodeType == node.COMMENT_NODE:
+                    graph.removeChild(node)
+                    pass
+                elif node.nodeType == node.ELEMENT_NODE:
+                    if node.getAttribute('class') == 'node':
+                        titles = node.getElementsByTagName('title')
+                        for title in titles:
+                            node.removeChild(title)
+                            pass
+                    elif node.getAttribute('class') == 'edge':
+                        titles = node.getElementsByTagName('title')
+                        for title in titles:
+                            title_content = title.firstChild.data
+                            if self._directed:
+                                title_content = title_content.split('->')
+                            else:
+                                title_content = title_content.split('--')
+                            node.removeChild(title)
+
 
     def _traverse_graph_(self):
         """Traverse each node in the graph and update the related data structure.

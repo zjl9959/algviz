@@ -107,3 +107,11 @@ def get_graph_elements(svg_str):
             else:
                 res_edges.append((start_node_val, end_node_val, edge_val))
     return sorted(list(node_id2label.values())), sorted(res_edges)
+
+
+def _hack_compress_svg_():
+    pass
+
+
+def hack_graph(graph):
+    setattr(graph, '_compress_svg_', _hack_compress_svg_)

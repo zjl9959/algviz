@@ -7,7 +7,7 @@
 
 from result import TestResult
 import algviz
-from utility import equal_table, get_graph_elements, equal
+from utility import equal_table, get_graph_elements, equal, hack_graph
 
 
 def test_create_forward_linked_list():
@@ -16,6 +16,7 @@ def test_create_forward_linked_list():
     # Test create a normal list.
     head = algviz.parseForwardLinkedList([1, 2, 'tail'])
     graph = viz.createGraph(head)
+    hack_graph(graph)
     nodes, edges = get_graph_elements(graph._repr_svg_())
     expect_nodes = [1, 2, 'tail']
     expect_edges = [(1, 2, None), (2, 'tail', None)]
@@ -24,6 +25,7 @@ def test_create_forward_linked_list():
     # Test create an empty list.
     head = algviz.parseForwardLinkedList([])
     graph = viz.createGraph(head)
+    hack_graph(graph)
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(nodes, []) and equal(edges, []), 'Empty forward list',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format([], []))
@@ -36,6 +38,7 @@ def test_traverse_forward_linked_list():
     # Test visit list nodes.
     head = algviz.parseForwardLinkedList([1, 2, 3, 4, 5, 6])
     graph = viz.createGraph(head)
+    hack_graph(graph)
     cur, visit_list = head, list()
     while cur:
         visit_list.append(cur.val)
@@ -57,6 +60,7 @@ def test_modify_forward_linked_list():
     viz = algviz.Visualizer()
     head = algviz.parseForwardLinkedList([1, 2, 3, 4, 5, 6])
     graph = viz.createGraph(head)
+    hack_graph(graph)
     # Test remove nodes from forward linked list.
     remove_positons = [0, 2, 5] # Remove nodes [1, 3, 6] from list.
     last, cur, pos = None, head, 0
@@ -119,6 +123,7 @@ def test_create_doubly_linked_list():
     head, tail = algviz.parseDoublyLinkedList(list_info)
     # Test init graph by head node.
     graph = viz.createGraph(head)
+    hack_graph(graph)
     nodes, edges = get_graph_elements(graph._repr_svg_())
     expect_edges = [
         (1, 2, None), (2, 1, None),
@@ -130,6 +135,7 @@ def test_create_doubly_linked_list():
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(list_info, expect_edges))
     # Test init graph by tail node.
     graph = viz.createGraph(tail)
+    hack_graph(graph)
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(nodes, list_info) and equal_table(edges, expect_edges), 'Create list(tail)',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(list_info, expect_edges))
@@ -142,6 +148,7 @@ def test_traverse_doubly_linked_list():
     list_info = [1, 2, 3, 4, 5, 6]
     head, tail = algviz.parseDoublyLinkedList(list_info)
     graph = viz.createGraph(head)
+    hack_graph(graph)
     # Test visit list node in forward direction.
     cur, visit_list = head, list()
     while cur:
@@ -172,6 +179,7 @@ def test_modify_doubly_linked_list():
     list_info = [2, 4]
     node2, node4 = algviz.parseDoublyLinkedList(list_info)
     graph = viz.createGraph(node2)
+    hack_graph(graph)
     # Test add nodes into doubly linked list.
     node1 = algviz.DoublyLinkedListNode(1)
     node3 = algviz.DoublyLinkedListNode(3)
@@ -214,6 +222,7 @@ def test_two_forward_linked_lists():
     list1_info = [1, 2, 3]; list2_info = [4, 5, 6]
     list1 = algviz.parseForwardLinkedList(list1_info)
     graph = viz.createGraph(list1)
+    hack_graph(graph)
     list2 = algviz.parseForwardLinkedList(list2_info)
     list1.next.next.next = list2
     graph._repr_svg_()
@@ -231,6 +240,7 @@ def test_two_doubly_linked_lists():
     list1_info = [1, 2, 3]; list2_info = [4, 5, 6]
     list1, tail1 = algviz.parseDoublyLinkedList(list1_info)
     graph = viz.createGraph(list1)
+    hack_graph(graph)
     list2, _ = algviz.parseDoublyLinkedList(list2_info)
     tail1.next = list2
     list2.prev = tail1
