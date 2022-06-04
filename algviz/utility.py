@@ -39,6 +39,7 @@ kMaxCellWidth = 100.0       # The maximum vector/table cell display width.
 kMinCellHeight = 10.0       # The minimum vector/table cell display height.
 kMaxCellHeight = 100.0      # The maximum vector/table cell display height.
 kMaxBarHight = 1000.0       # The maximum histogram bar height of vector.
+kMaxNameChars = 50          # The Maximum name character numbers.
 
 
 class TraceColorStack():

@@ -17,11 +17,22 @@ from algviz.vector import Vector
 from algviz.svg_graph import SvgGraph
 from algviz.svg_table import SvgTable
 from algviz.logger import Logger
+from algviz.utility import AlgvizParamError, kMaxNameChars
 
 
 class _NoDisplay():
     def _repr_svg_(self):
         return ''
+
+
+class _NameDisplay():
+    def __init__(self, name):
+        if type(name) != str or len(name) > kMaxNameChars:
+            raise AlgvizParamError('name "{}" not str or exceed {} characters.'.format(name, kMaxNameChars))
+        self._name = name + ':'
+
+    def __repr__(self):
+        return self._name
 
 
 _next_display_id = 0
@@ -70,18 +81,14 @@ class Visualizer():
                 did = self._element2display[elem()]
                 if did not in self._displayed:
                     if did in self._displayid2name:
-                        svg_title = SvgTable(400, 17)
-                        title_name = '{}:'.format(self._displayid2name[did])
-                        svg_title.add_text_element((4, 14), title_name, font_size=14, fill=(0,0,0))
+                        svg_title = _NameDisplay(self._displayid2name[did])
                         display.display(svg_title, display_id='algviz_{}'.format(did))
                     elem()._delay = delay
                     display.display(elem(), display_id='algviz{}'.format(did))
                     self._displayed.add(did)
                 else:
                     if did in self._displayid2name:
-                        svg_title = SvgTable(400, 17)
-                        title_name = '{}:'.format(self._displayid2name[did])
-                        svg_title.add_text_element((4, 14), title_name, font_size=14, fill=(0,0,0))
+                        svg_title = _NameDisplay(self._displayid2name[did])
                         display.update_display(svg_title, display_id='algviz_{}'.format(did))
                     elem()._delay = delay
                     display.update_display(elem(), display_id='algviz{}'.format(did))
