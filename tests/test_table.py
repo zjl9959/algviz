@@ -139,7 +139,7 @@ def test_mark_element():
     expect_colors = [['#ffffff', '#00ff01'],
                      ['#000100', '#00ff01']]
     for r, c, color in mark_list:
-        table.mark(color, r, c)
+        table.mark(color, r, c, hold=True)
     table_bgcolors_frame1 = get_table_bgcolors(table._repr_svg_())
     if not equal_table(table_bgcolors_frame1, expect_colors):
         res.add_case(False, 'Presistent mark frame1', table_bgcolors_frame1, expect_colors)

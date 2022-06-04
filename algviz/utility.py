@@ -35,8 +35,10 @@ class AlgvizFatalError(Exception):
 kMinAnimDelay = 0.1         # The minimum animation delay time is 0.1 seconds.
 kMaxAnimDelay = 100.0       # The maximum animation delay time is 100.0 seconds.
 kMinCellWidth = 10.0        # The minimum vector/table cell display width.
-kMaxCellWidth = 100.0       # The maximum vector/table cell display height.
-kMaxBarHight = 1000.0       # The maximum histogram bar height.
+kMaxCellWidth = 100.0       # The maximum vector/table cell display width.
+kMinCellHeight = 10.0       # The minimum vector/table cell display height.
+kMaxCellHeight = 100.0      # The maximum vector/table cell display height.
+kMaxBarHight = 1000.0       # The maximum histogram bar height of vector.
 
 
 class TraceColorStack():

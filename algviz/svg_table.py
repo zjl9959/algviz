@@ -87,7 +87,8 @@ class SvgTable():
             t.setAttribute('class', 'txt')
             t.setAttribute('x', '{:.2f}'.format(rect[0]+rect[2]*0.5))
             t.setAttribute('y', '{:.2f}'.format(rect[1]+rect[3]*0.5))
-            t.setAttribute('font-size', '{:.2f}'.format(text_font_size(rect[2], '{}'.format(text))))
+            txt_font_size = min(rect[3]-1, text_font_size(rect[2], '{}'.format(text)))
+            t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
             t.setAttribute('fill', auto_text_color(fill))
             tt = self._dom.createTextNode('{}'.format(text))
             t.appendChild(tt)
@@ -194,7 +195,7 @@ class SvgTable():
                 t[0].setAttribute('x', '{:.2f}'.format(rect[0]+rect[2]*0.5))
                 t[0].setAttribute('y', '{:.2f}'.format(rect[1]+rect[3]*0.5))
                 new_font = text_font_size(rect[2], '{}'.format(t[0].firstChild.nodeValue))
-                t[0].setAttribute('font-size', '{:.2f}'.format(new_font))
+                t[0].setAttribute('font-size', '{:.2f}'.format(min(new_font, rect[3]-1)))
         if text is not None:
             if len(t) == 0:
                 t = self._dom.createElement('text')
@@ -209,7 +210,9 @@ class SvgTable():
             t.setAttribute('class', 'txt')
             t.setAttribute('x', '{:.2f}'.format(rx+width*0.5))
             t.setAttribute('y', '{:.2f}'.format(ry+height*0.5))
-            t.setAttribute('font-size', '{:.2f}'.format(text_font_size(width, '{}'.format(text))))
+            txt_font_size = text_font_size(width, '{}'.format(text))
+            txt_font_size = min(height-1, txt_font_size)
+            t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
             t.setAttribute('fill', auto_text_color(fc))
             for t_child in t.childNodes:
                 t.removeChild(t_child)

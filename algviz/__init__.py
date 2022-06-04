@@ -20,41 +20,33 @@ from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
 from .utility import _version, AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError
 
 
-colors = {
-    0: (221, 160, 221), # Plum
-    1: (0, 255, 255),   # Aqua
-    2: (210, 180, 140), # Tan
-    3: (135, 206, 250), # LightSkyBlue
-    'red': (255, 0, 0),
-    'yellow': (255, 255, 0),
-    'blue': (0, 0, 255),
-    'green': (0, 128, 0),
-    'lime': (0, 255, 0),
-    'gold': (255, 215, 0),
-    'pink': (255, 192, 203),
-    'orchild': (218, 112, 214),
-    'tomato': (255, 99, 71),
-    'wheat': (245, 222, 179),
-    'gray': (128, 128, 128),
-    'silver': (192, 192, 192),
-    'black': (0, 0, 0),
-    'white': (255, 255, 255)
-}
-
-
-def colorsInfo():
-    """Display all the default colors name and background color in a vector.
-    """
-    viz = Visualizer()
-    c = 6
-    r = len(colors) // c
-    tab = viz.createTable(r, c, cell_size=50, name='ColorsInfo', show_index=False)
-    count = 0
-    for k in colors.keys():
-        tab[(count//c, count%c)] = k
-        tab.mark((count//c, count%c), colors[k])
-        count += 1
-    viz.display()
+# Common colors name to RGB map (see: https://www.w3schools.com/tags/ref_colornames.asp)
+color_white = (255, 255, 255)
+color_black = (0, 0, 0)
+color_red = (255, 0, 0)
+color_dark_red = (139, 0, 0)
+color_green = (0, 128, 0)
+color_lime = (0, 255, 0)
+color_dark_green = (0, 100, 0)
+color_spring_green = (0, 255, 127)
+color_green_yellow = (173, 255, 47)
+color_yellow = (255, 255, 0)
+color_blue = (0, 0, 255)
+color_light_blue = (173, 216, 230)
+color_dark_blue = (0, 0, 139)
+color_slate_blue = (106, 90, 205)
+color_brown = (165, 42, 42)
+color_purple = (128, 0, 128)
+color_aqua = (0, 255, 255)
+color_gold = (255, 215, 0)
+color_gray = (128, 128, 128)
+color_pink = (255, 192, 203)
+color_orange = (255, 165, 0)
+color_tomato = (255, 99, 71)
+color_wheat = (245, 222, 179)
+color_violet = (238, 130, 238)
+color_tan = (210, 180, 140)
+color_plum = (221, 160, 221)
 
 
 __all__ = [
@@ -63,7 +55,7 @@ __all__ = [
     'BinaryTreeNode', 'TreeNode', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',
-    'colors', 'colorsInfo', 'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError'
+    'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError'
 ]
 
 

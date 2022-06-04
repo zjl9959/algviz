@@ -109,13 +109,13 @@ class Visualizer():
             return input('Input `Enter` to continue:')
 
 
-    def createTable(self, row, col, data=None, name=None, cell_size=40, show_index=True):
+    def createTable(self, row, col, data=None, name=None, cell_size=(40, 40), show_index=True):
         """
         Args:
             row, col (int): The number of rows, columns for this table.
             data (list(list(printable))): The initial data for table cells.
             name (str): The name of this table object.
-            cell_size (float): Table cell size.
+            cell_size tuple(float, float): Table cell size (width, height).
             show_index (bool): Whether to display table row and column labels.
         
         Returns:
@@ -130,20 +130,20 @@ class Visualizer():
         return tab
 
 
-    def createVector(self, data=None, name=None, cell_size=40, bar=-1, show_index=True):
+    def createVector(self, data=None, name=None, cell_size=(40, 40), histogram=False, show_index=True):
         """
         Args:
             data (list(printable)): The initial data for vector cells.
             name (str): The name of this Vector object.
-            cell_size (float): Vector cell size.
-            bar (float): If bar < 0, ignore it. otherwise display the data in the form of a histogram, and bar is histogram's maximum height.
+            cell_size tuple(float, float): Vector cell size (width, height).
+            histogram (bool): If bar is True, display the data in the form of a histogram.
             show_index (bool): Whether to display the vector index label.
         
         Returns:
             Vector: New created Vector object.
         """
         global _next_display_id
-        vec = Vector(data, self._delay, cell_size, bar, show_index)
+        vec = Vector(data, self._delay, cell_size, histogram, show_index)
         self._element2display[vec] = _next_display_id
         if name is not None:
             self._displayid2name[_next_display_id] = name

@@ -33,7 +33,7 @@ def test_create_vector():
                  vec_elems, vec_data)
     # Test create a histogram vector.
     vec_data = [0.3, -2, 4, 1.5, 9]
-    vec = viz.createVector(vec_data, bar=300)
+    vec = viz.createVector(vec_data, cell_size=(40, 300), histogram=True)
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_data, vec_elems, float), 'Histogram vector',
                  vec_elems, vec_data)
@@ -163,9 +163,9 @@ def test_mark_elements():
     vec_data = [1, 2, 3, 4, 5]
     vec = viz.createVector(vec_data)
     # Add some hold and no hold marks into vector.
-    vec.mark((255, 0, 0), 0)
+    vec.mark((255, 0, 0), 0, hold=True)
     vec.mark((0, 255, 0), 1, hold=False)
-    vec.mark((0, 0, 255), 2, 4)
+    vec.mark((0, 0, 255), 2, 4, hold=True)
     # Test if all the marks color right.
     vec_bgcolors = get_vector_bgcolors(vec._repr_svg_())
     expect_bgcolors = ['#ff0000', '#00ff00', '#0000ff', '#0000ff', '#ffffff']

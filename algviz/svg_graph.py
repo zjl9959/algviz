@@ -186,7 +186,7 @@ class SvgGraph():
         return len(subgraph_nodes)
     
 
-    def markNode(self, color, node, hold=True):
+    def markNode(self, color, node, hold=False):
         """Emphasize one node by mark it's background color.
         
         Args:
@@ -202,7 +202,7 @@ class SvgGraph():
             self._frame_trace.append((node, color, hold))
     
 
-    def markEdge(self, color, node1, node2, hold=True):
+    def markEdge(self, color, node1, node2, hold=False):
         """Emphasize one edge by mark it's stoke color.
         
         Args:
@@ -265,7 +265,6 @@ class SvgGraph():
         ellipse = svg_node.getElementsByTagName('ellipse')[0]
         cx = float(ellipse.getAttribute('cx'))
         cy = float(ellipse.getAttribute('cy'))
-        rx = float(ellipse.getAttribute('rx'))
         fc = str2rgbcolor(ellipse.getAttribute('fill'))
         text_svg = svg_node.getElementsByTagName('text')
         if text_svg is not None:
