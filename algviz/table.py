@@ -10,8 +10,7 @@ License: GPLv3
 
 from algviz.svg_table import SvgTable
 from algviz.cursor import Cursor, _CursorManager
-from algviz.utility import AlgvizParamError, TraceColorStack
-from algviz.utility import _getElemColor, _setElemColor, clamp
+from algviz.utility import AlgvizParamError, TraceColorStack, clamp
 from algviz.utility import kMinCellWidth, kMaxCellWidth, kMinCellHeight, kMaxCellHeight
 
 
@@ -175,9 +174,6 @@ class Table():
         """
         r = self._check_index_type_and_range_(r, self._row)
         c = self._check_index_type_and_range_(c, self._col)
-        gid = self._index2rect[(r, c)]
-        self._cell_tcs[gid].add(_getElemColor)
-        self._frame_trace.append((gid, _getElemColor, False))
         return self._data[r][c]
     
 
@@ -195,8 +191,6 @@ class Table():
         r = self._check_index_type_and_range_(r, self._row)
         c = self._check_index_type_and_range_(c, self._col)
         gid = self._index2rect[(r, c)]
-        self._cell_tcs[gid].add(_setElemColor)
-        self._frame_trace.append((gid, _setElemColor, False))
         label = val
         if val is None:
             label = ''

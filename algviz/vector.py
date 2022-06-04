@@ -11,8 +11,9 @@ License: GPLv3
 
 from algviz.svg_table import SvgTable
 from algviz.cursor import Cursor, _CursorManager
-from algviz.utility import TraceColorStack, AlgvizParamError, clamp, _getElemColor, _setElemColor
-from algviz.utility import kMinAnimDelay, kMaxAnimDelay, kMinCellWidth, kMaxCellWidth, kMaxBarHight, kMinCellHeight, kMaxCellHeight
+from algviz.utility import TraceColorStack, AlgvizParamError, clamp
+from algviz.utility import kMinAnimDelay, kMaxAnimDelay, kMinCellWidth
+from algviz.utility import kMaxCellWidth, kMaxBarHight, kMinCellHeight, kMaxCellHeight
 
 
 class Vector():
@@ -263,9 +264,6 @@ class Vector():
             RuntimeError:  Vector index=xxx out of range!
         """
         index = self._check_index_type_and_range_(index)
-        rid = self._index2rect[index]
-        self._cell_tcs[rid].add(_getElemColor)
-        self._frame_trace.append((rid, _getElemColor, False))
         return self._data[index]
     
 
@@ -281,8 +279,6 @@ class Vector():
         """
         index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
-        self._cell_tcs[rid].add(_setElemColor)
-        self._frame_trace.append((rid, _setElemColor, False))
         label = val
         if val is None:
             label = ''

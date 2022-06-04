@@ -34,7 +34,6 @@ class BinaryTreeNode(NodeBase):
     def __getattribute__(self, name):
         if name == 'left' or name == 'right':
             node = super().__getattribute__(name)
-            self._on_visit_neighbor_(node)
             return node
         else:
             return super().__getattribute__(name)
@@ -42,9 +41,8 @@ class BinaryTreeNode(NodeBase):
 
     def __setattr__(self, name, value):
         if name == 'left' or name == 'right':
-            old_node = super().__getattribute__(name)
             super().__setattr__(name, value)
-            self._on_update_neighbor_(old_node, value)
+            self._on_update_neighbor_(value)
         else:
             super().__setattr__(name, value)
 
@@ -122,7 +120,6 @@ class TreeChildrenIter():
         else:
             child = self._children[self._next_index]
             self._next_index += 1
-            self._node._on_visit_neighbor_(child)
             return child
 
 
@@ -160,7 +157,7 @@ class TreeNode(NodeBase):
         children_ = super().__getattribute__('_children')
         if child not in children_:
             children_.add(child)
-            self._on_update_neighbor_(None, child)
+            self._on_update_neighbor_(child)
 
 
     def remove(self, child):
@@ -172,7 +169,7 @@ class TreeNode(NodeBase):
         children_ = super().__getattribute__('_children')
         if child in children_:
             children_.remove(child)
-            self._on_update_neighbor_(child, None)
+            self._on_update_neighbor_(None)
 
 
     def _neighbors_(self):

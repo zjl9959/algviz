@@ -8,7 +8,7 @@ License: GPLv3
 
 """
 
-from algviz.utility import AlgvizRuntimeError, _setElemColor
+from algviz.utility import AlgvizRuntimeError
 from algviz.graph_node_base import GraphNodeBase as NodeBase
 
 
@@ -31,7 +31,6 @@ class GraphNeighborIter():
         else:
             neighbor = self._neighbors[self._next_index]
             self._next_index += 1
-            self._node._on_visit_neighbor_(neighbor[0])
             return neighbor[0], neighbor[1]
 
 
@@ -64,7 +63,7 @@ class GraphNode(NodeBase):
         neighbors_ = super().__getattribute__('_neighbors')
         if node not in neighbors_:
             neighbors_[node] = edge
-            self._on_update_neighbor_(None, node)
+            self._on_update_neighbor_(node)
 
 
     def remove(self, node):
@@ -76,7 +75,7 @@ class GraphNode(NodeBase):
         neighbors_ = super().__getattribute__('_neighbors')
         if node in neighbors_:
             neighbors_.pop(node)
-            self._on_update_neighbor_(node, None)
+            self._on_update_neighbor_(None)
 
 
     def _neighbors_(self):
@@ -102,14 +101,12 @@ def updateGraphEdge(node1, node2, edge):
         node1_bind_graphs = node1.bind_graphs()
         for graph in node1_bind_graphs:
             graph._updateEdgeLabel(node1, node2, edge)
-            graph.markEdge(_setElemColor, node1, node2, hold=False)
     node2_neighbors = node2._neighbors
     if node1 in node2_neighbors:
         node2_neighbors[node1] = edge
         node2_bind_graphs = node2.bind_graphs()
         for graph in node2_bind_graphs:
             graph._updateEdgeLabel(node2, node1, edge)
-            graph.markEdge(_setElemColor, node2, node1, hold=False)
 
 
 def parseGraph(nodes, edges, nodes_label=None, directed=True):

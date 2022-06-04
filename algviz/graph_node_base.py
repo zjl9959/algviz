@@ -11,9 +11,6 @@ License: GPLv3
 
 """
 
-from algviz.utility import _getElemColor, _setElemColor
-
-
 class GraphNodeBase:
     """Base class for all the graph nodes.
     
@@ -41,7 +38,6 @@ class GraphNodeBase:
     
     def __getattribute__(self, name):
         if name == 'val':
-            self._on_visit_value_()
             return object.__getattribute__(self, 'val')
         else:
             return object.__getattribute__(self, name)
@@ -59,14 +55,6 @@ class GraphNodeBase:
         return str(object.__getattribute__(self, 'val'))
 
 
-    def _on_visit_value_(self):
-        """Notify the bind graph to update the displayed node mark.
-        """
-        bind_graphs = object.__getattribute__(self, '_bind_graphs')
-        for graph in bind_graphs:
-            graph.markNode(_getElemColor, self, hold=False)
-
-
     def _on_update_value_(self, value):
         """Notify the bind graph to update the displayed node mark and value.
 
@@ -76,38 +64,24 @@ class GraphNodeBase:
         bind_graphs = object.__getattribute__(self, '_bind_graphs')
         for graph in bind_graphs:
             graph._updateNodeLabel(self, value)
-            graph.markNode(_setElemColor, self, hold=False)
-
-
-    def _on_visit_neighbor_(self, neighbor):
-        """Notify the bind graph to update the displayed edge color between this node and it's neighbor.
-        """
-        bind_graphs = object.__getattribute__(self, '_bind_graphs')
-        for graph in bind_graphs:
-            graph.markEdge(_getElemColor, self, neighbor, hold=False)
 
     
-    def _on_update_neighbor_(self, old_neighbor, new_neighbor):
+    def _on_update_neighbor_(self, new_neighbor):
         """
         Notify the bind graph to update the displayed edge color between this node and it's neighbor.
         old_neighbor and new_neighbor can be None.
 
         Args:
-            old_neighbor: The old neighbor node of this node.
             new_neighbor: The new neighbor node to replace the old neighbor nodes.
         """
         # Mark edge between this node and it's old_neighbor.
         bind_graphs = object.__getattribute__(self, '_bind_graphs')
         if len(bind_graphs) == 0:
             return
-        if old_neighbor:
-            for graph in bind_graphs:
-                graph.markEdge(_setElemColor, self, old_neighbor, hold=False)
         # Mark edge between this node and it's new_neighbor.
         if new_neighbor:
             for graph in bind_graphs:
                 graph.addNode(new_neighbor)
-                graph.markEdge(_setElemColor, self, new_neighbor, hold=False)
 
 
     def bind_graphs(self):

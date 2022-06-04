@@ -43,7 +43,6 @@ class ForwardLinkedListNode(NodeBase):
         if name == 'next':
             # Visit next node in the forward linked list and update the node's visit state.
             node = super().__getattribute__('next')
-            self._on_visit_neighbor_(node)
             return node
         else:
             return super().__getattribute__(name)
@@ -51,9 +50,8 @@ class ForwardLinkedListNode(NodeBase):
 
     def __setattr__(self, name, value):
         if name == 'next':
-            old_node = super().__getattribute__(name)
             super().__setattr__('next', value)
-            self._on_update_neighbor_(old_node, value)
+            self._on_update_neighbor_(value)
         else:
             super().__setattr__(name, value)
     
@@ -91,7 +89,6 @@ class DoublyLinkedListNode(NodeBase):
         if name == 'next' or name == 'prev':
             # Visit next node in the doubly linked list and update the node's visit state.
             node = super().__getattribute__(name)
-            self._on_visit_neighbor_(node)
             return node
         else:
             return super().__getattribute__(name)
@@ -99,9 +96,8 @@ class DoublyLinkedListNode(NodeBase):
 
     def __setattr__(self, name, value):
         if name == 'next' or name == 'prev':
-            old_node = super().__getattribute__(name)
             super().__setattr__(name, value)
-            self._on_update_neighbor_(old_node, value)
+            self._on_update_neighbor_(value)
         else:
             super().__setattr__(name, value)
 
