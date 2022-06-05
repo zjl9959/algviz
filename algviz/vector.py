@@ -30,7 +30,7 @@ class Vector():
             data (list(printable)): The initialize data for vector.
             delay (float): Animation delay time between two animation frames.
             cell_size tuple(float, float): Vector cell size (width, height).
-            histogram (bool): If bar is True, display the data in the form of a histogram.
+            histogram (bool): Display the data in the form of a histogram or not.
             show_index (bool): Whether to display the vector index label.
         """
         if type(cell_size) != tuple or len(cell_size) < 2:

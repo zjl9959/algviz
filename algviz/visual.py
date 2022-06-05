@@ -143,7 +143,7 @@ class Visualizer():
             data (list(printable)): The initial data for vector cells.
             name (str): The name of this Vector object.
             cell_size tuple(float, float): Vector cell size (width, height).
-            histogram (bool): If bar is True, display the data in the form of a histogram.
+            histogram (bool): Display the data in the form of a histogram or not.
             show_index (bool): Whether to display the vector index label.
         
         Returns:

@@ -40,7 +40,7 @@ All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/)
 
 ### Step1: Install Jupyter-notebook
 
-Algviz can only run in [Jupyter-notebook](https://jupyter.org/). You can choose any of the following methods to install Jupyter-notebook.
+You can choose any of the following methods to install [Jupyter-notebook](https://jupyter.org/).
 
 + If you are a vscode user, you can install Jupyter [extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) for vscode.
 + [Install Jupyter](https://jupyter.org/install) in your computer and view the animation on your browser.
@@ -48,14 +48,14 @@ Algviz can only run in [Jupyter-notebook](https://jupyter.org/). You can choose 
 
 ### Step2: Install Graphviz
 
-[Graphviz](https://graphviz.org/) was used to generate static layout of topology graph.
+[Graphviz](https://graphviz.org/) is used to generate static layout of topology graph.
 It's a popular open source software, you can download the program in it's [official site](https://graphviz.org/download/).
 
 *Note: please remember to add graphviz into your system's environment path so that other programs can call it directly.*
 
 ### Step3: Install algviz
 
-Note: algviz run on Python 3.7 or heigher version of Python.
+Note: algviz runs on Python 3.7 or heigher versions.
 
 ```shell
 python -m pip install --upgrade pip
@@ -94,12 +94,12 @@ If you see the output like this:
 
 > Congratulations, everything is OK !!!
 
-It means algviz working fine in your environment.
-Otherwise please [report](https://github.com/zjl9959/algviz/issues) the bug.
+It means algviz works fine in your environment.
+But if you get any unexpected errors, please [report](https://github.com/zjl9959/algviz/issues) the bug.
 
 ## License
 
-Algviz use GNU general pubilc [LICENSE](https://github.com/zjl9959/algviz/blob/main/LICENSE). You can use it freely for non-commercial learning and communication.
+Algviz uses GNU general pubilc [LICENSE](https://github.com/zjl9959/algviz/blob/main/LICENSE). You can use it freely for learning and communication.
 
 ## Links
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## algviz 0.1.3
+
++ **Interfaces change**:
+    + Remove [colorsInfo()](https://algviz.readthedocs.io/en/0.1.1/api.html#algviz.colorsInfo) and `colors`, use `color_black`, `color_red` and so on instead.
+    + Update interface [Visualizer.createTable](https://algviz.readthedocs.io/en/latest/api.html#algviz.visual.Visualizer.createTable): change the type of paramter `cell_size` from **float** into **tuple(float, float)**, in order to support setting the cell height of table elements.
+    + Update interface [Visualizer.createVector](https://algviz.readthedocs.io/en/latest/api.html#algviz.visual.Visualizer.createVector):
+        + Change the type of paramter `cell_size` from **float** into **tuple(float, float)**, in order to support setting the cell height of vector elements.
+        + Change the paramter `bar` into `histogram`(type is **bool**, means display the data in the form of a histogram).
+    + Update interfaces `Vector.mark`, `Table.mark`, `SvgGraph.markNode` and `SvgGraph.markEdge`: change the default value of paramter `hold` from **True** into **False**.
++ **Display change:**
+    + Change `Logger` display format into normal string.
+    + Display the name of visualizer objects by string instead of `Table`.
+    + No longer mark items cell automatically when access or modify data in items.
++ Remove useless comments and titles in the SVG output result of `SvgGraph`..
+
 ## algviz 0.1.2
 
 + SVG animation visual effection optimization: divide the animation of disappearing, moving and appearing into different animation sequences.
