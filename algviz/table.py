@@ -111,7 +111,6 @@ class Table():
             self._svg, 'R', (self._cell_margin, self._cell_margin), 0)
         self._col_cursor_mgr = _CursorManager(self._cell_height,
             self._svg, 'D', (self._cell_margin, self._cell_margin), 0)
-        self._update_svg_size_()
         # Initial rectangle elemenets in SVG.
         for r in range(self._row):
             for c in range(self._col):
@@ -125,6 +124,7 @@ class Table():
                 self._new_row_index_text_in_svg_(r)
             for c in range(self._col):
                 self._new_col_index_text_in_svg_(c)
+        self._update_svg_size_()
     
 
     def mark(self, color, r, c, hold=False):
