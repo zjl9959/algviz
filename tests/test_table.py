@@ -171,11 +171,11 @@ def test_table_cursor():
     r = table.new_row_cursor('r')
     c = table.new_col_cursor('c')
     while r < 3:
-        c.update(0)
+        c << 0
         while c < 3:
             table[r][c] = r.index()*3+c.index()
-            c.inc()
-        r.inc()
+            c += 1
+        r += 1
     expect_results = [
         [0, 1, 2],
         [3, 4, 5],
@@ -187,19 +187,25 @@ def test_table_cursor():
     # Test visit elements by table cursor.
     expect_results = [8, 7, 6, 5, 4, 3, 2, 1, 0]
     table_elems = list()
-    r.dec(); c.dec()
+    r -= 1
+    r += c
+    r *= c
+    r //= c
+    r -= c
+    c -= 1
     while r >= 0:
-        c.update(2)
+        c << 2
         while c >= 0:
             table_elems.append(table[r][c])
-            c.dec()
-        r.dec()
+            c -= 1
+        r -= 1
     res.add_case(equal(table_elems, expect_results), 'Visit elements',
         table_elems, expect_results)
     # Test index out of range.
     case_ok = False
     try:
-        table[r.dec()][c] = 3
+        r -= 1
+        table[r][c] = 3
     except RuntimeError:
         case_ok = True
     res.add_case(case_ok, 'Index out of range.')

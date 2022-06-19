@@ -195,22 +195,29 @@ def test_vector_cursor():
     results, expect_results = list(), [2, 1, 4, 5]
     i = vec.new_cursor('i', 1)
     results.append(vec[i])
-    results.append(vec[i.dec()])
-    results.append(vec[i.inc(3)])
-    i.update(4)
+    i *= 5
+    i -= 1
+    i //= 5
+    results.append(vec[i])
+    i += 3
+    i += i
+    i -= 3
+    results.append(vec[i])
+    i << 4
     results.append(vec[i])
     res.add_case(equal(results, expect_results), 'Access elements', results, expect_results)
     # Test modify elements by vector cursor.
     j = vec.new_cursor('j', 3)
     expect_results = [2, 3, 4, 7, -5]
     if j < i:
-        j.update(i.index())
+        j << i
         if j == 4:
             vec[j] = -5
         if j != i.index()-1:
             vec.insert(j, 7)
         if j <= 4:
-            vec.pop(j.dec(4))
+            j -= 4
+            vec.pop(j)
     vec._repr_svg_()        # Call this to skip animation frame.
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_elems, expect_results), 'Modify vector',
@@ -218,7 +225,8 @@ def test_vector_cursor():
     # Test index out of range.
     case_ok = False
     try:
-        vec[j.dec()] = 2
+        j -= 1
+        vec[j] = 2
     except RuntimeError:
         case_ok = True
     res.add_case(case_ok, 'Index out of range.')

@@ -12,16 +12,17 @@ License: GPLv3
 
 """
 
+from algviz.utility import AlgvizTypeError
+
+
 # The alternative cursor colors list.
 kcursor_colors = (
-    (128, 128, 128),    # gray
     (0, 255, 0),        # lime
     (255, 215, 0),      # gold
     (255, 192, 203),    # pink
     (218, 112, 214),    # orchild
     (255, 99, 71),      # tomato
     (245, 222, 179),    # wheat
-    (192, 192, 192),    # silver
 )
 
 class Cursor:
@@ -32,13 +33,20 @@ class Cursor:
     You can access an element in it's related Vector/Table object.
     The index in cursor's should be an integer number.
     
+    Assignment operations: <<
+
+    Mathmatics operations: +=, -=, *=, //=
+
+    Compare operations: >, <, >=, <=, ==, !=
+    
+    The right hand value of those operations above can be a cursor or an integer number.
+
+
     For example:
         i = vector.new_cursor('i')  # Create a cursor point to vector object.
 
         vector[i] = 3               # Set the cursor's index(0) element to 3 in vector.
 
-    This class provide compare operations like: >, <, >=, <=, ==, !=.
-    So you can do these operations between a cursor and an integer number or other cursor.
 
     For example:
         i = vector.new_cursor('i', 3)   # The index in cursor i is 3.
@@ -66,41 +74,32 @@ class Cursor:
         """
         return self._index
 
-    def update(self, new_index):
-        """Update the cursor's index manually.
-
-        Args:
-            new_index (int): The new index assigned to the cursor.
-        """
-        self._index = _get_rhs_index(new_index)
+    # Index assignment operator.
+    def __lshift__(self, other):
+        self._index = _get_rhs_index(other)
         self._on_cursor_updated_(self._index)
+        return self
 
     # Mathmatics operators.
-    def inc(self, other=1):
-        """Increase the index value in cursor.
-        
-        Args:
-            other: The increment value, can be int or Cursor.
+    def __imul__(self, other):
+        self._index *= _get_rhs_index(other)
+        self._on_cursor_updated_(self._index)
+        return self
 
-        Returns:
-            int: The new index value in cursor.
-        """
+    def __ifloordiv__(self, other):
+        self._index //= _get_rhs_index(other)
+        self._on_cursor_updated_(self._index)
+        return self
+
+    def __iadd__(self, other):
         self._index += _get_rhs_index(other)
         self._on_cursor_updated_(self._index)
-        return self._index
+        return self
 
-    def dec(self, other=1):
-        """Decrease the index value in cursor.
-        
-        Args:
-            other: The decrement value, can be int or Cursor.
-
-        Returns:
-            int: The new index value in cursor.
-        """
+    def __isub__(self, other):
         self._index -= _get_rhs_index(other)
         self._on_cursor_updated_(self._index)
-        return self._index
+        return self
 
     # Compare operators.
     def __lt__(self, other):
@@ -123,12 +122,14 @@ class Cursor:
 
 
 def _get_rhs_index(rhs):
-    if type(rhs) is int:
+    if rhs == None:
+        return None
+    elif type(rhs) is int:
         return rhs
     elif type(rhs) is Cursor:
         return rhs._index
     else:
-        return int(rhs)     # Try to convert unkonw type into int.
+        raise AlgvizTypeError(rhs)
 
 
 class _CursorManager:

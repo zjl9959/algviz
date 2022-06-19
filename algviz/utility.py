@@ -29,6 +29,11 @@ class AlgvizFatalError(Exception):
         super().__init__('[AlgvizFatalError] {}\n{}'.format(message, KFATAL_HELP_INFO))
 
 
+class AlgvizTypeError(Exception):
+    def __init__(self, obj):
+        super().__init__('[AlgvizTypeError] Type {} not support!\n{}'.format(type(obj), KFATAL_HELP_INFO))
+
+
 # Parameter limit for display data objects.
 kMinAnimDelay = 0.1         # The minimum animation delay time is 0.1 seconds.
 kMaxAnimDelay = 100.0       # The maximum animation delay time is 100.0 seconds.

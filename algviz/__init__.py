@@ -17,7 +17,7 @@ from .graph import GraphNode, parseGraph, updateGraphEdge
 from .tree import BinaryTreeNode, TreeNode, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
-from .utility import _version, AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError
+from .utility import _version, AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError, AlgvizTypeError
 
 
 # Common colors name to RGB map (see: https://www.w3schools.com/tags/ref_colornames.asp)
@@ -56,7 +56,7 @@ __all__ = [
     'BinaryTreeNode', 'TreeNode', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',
-    'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError'
+    'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError', 'AlgvizTypeError'
 ]
 
 
