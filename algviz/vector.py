@@ -205,7 +205,8 @@ class Vector():
         st = self._check_index_type_and_range_(st)
         if ed is None:
             ed = st + 1
-        ed = self._check_index_type_and_range_(ed)
+        if type(ed) is Cursor:
+            ed = ed.index()
         for i in range(st, ed):
             if i < 0 or i >= len(self._data):
                 i %= len(self._data)

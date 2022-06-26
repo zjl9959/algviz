@@ -17,12 +17,12 @@ from algviz.utility import AlgvizTypeError
 
 # The alternative cursor colors list.
 kcursor_colors = (
-    (0, 255, 0),        # lime
-    (255, 215, 0),      # gold
-    (255, 192, 203),    # pink
-    (218, 112, 214),    # orchild
-    (255, 99, 71),      # tomato
-    (245, 222, 179),    # wheat
+    (203, 67, 53),
+    (25, 111, 61),
+    (40, 116, 166),
+    (147, 81, 22),
+    (99, 57, 116),
+    (28, 40, 51)
 )
 
 
