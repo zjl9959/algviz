@@ -168,8 +168,8 @@ def test_table_cursor():
     viz = algviz.Visualizer()
     table = viz.createTable(3, 3)
     # Test modify elements by table cursor.
-    r = table.new_row_cursor('r')
-    c = table.new_col_cursor('c')
+    r = viz.createCursor('r')
+    c = viz.createCursor('c')
     while r < 3:
         c << 0
         while c < 3:

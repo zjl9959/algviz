@@ -203,9 +203,9 @@ class Vector():
             hold (bool): Whether to keep the mark color in future animation frames.
         """
         st = self._check_index_type_and_range_(st)
-        ed = self._check_index_type_and_range_(ed)
         if ed is None:
             ed = st + 1
+        ed = self._check_index_type_and_range_(ed)
         for i in range(st, ed):
             if i < 0 or i >= len(self._data):
                 i %= len(self._data)
