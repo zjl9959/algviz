@@ -107,9 +107,9 @@ class Table():
                     except:
                         self._data[r][c] = None
         # Add row and column cursor managers for table.
-        self._row_cursor_mgr = _CursorManager(self._cell_width,
+        self._row_cursor_mgr = _CursorManager((self._cell_width, self._cell_height),
             self._svg, 'R', (self._cell_margin, self._cell_margin), 0)
-        self._col_cursor_mgr = _CursorManager(self._cell_height,
+        self._col_cursor_mgr = _CursorManager((self._cell_width, self._cell_height),
             self._svg, 'D', (self._cell_margin, self._cell_margin), 0)
         # Initial rectangle elemenets in SVG.
         for r in range(self._row):

@@ -148,20 +148,24 @@ class _CursorManager:
     def __init__(self, cell_size, svg, dir, svg_margin=(0, 0), cell_margin=0):
         """
         Args:
-            cell_size (float): The rectangle cell size in SVG.
+            cell_size (float, float): The rectangle cell size in SVG.
             svg (SvgTable): The SvgTable object to add cursors on.
             dir (str): The direction of cursors. (Support 'D':down, 'R':right)
             svg_margin (float, float): The margin between SVG side and cursor's start.
             cell_margin (float): The margin between rectangle cells.
         """
         self._next_cursor_id = 0
-        self._cell_size = cell_size
+        self._cell_width = cell_size[0]
+        self._cell_height = cell_size[1]
         self._svg_margin = svg_margin           # The margin between cell and SVG.
         self._cell_margin = cell_margin         # The margin between cells.
         self._svg = svg                         # The SVGTable object in Vector or Table.
         self._dir = dir                         # The direction of the cursor's arrow (U:up, D:down, L:left, R:right).
         # The total height of a cursor (arrow and label).
-        self._cursor_height = min(20, 0.4 * self._cell_size)
+        if self._dir == 'U' or self._dir == 'D':
+            self._cursor_height = min(20, 0.4 * self._cell_height)
+        else:
+            self._cursor_height = min(20, 0.4 * self._cell_width)
         self._cursor_margin = 3                 # The margin between cursor manager and SVG.
         self._cursor2id = dict()                # Map the cursor object id into the unique cursor id in this cursor manager.
         # Cursor_offset = cursor_id*self._cursor_offset.
@@ -289,9 +293,9 @@ class _CursorManager:
                 old_index = -1 if old_index < 0 else max_index
             new_index = self._new_cursors_index[cursor_id]
             if self._dir == 'R':
-                move_delt_y = (new_index - old_index) * (self._cell_size + self._cell_margin)
+                move_delt_y = (new_index - old_index) * (self._cell_height + self._cell_margin)
             else:
-                move_delt_x = (new_index - old_index) * (self._cell_size + self._cell_margin)
+                move_delt_x = (new_index - old_index) * (self._cell_width + self._cell_margin)
             cursor_gid = self._cursors_info[cursor_id][0]
             self._svg.add_animate_move(cursor_gid, (move_delt_x, move_delt_y), time, False)
             self._cursor_moves[cursor_id] = (move_delt_x, move_delt_y)
@@ -324,9 +328,11 @@ class _CursorManager:
         cursor_pos_x, cursor_pos_y = 0, 0
         if self._dir == 'R':
             cursor_pos_x = self._cursor_height * (cursor_seq + 1) + self._cursor_margin
-            cursor_pos_y = self._svg_margin[1] + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+            cursor_pos_y = self._svg_margin[1] + index*(self._cell_height + self._cell_margin) + self._cell_height*0.5
+            cursor_width = self._cell_height
         else:
-            cursor_pos_x = self._svg_margin[0] + index*(self._cell_size + self._cell_margin) + self._cell_size*0.5
+            cursor_pos_x = self._svg_margin[0] + index*(self._cell_width + self._cell_margin) + self._cell_width*0.5
             cursor_pos_y = self._cursor_height * (cursor_seq + 1) + self._cursor_margin
+            cursor_width = self._cell_width
         cursor_height = self._cursor_height * (cursor_seq + 1)
-        return [cursor_pos_x, cursor_pos_y, cursor_offset, self._cell_size, cursor_height]
+        return [cursor_pos_x, cursor_pos_y, cursor_offset, cursor_width, cursor_height]
