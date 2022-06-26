@@ -82,7 +82,7 @@ class Vector():
         """Insert a new value into vector. If index < 0 or index >= length of Vector, then set index = index % vector length.
         
         Args:
-            index (int): The subscript index to insert value. (Insert before index)
+            index (int/Cursor): The subscript index to insert value. (Insert before index)
             val (printable): The value to insert into vector.
 
         Raises:
@@ -130,7 +130,7 @@ class Vector():
         """Pop a value from vector. Pop vector's tail value as default. 
         
         Args:
-            index (int): The index position of value to pop out.
+            index (int/Cursor): The index position of value to pop out.
 
         Raises:
             RuntimeError: Index:xxx type is not int or Cursor.
@@ -168,7 +168,7 @@ class Vector():
     def swap(self, index1, index2):
         """Swap the two cells positon in Vector.
         Args:
-            index1, index2 (int): The two index positions to be swapped.
+            index1, index2 (int/Cursor): The two index positions to be swapped.
         
         Raises:
             RuntimeError: Index:xxx type is not int or Cursor.
@@ -199,9 +199,11 @@ class Vector():
         Args:
             color ((R,G,B)): The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-            st, ed (int): The mark range's index in Vector.
+            st, ed (int/Cursor): The mark range's index in Vector.
             hold (bool): Whether to keep the mark color in future animation frames.
         """
+        st = self._check_index_type_and_range_(st)
+        ed = self._check_index_type_and_range_(ed)
         if ed is None:
             ed = st + 1
         for i in range(st, ed):
@@ -224,45 +226,57 @@ class Vector():
                 self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
     
 
-    def new_cursor(self, name=None, offset=0):
+    def _add_cursor_(self, cursor):
         """Create a new cursor to track the element's index.
         
         Args:
-            name (str): The cursor's name to be displayed.
-            offset (int): The cursor's initital index offset.
+            cursor (Cursor): The cursor object to track.
         
         Returns:
-            Cursor: Return the new created Cursor object.
+            bool: Wheather add cursor successfully.
         """
-        res_cursor = self._cursor_manager.new_cursor(name, offset)
-        self._update_svg_size_(len(self._data))
-        self._update_rects_position_()
-        self._update_subscripts_position_()
-        return res_cursor
+        if type(cursor) != Cursor:
+            return False
+        if not self._cursor_manager.contains(cursor):
+            self._cursor_manager.add_cursor(cursor)
+            self._update_svg_size_(len(self._data))
+            self._update_rects_position_()
+            self._update_subscripts_position_()
+            return True
+        return False
 
-    def remove_cursor(self, cursor_obj):
+
+    def _remove_cursor_(self, cursor):
         """Remove one cursor from Vector and it's SVG representation.
 
         Args:
-            cursor_obj (Cursor): The cursor object to be removed.
+            cursor (Cursor): The cursor object to be removed.
+
+        Returns:
+            bool: Wheather remove cursor successfully.
         """
-        if type(cursor_obj) != Cursor:
-            return
-        self._cursor_manager.remove_cursor(cursor_obj._id)
-        self._update_svg_size_(len(self._data))
-        self._update_rects_position_()
-        self._update_subscripts_position_()
+        if type(cursor) != Cursor:
+            return False
+        if self._cursor_manager.contains(cursor):
+            self._cursor_manager.remove_cursor(cursor)
+            self._update_svg_size_(len(self._data))
+            self._update_rects_position_()
+            self._update_subscripts_position_()
+            return True
+        return False
 
 
     def __getitem__(self, index):
         """
         Args:
-            index (int): The index position of the cell to be accessed.
+            index (int/Cursor): The index position of the cell to be accessed.
 
         Raises:
             RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
+        if type(index) is Cursor:
+            self._add_cursor_(index)
         index = self._check_index_type_and_range_(index)
         return self._data[index]
     
@@ -270,13 +284,15 @@ class Vector():
     def __setitem__(self, index, val):
         """
         Args:
-            index (int): The index position of the cell to be updated.
+            index (int/Cursor): The index position of the cell to be updated.
             val (printable): New value for the cell.
         
         Raises:
             RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
+        if type(index) is Cursor:
+            self._add_cursor_(index)
         index = self._check_index_type_and_range_(index)
         rid = self._index2rect[index]
         label = val

@@ -48,7 +48,7 @@ class TableRowOperator():
     def __init__(self, r, tab):
         """
         Args:
-            r (int): Set which row in the table to iterate over.
+            r (int/Cursor): Set which row in the table to iterate over.
             tab (Table): Bounded Table object for this Iterator.
         """
         self._r = r
@@ -133,7 +133,7 @@ class Table():
         Args:
             color ((R,G,B)): The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-            r, c (int): Index the cell's raw, column in the table to be marked.
+            r, c (int/Cursor): Index the cell's raw, column in the table to be marked.
             hold (bool): Whether to keep the mark color in future animation frames.
         
         Raises:
@@ -163,7 +163,7 @@ class Table():
         """Get the cell value in the table.
         
         Args:
-            r, c (int): Index the cell's raw, column in the table.
+            r, c (int/Cursor): Index the cell's raw, column in the table.
         
         Returns:
             printable: The value in the specific cell.
@@ -172,6 +172,10 @@ class Table():
             RuntimeError: Index:xx type is not int or Cursor.
             RuntimeError: Table index=xxx out of range.
         """
+        if type(r) is Cursor:
+            self._add_cursor_(r, True)
+        if type(c) is Cursor:
+            self._add_cursor_(c, False)
         r = self._check_index_type_and_range_(r, self._row)
         c = self._check_index_type_and_range_(c, self._col)
         return self._data[r][c]
@@ -181,13 +185,17 @@ class Table():
         """ Get the cell value in the table.
         
         Args:
-            r, c (int): Index the cell's raw, column in the table to be modified.
+            r, c (int/Cursor): Index the cell's raw, column in the table to be modified.
             val (printable): New value for the cell.
 
         Raises:
             RuntimeError: Index:xx type is not int or Cursor.
             RuntimeError: Table index=xxx out of range.
         """
+        if type(r) is Cursor:
+            self._add_cursor_(r, True)
+        if type(c) is Cursor:
+            self._add_cursor_(c, False)
         r = self._check_index_type_and_range_(r, self._row)
         c = self._check_index_type_and_range_(c, self._col)
         gid = self._index2rect[(r, c)]
@@ -254,75 +262,72 @@ class Table():
         self._update_subscripts_position_()
 
 
-    def new_row_cursor(self, name=None, offset=0):
-        """Create a new cursor to track the rows in table.
+    def _add_cursor_(self, cursor, is_row):
+        """Add a cursor into the cursor manager to track it.
         
         Args:
-            name (str): The cursor's name to be displayed.
-            offset (int): The cursor's initital index offset.
+            cursor (Cursor): The cursor object to track.
         
         Returns:
-            Cursor: Return the new created Cursor object.
+            bool: Wheather add cursor successfully.
         """
-        res_cursor = None
-        res_cursor = self._row_cursor_mgr.new_cursor(name, offset)
-        res_cursor._dir = 'R'
-        self._col_cursor_mgr.on_svg_margin_changed((
-            self._cell_margin+self._row_cursor_mgr.get_cursors_occupy(), self._cell_margin))
-        self._update_svg_size_()
-        self._update_rects_position_()
-        self._update_subscripts_position_()
-        return res_cursor
+        if type(cursor) != Cursor:
+            return False
+        need_update_svg = False
+        if is_row:
+            if not self._row_cursor_mgr.contains(cursor):
+                self._row_cursor_mgr.add_cursor(cursor)
+                self._col_cursor_mgr.on_svg_margin_changed((
+                    self._cell_margin+self._row_cursor_mgr.get_cursors_occupy(), self._cell_margin))
+                need_update_svg = True
+        else:
+            if not self._col_cursor_mgr.contains(cursor):
+                self._col_cursor_mgr.add_cursor(cursor)
+                self._row_cursor_mgr.on_svg_margin_changed((
+                    self._cell_margin, self._cell_margin + self._col_cursor_mgr.get_cursors_occupy()))
+                need_update_svg = True
+        if need_update_svg:
+            self._update_svg_size_()
+            self._update_rects_position_()
+            self._update_subscripts_position_()
+            return True
+        return False
 
 
-    def new_col_cursor(self, name=None, offset=0):
-        """Create a new cursor to track the columns in table.
-        
-        Args:
-            name (str): The cursor's name to be displayed.
-            offset (int): The cursor's initital index offset.
-        
-        Returns:
-            Cursor: Return the new created Cursor object.
-        """
-        res_cursor = None
-        res_cursor = self._col_cursor_mgr.new_cursor(name, offset)
-        res_cursor._dir = 'U'
-        self._row_cursor_mgr.on_svg_margin_changed((
-            self._cell_margin, self._cell_margin+self._col_cursor_mgr.get_cursors_occupy()))
-        self._update_svg_size_()
-        self._update_rects_position_()
-        self._update_subscripts_position_()
-        return res_cursor
-
-
-    def remove_cursor(self, cursor_obj):
+    def _remove_cursor_(self, cursor):
         """Remove one cursor from Vector and it's SVG representation.
 
         Args:
-            cursor_obj (Cursor): The cursor object to be removed.
+            cursor (Cursor): The cursor object to be removed.
+        
+        Returns:
+            bool: Wheather remove cursor successfully.
         """
-        if type(cursor_obj) != Cursor:
-            return
-        if cursor_obj._dir == 'R':
-            self._row_cursor_mgr.remove_cursor(cursor_obj._id)
+        if type(cursor) != Cursor:
+            return False
+        need_update_svg = False
+        if self._row_cursor_mgr.contains(cursor):
+            self._row_cursor_mgr.remove_cursor(cursor)
             self._col_cursor_mgr.on_svg_margin_changed((
                 self._cell_margin+self._row_cursor_mgr.get_cursors_occupy(), self._cell_margin))
-        elif cursor_obj._dir == 'U':
-            self._col_cursor_mgr.remove_cursor(cursor_obj._id)
+            need_update_svg = True
+        if self._col_cursor_mgr.contains(cursor):
+            self._col_cursor_mgr.remove_cursor(cursor)
             self._row_cursor_mgr.on_svg_margin_changed((
                 self._cell_margin, self._cell_margin+self._col_cursor_mgr.get_cursors_occupy()))
-        else:
-            return
-        self._update_svg_size_()
-        self._update_rects_position_()
-        self._update_subscripts_position_()
+            need_update_svg = True
+        if need_update_svg:
+            self._update_svg_size_()
+            self._update_rects_position_()
+            self._update_subscripts_position_()
+            return True
+        return False
 
 
     def __getitem__(self, r):
         """
         Args:
-            r (int): The index of the row to access.
+            r (int/Cursor): The index of the row to access.
         
         Returns:
             TabRowIter: The iterator object for the row in the table.

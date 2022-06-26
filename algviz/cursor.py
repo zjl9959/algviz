@@ -25,6 +25,7 @@ kcursor_colors = (
     (245, 222, 179),    # wheat
 )
 
+
 class Cursor:
     """A cursor is a display object to show the current index of Vector or Table(row/column).
 
@@ -33,7 +34,7 @@ class Cursor:
     You can access an element in it's related Vector/Table object.
     The index in cursor's should be an integer number.
     
-    Assignment operations: <<
+    Assignment operation: <<
 
     Mathmatics operations: +=, -=, *=, //=
 
@@ -58,14 +59,18 @@ class Cursor:
         i > j                           # False: 3 > 5 is false.
     """
 
-    def __init__(self, manager, id, index=0):
-        self._manager = manager         # This cursor's related manager.
-        self._id = id                   # The unique id of the cursor in it's related Vector or Table.
+    def __init__(self, name, index):
+        self._managers = list()         # This cursor's related managers.
+        self._name = name               # The cursor's display name.
         self._index = index             # The current index of cursor.
 
+    def _add_manager_(self, mgr):
+        if mgr not in self._managers:
+            self._managers.append(mgr)
+
     def _on_cursor_updated_(self, new_index):
-        if self._manager:
-            self._manager.on_cursor_updated(self._id, new_index)
+        for mgr in self._managers:
+            mgr.on_cursor_updated(self, new_index)
 
     def index(self):
         """
@@ -73,6 +78,13 @@ class Cursor:
             int: The cursor's current index value.
         """
         return self._index
+
+    def name(self):
+        """
+        Returns:
+            str: Cursor display name.
+        """
+        return self._name
 
     # Index assignment operator.
     def __lshift__(self, other):
@@ -151,6 +163,7 @@ class _CursorManager:
         # The total height of a cursor (arrow and label).
         self._cursor_height = min(20, 0.4 * self._cell_size)
         self._cursor_margin = 3                 # The margin between cursor manager and SVG.
+        self._cursor2id = dict()                # Map the cursor object id into the unique cursor id in this cursor manager.
         # Cursor_offset = cursor_id*self._cursor_offset.
         self._cursor_offset = 2
         self._cursors_info = dict()             # key:cursor_id; value:(cursor_gid, cursor_color, cursor_name) in SVG.
@@ -159,9 +172,18 @@ class _CursorManager:
         self._new_cursors_index = dict()        # key:cursor_id; value:cursor_index.
         self._cursor_moves = dict()             # Cache the cursor move since last frame. key:cursor_id; value:(cursor_move_delt_x, cursor_move_delt_y).
 
-    def new_cursor(self, name, index):
+    def contains(self, cursor):
+        """Check if the cursor was tracked by this manager.
+        """
+        return id(cursor) in self._cursor2id
+
+    def add_cursor(self, cursor):
         """Create a new cursor object and track it.
         """
+        if self.contains(cursor):
+            return
+        name = cursor.name()
+        index = cursor.index()
         # Update old cursor's position.
         for cid in self._cursors_id_list:
             gid = self._cursors_info[cid][0]
@@ -180,11 +202,17 @@ class _CursorManager:
         self._cursors_id_list.append(cursor_id)
         self._cursors_info[cursor_id] = (cursor_node, cursor_color, name)
         self._old_cursors_index[cursor_id] = index
-        return Cursor(self, cursor_id, index)
+        # Update the cache and cursor.
+        self._cursor2id[id(cursor)] = cursor_id
+        cursor._add_manager_(self)
 
-    def remove_cursor(self, cursor_id):
+
+    def remove_cursor(self, cursor):
         """Untrack the specific cursor from this cursor manager.
         """
+        if id(cursor) not in self._cursor2id:
+            return
+        cursor_id = self._cursor2id[id(cursor)]
         if cursor_id not in self._cursors_id_list:
             return
         cursor_seq = self._cursors_id_list.index(cursor_id)
@@ -237,9 +265,12 @@ class _CursorManager:
         """
         return len(self._cursors_id_list) * self._cursor_height + self._cursor_margin
 
-    def on_cursor_updated(self, cursor_id, new_index):
+    def on_cursor_updated(self, cursor, new_index):
         """Called when cursor's index changed.
         """
+        if not self.contains(cursor):
+            return
+        cursor_id = self._cursor2id[id(cursor)]
         self._new_cursors_index[cursor_id] = new_index
 
     def refresh_cursors_animation(self, max_index, time):

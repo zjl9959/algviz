@@ -17,6 +17,7 @@ from algviz.vector import Vector
 from algviz.svg_graph import SvgGraph
 from algviz.svg_table import SvgTable
 from algviz.logger import Logger
+from algviz.cursor import Cursor
 from algviz.utility import AlgvizParamError, kMaxNameChars
 
 
@@ -60,12 +61,12 @@ class Visualizer():
         
         # The mapping relationship between the display object and the display id.
         self._element2display = WeakKeyDictionary()
-        
         # Record the displayed id. If object is not displayed, call the display interface, otherwise call the update interface.
         self._displayed = set()
-        
         # The mapping relationship between the display object and the object's name.
         self._displayid2name = dict()
+        # All the cursor objects id bind with this visualizer.
+        self._cursors_id_set = set()
 
 
     def display(self, delay=None):
@@ -193,3 +194,33 @@ class Visualizer():
             self._displayid2name[_next_display_id] = name
         _next_display_id += 1
         return logg
+
+
+    def createCursor(self, name=None, offset=0):
+        """
+        Args:
+            name (str): The name of this Cursor object.
+            offset (int): The cursor's index position offset.
+
+        Returns:
+            Cursor: Created Cursor object.
+        """
+        cursor = Cursor(name, offset)
+        self._cursors_id_set.add(id(cursor))
+        return cursor
+
+
+    def removeCursor(self, cursor):
+        """
+        Args:
+            cursor (Cursor): The cursor object to be removed from this visualizer.
+        """
+        cursor_id = id(cursor)
+        if cursor_id not in self._cursors_id_set:
+            return
+        for elem in self._element2display.keyrefs():
+            element = elem()
+            if not element and type(element) != Vector and type(element) != Table:
+                continue
+            element._remove_cursor_(cursor)
+        self._cursors_id_set.remove(cursor_id)
