@@ -17,12 +17,12 @@ from algviz.utility import AlgvizTypeError
 
 # The alternative cursor colors list.
 kcursor_colors = (
-    (203, 67, 53),
-    (25, 111, 61),
     (40, 116, 166),
     (147, 81, 22),
-    (99, 57, 116),
-    (28, 40, 51)
+    (25, 111, 61),
+    (203, 67, 53),
+    (28, 40, 51),
+    (99, 57, 116)
 )
 
 

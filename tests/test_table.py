@@ -218,7 +218,7 @@ def test_multiply_cursors():
     vec = viz.createVector([-1, -2, -3, -4, -5, -6, -7, -8, -9], 'vec')
     tab = viz.createTable(3, 3, [[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'tab1', (80, 40))
     k = viz.createCursor('k')
-    for i in viz.cursorRange(0, 3, name='i'):
+    for i in viz.cursorRange(0, 3, 'i'):
         i << i - 1
         i << i * 3
         i << i // 3

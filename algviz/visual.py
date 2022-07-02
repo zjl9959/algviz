@@ -66,7 +66,7 @@ class Visualizer():
         # The mapping relationship between the display object and the object's name.
         self._displayid2name = dict()
         # The next unique cursor id created by this visualizer.
-        self._next_cursor_id = 0
+        self._next_cursor_id = -1
 
 
     def display(self, delay=None):
@@ -223,12 +223,12 @@ class Visualizer():
             element._remove_cursor_(cursor)
 
 
-    def cursorRange(self, st, ed, step=1, name=None):
+    def cursorRange(self, st, ed, name=None, step=1):
         """
         Args:
             st/ed (int): The start/end of cursor index.
-            step (int): The change step of this cursor's index(default->1).
             name (str): The display name of this cursor(default->None).
+            step (int): The change step of this cursor's index(default->1).
         Returns:
             _CursorRange: the iterator of Cursor objects.
         """
