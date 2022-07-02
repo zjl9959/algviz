@@ -36,7 +36,10 @@ class Cursor:
     
     Assignment operation: <<
 
-    Mathmatics operations: +=, -=, *=, //=
+    Mathmatics operations:
+        No side effect, returns a int number: +, -, *, //, %
+
+        Changes the cursor's index and returns itself: +=, -=, *=, //=, %=
 
     Compare operations: >, <, >=, <=, ==, !=
     
@@ -44,25 +47,23 @@ class Cursor:
 
 
     For example:
-        i = vector.new_cursor('i')  # Create a cursor point to vector object.
+        i = viz.create_cursor('i', 3)   # The index in cursor i is 3.
 
-        vector[i] = 3               # Set the cursor's index(0) element to 3 in vector.
+        j = viz.create_cursor('j', 5)   # The index in cursor j is 5.
 
+        i += j                          # The index in cursor i change from 3 into 8(3+5).
 
-    For example:
-        i = vector.new_cursor('i', 3)   # The index in cursor i is 3.
-
-        j = vector.new_cursor('j', 5)   # The index in cursor j is 5.
-
-        i < 10                          # True: 3 < 10 is true.
+        j << i - 1                      # The index in cursor j change from 5 into 7(8-1).
         
-        i > j                           # False: 3 > 5 is false.
+        i > j                           # True: 8 > 7 is true.
     """
 
-    def __init__(self, name, index):
+    def __init__(self, name, index, id):
         self._managers = list()         # This cursor's related managers.
         self._name = name               # The cursor's display name.
         self._index = index             # The current index of cursor.
+        color = kcursor_colors[id % len(kcursor_colors)]
+        self._color = color             # The display color of cursor.
 
     def _add_manager_(self, mgr):
         if mgr not in self._managers:
@@ -93,6 +94,26 @@ class Cursor:
         return self
 
     # Mathmatics operators.
+    def __add__(self, other):
+        rhs = _get_rhs_index(other)
+        return self._index + rhs
+
+    def __sub__(self, other):
+        rhs = _get_rhs_index(other)
+        return self._index - rhs
+
+    def __mul__(self, other):
+        rhs = _get_rhs_index(other)
+        return self._index * rhs
+
+    def __floordiv__(self, other):
+        rhs = _get_rhs_index(other)
+        return self._index // rhs
+
+    def __mod__(self, other):
+        rhs = _get_rhs_index(other)
+        return self._index % rhs
+
     def __imul__(self, other):
         self._index *= _get_rhs_index(other)
         self._on_cursor_updated_(self._index)
@@ -110,6 +131,11 @@ class Cursor:
 
     def __isub__(self, other):
         self._index -= _get_rhs_index(other)
+        self._on_cursor_updated_(self._index)
+        return self
+
+    def __imod__(self, other):
+        self._index %= _get_rhs_index(other)
         self._on_cursor_updated_(self._index)
         return self
 
@@ -142,6 +168,27 @@ def _get_rhs_index(rhs):
         return rhs._index
     else:
         raise AlgvizTypeError(rhs)
+
+
+class _CursorRange:
+    def __init__(self, viz, id, name, start, end, step):
+        self._end = end
+        self._step = step
+        self._viz = viz
+        self._next_index = start
+        self._cursor = Cursor(name, start, id)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._next_index >= self._end:
+            self._viz.removeCursor(self._cursor)
+            raise StopIteration
+        else:
+            self._cursor << self._next_index
+            self._next_index += self._step
+            return self._cursor
 
 
 class _CursorManager:
@@ -200,7 +247,7 @@ class _CursorManager:
         self._next_cursor_id += 1
         cursor_seq = len(self._cursors_id_list)
         cursor_pos = self._calculate_cursor_position_(cursor_seq, index)
-        cursor_color = kcursor_colors[cursor_seq % len(kcursor_colors)]
+        cursor_color = cursor._color
         cursor_node = self._svg.add_cursor_element(cursor_pos, cursor_color, name, self._dir)
         # Record the cursor's position and offset information.
         self._cursors_id_list.append(cursor_id)

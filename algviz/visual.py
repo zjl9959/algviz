@@ -17,8 +17,8 @@ from algviz.vector import Vector
 from algviz.svg_graph import SvgGraph
 from algviz.svg_table import SvgTable
 from algviz.logger import Logger
-from algviz.cursor import Cursor
-from algviz.utility import AlgvizParamError, kMaxNameChars
+from algviz.cursor import Cursor, _CursorRange
+from algviz.utility import AlgvizParamError, AlgvizTypeError, kMaxNameChars
 
 
 class _NoDisplay():
@@ -65,8 +65,8 @@ class Visualizer():
         self._displayed = set()
         # The mapping relationship between the display object and the object's name.
         self._displayid2name = dict()
-        # All the cursor objects id bind with this visualizer.
-        self._cursors_id_set = set()
+        # The next unique cursor id created by this visualizer.
+        self._next_cursor_id = 0
 
 
     def display(self, delay=None):
@@ -205,9 +205,8 @@ class Visualizer():
         Returns:
             Cursor: Created Cursor object.
         """
-        cursor = Cursor(name, offset)
-        self._cursors_id_set.add(id(cursor))
-        return cursor
+        self._next_cursor_id += 1
+        return Cursor(name, offset, self._next_cursor_id)
 
 
     def removeCursor(self, cursor):
@@ -215,12 +214,23 @@ class Visualizer():
         Args:
             cursor (Cursor): The cursor object to be removed from this visualizer.
         """
-        cursor_id = id(cursor)
-        if cursor_id not in self._cursors_id_set:
-            return
+        if type(cursor) != Cursor:
+            raise AlgvizTypeError('removeCursor object is not a Cursor type.')
         for elem in self._element2display.keyrefs():
             element = elem()
             if not element and type(element) != Vector and type(element) != Table:
                 continue
             element._remove_cursor_(cursor)
-        self._cursors_id_set.remove(cursor_id)
+
+
+    def cursorRange(self, st, ed, step=1, name=None):
+        """
+        Args:
+            st/ed (int): The start/end of cursor index.
+            step (int): The change step of this cursor's index(default->1).
+            name (str): The display name of this cursor(default->None).
+        Returns:
+            _CursorRange: the iterator of Cursor objects.
+        """
+        self._next_cursor_id += 1
+        return _CursorRange(self, self._next_cursor_id, name, st, ed, step)
