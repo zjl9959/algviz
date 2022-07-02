@@ -202,6 +202,8 @@ def test_vector_cursor():
     i += 3
     i += i
     i -= 3
+    i << i + 3 + 1
+    i %= 4
     results.append(vec[i])
     i << 4
     results.append(vec[i])

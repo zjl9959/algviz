@@ -212,6 +212,29 @@ def test_table_cursor():
     return res
 
 
+def test_multiply_cursors():
+    res = TestResult()
+    viz = algviz.Visualizer()
+    vec = viz.createVector([-1, -2, -3, -4, -5, -6, -7, -8, -9], 'vec')
+    tab = viz.createTable(3, 3, [[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'tab1', (80, 40))
+    k = viz.createCursor('k')
+    for i in viz.cursorRange(0, 3, name='i'):
+        i << i - 1
+        i << i * 3
+        i << i // 3
+        i << i + 1
+        for j in viz.cursorRange(0, 3, name='j'):
+            k << j + i*3
+            k %= 9
+            if k % 5 < 5:
+                tab[i][j] = vec[k]
+    table_elems = get_table_elements(tab._repr_svg_())
+    expect_results = [[-1, -2, -3], [-4, -5, -6], [-7, -8, -9]]
+    res.add_case(equal_table(table_elems, expect_results), 'Copy vector data into table',
+        table_elems, expect_results)
+    return res
+
+
 def test_reshape_table():
     res = TestResult()
     viz = algviz.Visualizer()
