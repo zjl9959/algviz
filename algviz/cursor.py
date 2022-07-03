@@ -3,8 +3,8 @@
 
 """Define the cursor related classes.
 
-A cusor is a arrow show in Vector or Table's SVG display.
-The cusor represent the index of element in Vector or Table.
+A cursor is an arrow shown in Vector or Table's SVG display.
+The cursor represents the index of the element in Vector or Table.
 
 Author: zjl9959@gmail.com
 
@@ -29,10 +29,11 @@ kcursor_colors = (
 class Cursor:
     """A cursor is a display object to show the current index of Vector or Table(row/column).
 
-    A cursor object must be created from it's related Vector/Table object.
-    Otherwise the disaplyed SVG can not track it's index change.
-    You can access an element in it's related Vector/Table object.
-    The index in cursor's should be an integer number.
+    A cursor object should be created from Visualizer.create_cursor
+    or Visualizer.cursorRange interfaces. After that,
+    you can access the element in any Vector/Table object with
+    the created cursor just like an integer index.
+    The index in the cursor should be an integer number.
     
     Assignment operation: <<
 
@@ -43,13 +44,13 @@ class Cursor:
 
     Compare operations: >, <, >=, <=, ==, !=
     
-    The right hand value of those operations above can be a cursor or an integer number.
+    The right-hand value of those operations above can be a cursor or an integer number.
 
 
     For example:
-        i = viz.create_cursor('i', 3)   # The index in cursor i is 3.
+        i = viz.createCursor('i', 3)   # The index in cursor i is 3.
 
-        j = viz.create_cursor('j', 5)   # The index in cursor j is 5.
+        j = viz.createCursor('j', 5)   # The index in cursor j is 5.
 
         i += j                          # The index in cursor i change from 3 into 8(3+5).
 

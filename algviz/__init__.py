@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-"""Algorithm visualization animation library.
+"""Algviz is an algorithm visualization tool for your Python code.
 
-algviz is an algorithm visualization library for jupyter notebook.
-This module can automatic generate visualize animations for
-vector, table, list, tree and graph data structures in your code.
+Algviz can generate visual animations for
+vector, table, linked list, tree, and graph data structures.
+You can bring alive animations in your notebook after
+inserting a few algviz interfaces into code. 
 
 Author: zjl9959@gmail.com
 
