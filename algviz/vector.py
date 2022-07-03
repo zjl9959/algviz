@@ -59,17 +59,17 @@ class Vector():
         self._label_font_size = int(min(12, self._cell_width*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
         self._svg = SvgTable(self._cell_margin, self._cell_margin)
+        # Initial cursor manager.
+        self._cursor_manager = _CursorManager((self._cell_width, self._cell_width), self._svg, 'D',
+            (self._cell_margin, self._cell_margin), self._cell_margin)
         # Create rect elements for initial data.
         for i in range(len(self._data)):
-            rect_pos_x = self._cell_width*i+self._cell_margin*(i+1)
-            rect_pos_y = self._cell_margin
+            rect_pos_x = self._cell_width*i + self._cell_margin*(i+1)
+            rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
             rect = (rect_pos_x, rect_pos_y, self._cell_width, self._cell_height)
             rid = self._svg.add_rect_element(rect, text=self._data[i])
             self._cell_tcs[rid] = TraceColorStack()
             self._index2rect[i] = rid
-        # Initial cursor manager.
-        self._cursor_manager = _CursorManager((self._cell_width, self._cell_width), self._svg, 'D',
-            (self._cell_margin, self._cell_margin), self._cell_margin)
         # Update SVG and rects size.
         self._update_svg_size_(len(self._data))
         if self._show_histogram:
