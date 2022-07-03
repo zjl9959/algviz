@@ -218,7 +218,7 @@ class Visualizer():
             raise AlgvizTypeError('removeCursor object is not a Cursor type.')
         for elem in self._element2display.keyrefs():
             element = elem()
-            if not element and type(element) != Vector and type(element) != Table:
+            if not element or (type(element) != Vector and type(element) != Table):
                 continue
             element._remove_cursor_(cursor)
 
