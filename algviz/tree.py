@@ -21,14 +21,18 @@ class BinaryTreeNode(NodeBase):
         right (BinaryTreeNode): Point to the right subtree node object.
     """
 
-    def __init__(self, val):
+    def __init__(self, val, left=None, right=None):
         """
         Args:
             val (printable): The label value for binary node(should be printable object).
+            left (BinaryTreeNode): Point to the left subtree node object.
+            right (BinaryTreeNode): Point to the right subtree node object.
         """
         super().__init__(val)
-        super().__setattr__('left', None)
-        super().__setattr__('right', None)
+        super().__setattr__('left', left)
+        self._on_update_neighbor_(left)
+        super().__setattr__('right', right)
+        self._on_update_neighbor_(right)
     
 
     def __getattribute__(self, name):

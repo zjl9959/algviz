@@ -30,13 +30,15 @@ class ForwardLinkedListNode(NodeBase):
         next (ForwardLinkedListNode): Point to the next ForwardLinkedListNode object.
     """
 
-    def __init__(self, val):
+    def __init__(self, val, next=None):
         """
         Args:
             val (printable): The label to be displayed in forward linked list node.
+            next (ForwardLinkedListNode): Point to the next ForwardLinkedListNode object.
         """
         super().__init__(val)
-        super().__setattr__('next', None)
+        super().__setattr__('next', next)
+        self._on_update_neighbor_(next)
 
 
     def __getattribute__(self, name):
@@ -71,18 +73,22 @@ class DoublyLinkedListNode(NodeBase):
 
     Attributes:
         val (printable): The label to be displayed in the doubly linked list node.
-        next (DoublyLinkedListNode): Point to the next DoublyLinkedListNode object.
         prev (DoublyLinkedListNode): Point to the previous DoublyLinkedListNode object.
+        next (DoublyLinkedListNode): Point to the next DoublyLinkedListNode object.
     """
 
-    def __init__(self, val):
+    def __init__(self, val, prev=None, next=None):
         """
         Args:
             val (printable): The label to be displayed in doubly linked list node.
+            prev (DoublyLinkedListNode): Point to the previous DoublyLinkedListNode object.
+            next (DoublyLinkedListNode): Point to the next DoublyLinkedListNode object.
         """
         super().__init__(val)
-        super().__setattr__('next', None)
-        super().__setattr__('prev', None)
+        super().__setattr__('prev', prev)
+        self._on_update_neighbor_(prev)
+        super().__setattr__('next', next)
+        self._on_update_neighbor_(next)
 
 
     def __getattribute__(self, name):
