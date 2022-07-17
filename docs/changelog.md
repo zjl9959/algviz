@@ -1,5 +1,10 @@
 # Changelog
 
+## algviz 0.1.5
+
++ Fixed some known bugs about cursor.
++ Update some constructor interfaces.
+
 ## algviz 0.1.4
 
 This version adjusts the interfaces to create or remove cursors.
