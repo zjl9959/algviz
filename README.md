@@ -4,7 +4,7 @@
 
 <div align=center><img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/></div>
 
-Algviz is an algorithm visualization tool for your Python code in Jupyter-notebook.
+Algviz is an algorithm visualization tool for your Python code in [Jupyter-notebook](https://jupyter.org/).
 
 Algviz can generate visual animations for `vector`, `table`, `linked list`, `tree`, and `graph` data structures.
 You can bring alive animations in your notebook after inserting a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) into code. For example, this animation shows a [bubble sort algorithm]:
@@ -33,16 +33,14 @@ for num in vector:              # Iterate over all the elements in vector.
 
 You can modify the data multi-times, and algviz will record all the operations since the last time you call the [display](https://algviz.readthedocs.io/en/latest/api.html#algviz.visual.Visualizer.display) interface. Then it will merge all the operations in one animation when you call display next time. So the only thing you need to be concerned about is: `when to call the display interface?`
 
-All the animations created by algviz are [SVG](https://www.w3.org/Graphics/SVG/) string format. You can export the animation frames and review them in the browser or embed it in your slides. *In the future, [algviz.com](https://algviz.com) will support exporting the svg with all the display objects and animation sequences for your code, please stay tuned!*
-
 
 ## Installation
 
 ### Step1: Install Jupyter-notebook
 
-You can choose any of the following methods to install [Jupyter-notebook](https://jupyter.org/).
+You can choose any of the following methods to install:
 
-+ If you are a vscode user, you can install Jupyter [extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) for vscode.
++ If you are a [vscode](https://code.visualstudio.com/) user, you can install Jupyter [extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) for vscode.
 + [Install Jupyter](https://jupyter.org/install) on your computer and view the animation on your browser.
 + [Install anaconda](https://docs.anaconda.com/anaconda/install/index.html) and [use Jupyter-notebook](https://docs.anaconda.com/ae-notebooks/user-guide/basic-tasks/apps/jupyter/index.html) in it.
 
