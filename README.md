@@ -1,5 +1,7 @@
 # Algviz
 
+[中文页面](https://algviz.com/common/README-zh.html)
+
 ## Introduce
 
 <div align=center><img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/></div>
