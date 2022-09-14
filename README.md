@@ -1,6 +1,6 @@
 # Algviz
 
-[中文页面](https://algviz.com/common/README-zh.html)
+[中文页面](https://algviz.com/cn/about.html)
 
 ## Introduce
 
