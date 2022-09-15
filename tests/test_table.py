@@ -168,8 +168,8 @@ def test_table_cursor():
     viz = algviz.Visualizer()
     table = viz.createTable(3, 3)
     # Test modify elements by table cursor.
-    r = viz.createCursor('r')
-    c = viz.createCursor('c')
+    r = viz.createCursor(name='r')
+    c = viz.createCursor(name='c')
     while r < 3:
         c << 0
         while c < 3:
@@ -217,8 +217,8 @@ def test_multiply_cursors():
     viz = algviz.Visualizer()
     vec = viz.createVector([-1, -2, -3, -4, -5, -6, -7, -8, -9], 'vec')
     tab = viz.createTable(3, 3, [[1, 2, 3], [4, 5, 6], [7, 8, 9]], 'tab1', (80, 40))
-    k = viz.createCursor('k')
-    for i in viz.cursorRange(0, 3, 'i'):
+    k = viz.createCursor(name='k')
+    for i in viz.cursorRange(0, 3, name='i'):
         i << i - 1
         i << i * 3
         i << i // 3

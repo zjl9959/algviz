@@ -196,15 +196,17 @@ class Visualizer():
         return logg
 
 
-    def createCursor(self, name=None, offset=0):
+    def createCursor(self, offset=0, name=None):
         """
         Args:
+            offset (int/Cursor): The cursor's index position offset.
             name (str): The name of this Cursor object.
-            offset (int): The cursor's index position offset.
 
         Returns:
             Cursor: Created Cursor object.
         """
+        if type(offset) is Cursor:
+            offset = offset.index()
         self._next_cursor_id += 1
         return Cursor(name, offset, self._next_cursor_id)
 
@@ -223,14 +225,19 @@ class Visualizer():
             element._remove_cursor_(cursor)
 
 
-    def cursorRange(self, st, ed, name=None, step=1):
+    def cursorRange(self, st, ed, step=1, name=None):
         """
         Args:
-            st/ed (int): The start/end of cursor index.
+            st/ed (int/Cursor): The start/end of cursor index.
+            step (int/Cursor): The change step of this cursor's index(default->1).
             name (str): The display name of this cursor(default->None).
-            step (int): The change step of this cursor's index(default->1).
+
         Returns:
             _CursorRange: the iterator of Cursor objects.
         """
+        if type(ed) is Cursor:
+            st = st.index()
+        if type(ed) is Cursor:
+            ed = ed.index()
         self._next_cursor_id += 1
         return _CursorRange(self, self._next_cursor_id, name, st, ed, step)

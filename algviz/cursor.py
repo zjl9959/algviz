@@ -48,9 +48,9 @@ class Cursor:
 
 
     For example:
-        i = viz.createCursor('i', 3)   # The index in cursor i is 3.
+        i = viz.createCursor(3, 'i')   # The index in cursor i is 3.
 
-        j = viz.createCursor('j', 5)   # The index in cursor j is 5.
+        j = viz.createCursor(5, 'j')   # The index in cursor j is 5.
 
         i += j                          # The index in cursor i change from 3 into 8(3+5).
 
@@ -183,7 +183,7 @@ class _CursorRange:
         return self
 
     def __next__(self):
-        if self._next_index >= self._end:
+        if self._next_index == self._end:
             self._viz.removeCursor(self._cursor)
             raise StopIteration
         else:

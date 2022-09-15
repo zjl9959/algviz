@@ -193,7 +193,7 @@ def test_vector_cursor():
     vec = viz.createVector(vec_data)
     # Test access elements by vector cursor.
     results, expect_results = list(), [2, 1, 4, 5]
-    i = viz.createCursor('i', 1)
+    i = viz.createCursor(1, 'i')
     results.append(vec[i])
     i *= 5
     i -= 1
@@ -209,7 +209,8 @@ def test_vector_cursor():
     results.append(vec[i])
     res.add_case(equal(results, expect_results), 'Access elements', results, expect_results)
     # Test modify elements by vector cursor.
-    j = viz.createCursor('j', 3)
+    j = viz.createCursor(i, 'j')
+    j -= 1
     expect_results = [2, 3, 4, 7, -5]
     if j < i:
         j << i
