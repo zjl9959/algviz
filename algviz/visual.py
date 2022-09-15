@@ -235,9 +235,9 @@ class Visualizer():
         Returns:
             _CursorRange: the iterator of Cursor objects.
         """
-        if type(ed) is Cursor:
+        if type(st) is Cursor:
             st = st.index()
         if type(ed) is Cursor:
             ed = ed.index()
         self._next_cursor_id += 1
-        return _CursorRange(self, self._next_cursor_id, name, st, ed, step)
+        return _CursorRange(self._next_cursor_id, name, st, ed, step)

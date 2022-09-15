@@ -172,10 +172,9 @@ def _get_rhs_index(rhs):
 
 
 class _CursorRange:
-    def __init__(self, viz, id, name, start, end, step):
+    def __init__(self, id, name, start, end, step):
         self._end = end
         self._step = step
-        self._viz = viz
         self._next_index = start
         self._cursor = Cursor(name, start, id)
 
@@ -184,7 +183,6 @@ class _CursorRange:
 
     def __next__(self):
         if self._next_index == self._end:
-            self._viz.removeCursor(self._cursor)
             raise StopIteration
         else:
             self._cursor << self._next_index
