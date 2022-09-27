@@ -295,11 +295,13 @@ class SvgGraph():
         svg_node = find_tag_by_id(self._svg, 'g', edge_id)
         if svg_node is None or label is None:
             return
-        text = svg_node.getElementsByTagName('text')[0]
-        for t in text.childNodes:
-            text.removeChild(t)
-        tt = self._svg.createTextNode('{}'.format(label))
-        text.appendChild(tt)
+        text_list = svg_node.getElementsByTagName('text')
+        if text_list and len(text_list) > 0:
+            text = text_list[0]
+            for t in text.childNodes:
+                text.removeChild(t)
+            tt = self._svg.createTextNode('{}'.format(label))
+            text.appendChild(tt)
     
 
     def _repr_svg_(self):
@@ -422,9 +424,11 @@ class SvgGraph():
         if node is not None:
             ellipse = node.getElementsByTagName('ellipse')[0]
             ellipse.setAttribute('fill', rgbcolor2str(color))
-            text = node.getElementsByTagName('text')[0]
-            if text is not None:
-                text.setAttribute('fill', auto_text_color(color))
+            text_list = node.getElementsByTagName('text')
+            if text_list and len(text_list) > 0:
+                text = text_list[0]
+                if text is not None:
+                    text.setAttribute('fill', auto_text_color(color))
     
 
     def _update_edge_color_(self, edge, color):

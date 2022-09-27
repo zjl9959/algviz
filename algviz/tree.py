@@ -240,3 +240,35 @@ def parseTree(tree_info, nodes_label=None):
             child_node = nodes_dict[child]
             parent_node.add(child_node)
     return nodes_dict[root]
+
+
+class RecursiveTree():
+    """Used to trace the recursive process in the recursive algorithm.
+    """
+    def __init__(self, viz, name="Recursive tree"):
+        """
+        Args:
+            viz (Visualizer): The visualizer object that contains this recursive tree.
+            name (printable): The display name of this recursive tree.
+        """
+        self.root = TreeNode("root")
+        self.graph = viz.createGraph([self.root], name, True)
+        self.stack = list()     # Recursive stack.
+
+    def forward(self, val=''):
+        """Forward to a new depth of this recursive tree.
+        Args:
+            val (printable): The label to be displayed in the recursive tree node.
+        """
+        node = TreeNode(val)
+        self.root.add(node)
+        self.graph.markNode((173, 255, 47), node, hold=True)
+        self.stack.append(self.root)
+        self.root = node
+
+    def backward(self):
+        """Backward to the last visited node in the recursive tree.
+        """
+        self.graph.markNode((192, 192, 192), self.root, hold=True)
+        self.root = self.stack.pop()
+        self.graph.markNode((255, 99, 71), self.root, hold=True)

@@ -15,7 +15,7 @@ License: GPLv3
 
 from .visual import Visualizer
 from .graph import GraphNode, parseGraph, updateGraphEdge
-from .tree import BinaryTreeNode, TreeNode, parseBinaryTree, parseTree
+from .tree import BinaryTreeNode, TreeNode, RecursiveTree, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
 from .utility import _version, AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError, AlgvizTypeError
@@ -54,7 +54,7 @@ color_yellow = (255, 255, 0)
 __all__ = [
     'Visualizer',
     'GraphNode', 'parseGraph', 'updateGraphEdge',
-    'BinaryTreeNode', 'TreeNode', 'parseBinaryTree', 'parseTree',
+    'BinaryTreeNode', 'TreeNode', 'RecursiveTree', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',
     'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError', 'AlgvizTypeError'
