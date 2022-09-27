@@ -1,5 +1,15 @@
 # Changelog
 
+## algviz 0.1.6
+
++ **Interfaces change**
+    + [Visualizer.createCursor](https://algviz.readthedocs.io/en/0.1.6/api.html#algviz.visual.Visualizer.createCursor) swap the position of parameters `offset` and `name`.
+    + [Visualizer.cursorRange](https://algviz.readthedocs.io/en/0.1.6/api.html#algviz.visual.Visualizer.cursorRange) swap the position of parameters `step` and `name`.
+    + Add a new class [RecursiveTree](https://algviz.readthedocs.io/en/0.1.6/api.html#algviz.tree.RecursiveTree), which can make it easier to track the recursive algorithm.
++ **Fixed bugs**:
+    + Crash when the [TreeNode](https://algviz.readthedocs.io/en/0.1.6/api.html#algviz.tree.TreeNode) value is an empty string.
+    + [CursorRange](https://algviz.readthedocs.io/en/0.1.6/api.html/#algviz.Visualizer.cursorRange) iterator range error.
+
 ## algviz 0.1.5
 
 + Fixed some known bugs about cursor.
