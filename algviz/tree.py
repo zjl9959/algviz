@@ -262,6 +262,7 @@ class RecursiveTree():
         """
         node = TreeNode(val)
         self.root.add(node)
+        self.graph.removeMark((173, 255, 47))
         self.graph.markNode((173, 255, 47), node, hold=True)
         self.stack.append(self.root)
         self.root = node
@@ -271,4 +272,5 @@ class RecursiveTree():
         """
         self.graph.markNode((192, 192, 192), self.root, hold=True)
         self.root = self.stack.pop()
+        self.graph.removeMark((255, 99, 71))
         self.graph.markNode((255, 99, 71), self.root, hold=True)
