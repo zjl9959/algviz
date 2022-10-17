@@ -103,7 +103,7 @@ Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/
 
 ## Links
 
-+ HomePage: https://algviz.com/
++ HomePage: https://algviz.com/en/index.html
 + GitHub: https://github.com/zjl9959/algviz
 + PyPi: https://pypi.org/project/algviz/
 + ReadtheDocs: https://algviz.readthedocs.io/en/latest/index.html
