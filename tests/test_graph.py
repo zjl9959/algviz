@@ -105,6 +105,22 @@ def test_modify_directed_graph():
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    # Test neighborIndex interface.
+    expect_res = [0, 1, 0]
+    actual_res = [
+        graph_nodes[2].neighborIndex(graph_nodes[1]),
+        graph_nodes[2].neighborIndex(node3),
+        node3.neighborIndex(sub_graph_nodes[4]),
+    ]
+    res.add_case(equal(expect_res, actual_res), 'neighborIndex', actual_res, actual_res)
+    # Test neighborAt interface.
+    expect_res = [5, 3, 1]
+    actual_res = [
+        sub_graph_nodes[4].neighborAt(0)[0],
+        graph_nodes[2].neighborAt(1)[0],
+        graph_nodes[2].neighborAt(0)[0],
+    ]
+    res.add_case(equal(expect_res, actual_res), 'neighborAt', actual_res, expect_res)
     # Test remove node neighbors.
     node3.remove(sub_graph_nodes[4])
     node2.remove(graph_nodes[1])
@@ -141,6 +157,16 @@ def test_modify_directed_graph():
     graph._repr_svg_()  # Skip the animation frame.
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Update edge',
+                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    # Test add/removeAt interfaces.
+    expect_nodes = [2, 3, 7]
+    expect_edges = [[2, 3, -23], [2, 7, 'e2_7']]
+    graph_nodes[2].add(algviz.GraphNode(7), 'e2_7', 0)
+    graph_nodes[0].removeAt(0)
+    graph.removeNode(graph_nodes[0])
+    graph._repr_svg_()  # Skip the animation frame.
+    nodes, edges = get_graph_elements(graph._repr_svg_())
+    res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'add/removeAt',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     return res
 

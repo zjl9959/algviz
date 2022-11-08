@@ -184,6 +184,16 @@ def test_modify_tree():
     nodes, edges = get_graph_elements(tree._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    # Test childIndex interface.
+    expect_res = [0, 1, 2, 3]
+    actual_res = []
+    for child in root.children():
+        actual_res.append(root.childIndex(child))
+    res.add_case(equal(expect_res, actual_res), 'childIndex', expect_res, actual_res)
+    # Test childAt interface.
+    expect_res = [8, 2, 3, 1]
+    actual_res = [root.childAt(3), root.childAt(1), root.childAt(2), root.childAt(0)]
+    res.add_case(equal(expect_res, actual_res), 'childAt', expect_res, actual_res)
     # Test remove nodes from tree.
     for child in root.children():
         if child.val <= 3:
@@ -194,5 +204,15 @@ def test_modify_tree():
     tree._repr_svg_()   # Skip the animation frame.
     nodes, edges = get_graph_elements(tree._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes',
+                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    # Test add/removeAt interface.
+    root.add(sub_tree)
+    root.add(algviz.TreeNode(10), 1)
+    root.childAt(2).removeAt(0)
+    expect_nodes = [0, 10, 3, 4, 5, 6, 7, 8, 9]
+    expect_edges = [(0, 10, None), (0, 3, None), (0, 8, None), (3, 5, None), (3, 6, None), (4, 7, None), (4, 9, None)]
+    tree._repr_svg_()   # Skip the animation frame.
+    nodes, edges = get_graph_elements(tree._repr_svg_())
+    res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'add/removeAt',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     return res

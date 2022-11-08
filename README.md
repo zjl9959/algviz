@@ -1,6 +1,10 @@
 # Algviz
 
-[中文页面](https://algviz.com/cn/about.html)
+[Website](https://algviz.com/index_en.html) | 
+[中文官网](https://algviz.com/index.html) | 
+[GitHub](https://github.com/zjl9959/algviz) | 
+[PyPi](https://pypi.org/project/algviz/) | 
+[ReadtheDocs](https://algviz.readthedocs.io/en/latest/index.html)
 
 ## Introduce
 
@@ -100,13 +104,6 @@ But if you get any unexpected errors, please [report](https://github.com/zjl9959
 ## License
 
 Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/main/LICENSE). You can use it freely for learning and communication.
-
-## Links
-
-+ HomePage: https://algviz.com/en/index.html
-+ GitHub: https://github.com/zjl9959/algviz
-+ PyPi: https://pypi.org/project/algviz/
-+ ReadtheDocs: https://algviz.readthedocs.io/en/latest/index.html
 
 
 [Vector]: https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector

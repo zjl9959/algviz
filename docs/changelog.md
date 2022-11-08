@@ -1,5 +1,14 @@
 # Changelog
 
+## algviz 0.1.7
+
++ New interfaces [TreeNode.childAt](https://algviz.readthedocs.io/en/0.1.7/api.html#algviz.tree.TreeNode.childAt),
+[TreeNode.childIndex](https://algviz.readthedocs.io/en/0.1.7/api.html#algviz.tree.TreeNode.childIndex) and 
+[TreeNode.removeAt](https://algviz.readthedocs.io/en/0.1.7/api.html#algviz.tree.TreeNode.removeAt) for `TreeNode`.
++ New interfaces [GraphNode.neighborAt](https://algviz.readthedocs.io/en/0.1.7/api.html#algviz.graph.GraphNode.neighborAt),
+[GraphNode.neighborIndex](https://algviz.readthedocs.io/en/0.1.7/api.html#algviz.graph.GraphNode.neighborIndex) and 
+[GraphNode.removeAt](https://algviz.readthedocs.io/en/0.1.7/api.html#algviz.graph.GraphNode.removeAt) for `GraphNode`.
+
 ## algviz 0.1.6
 
 + **Interfaces change**
@@ -25,9 +34,9 @@ you can create the cursor one time then it will be bound with display objects wh
     + **[Cursor](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.cursor.Cursor) operations extend**:
         + Add assignment operation: `<<`
         + Add mathmatics operations: `%`, `+=`, `-=`, `*=`, `//=`, `%=`
-    + **Added interfaces**: [`Visualizer.createCursor`](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.visual.Visualizer.createCursor), [`Visualizer.removeCursor`](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.visual.Visualizer.removeCursor), [`Visualizer.cursorRange`](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.visual.Visualizer.cursorRange)
-    + **Deprecated interfaces**: [`Vector.new_cursor`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.vector.Vector.new_cursor), [`Vector.remove_cursor`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.vector.Vector.remove_cursor), [`Table.new_col_cursor`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.table.Table.new_col_cursor), [`Table.new_row_cursor`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.table.Table.new_row_cursor), [`Table.remove_cursor`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.table.Table.remove_cursor), [`Cursor.dec`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.cursor.Cursor.dec), [`Cursor.inc`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.cursor.Cursor.inc), [`Cursor.update`](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.cursor.Cursor.update).
-+ Added new class: [`AlgvizTypeError`](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.utility.AlgvizTypeError).
+    + **Added interfaces**: [Visualizer.createCursor](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.visual.Visualizer.createCursor), [Visualizer.removeCursor](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.visual.Visualizer.removeCursor), [Visualizer.cursorRange](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.visual.Visualizer.cursorRange)
+    + **Deprecated interfaces**: [Vector.new_cursor](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.vector.Vector.new_cursor), [Vector.remove_cursor](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.vector.Vector.remove_cursor), [Table.new_col_cursor](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.table.Table.new_col_cursor), [Table.new_row_cursor](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.table.Table.new_row_cursor), [Table.remove_cursor](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.table.Table.remove_cursor), [Cursor.dec](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.cursor.Cursor.dec), [Cursor.inc](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.cursor.Cursor.inc), [Cursor.update](https://algviz.readthedocs.io/en/0.1.3/api.html#algviz.cursor.Cursor.update).
++ Added new class: [AlgvizTypeError](https://algviz.readthedocs.io/en/0.1.4/api.html#algviz.utility.AlgvizTypeError).
 + Fixed bugs:
     + Can not access Table row/column index with Cursor object.
     + Cursor move distance error when cell width is not equal with cell height in Table/Vector.

@@ -65,3 +65,4 @@ __title__ = 'algviz'
 __version__ = _version
 __author__ = 'zjl9959@gmail.com'
 __license__ = 'GNU General Public License (GPLv3)'
+__help__ = "Visit https://algviz.com for more information."

@@ -139,7 +139,7 @@ class TreeNode(NodeBase):
             val (printable): The label value for tree node.
         """
         super().__init__(val)
-        super().__setattr__('_children', set())
+        super().__setattr__('_children', list())
     
 
     def children(self):
@@ -152,28 +152,92 @@ class TreeNode(NodeBase):
         return TreeChildrenIter(self, tuple(children_))
 
 
-    def add(self, child):
+    def childAt(self, index):
+        """Return the child node at the index position of the children list.
+        
+        Args:
+            index (int): The position of the child node.
+
+        Returns:
+            TreeNode: child node.
+
+        Raises:
+            AlgvizParamError: TreeNode child index type error or out of range.
+        """
+        children_ = super().__getattribute__('_children')
+        if type(index) != int or index < 0 or index >= len(children_):
+            raise AlgvizParamError('TreeNode child index type error or out of range.')
+        return children_[index]
+
+
+    def childIndex(self, child):
+        """Return the child node index in the children list.
+
+        Args:
+            child (TreeNode): The child node object to be located.
+
+        Returns:
+            int: the index position of the child node. If child not found, then return -1.
+        """
+        res = -1
+        children_ = super().__getattribute__('_children')
+        for i in range(len(children_)):
+            if child == children_[i]:
+                res = i
+        return res
+
+
+    def add(self, child, index=None):
         """Add a child node for this node.
         
         Args:
             child (TreeNode): The child node object to be added.
+            index (int): The position to insert the child node.
+
+        Raises:
+            AlgvizParamError: TreeNode child index should be a positive integer!
         """
+        if (type(index) != int and index != None) or (type(index) == int and index < 0):
+            raise AlgvizParamError('TreeNode child index should be a positive integer!')
         children_ = super().__getattribute__('_children')
-        if child not in children_:
-            children_.add(child)
-            self._on_update_neighbor_(child)
+        for n in children_:
+            if child == n:
+                return
+        if index == None or index >= len(children_):
+            children_.append(child)
+        else:
+            children_.insert(index, child)
+        self._on_update_neighbor_(child)
 
 
     def remove(self, child):
         """Remove one child node.
         
         Args:
-            child (TreeNode): The child to be removed.
+            child (TreeNode): The child node to be removed.
         """
         children_ = super().__getattribute__('_children')
-        if child in children_:
-            children_.remove(child)
-            self._on_update_neighbor_(None)
+        for i in range(len(children_)):
+            if child == children_[i]:
+                children_.pop(i)
+                self._on_update_neighbor_(None)
+                return
+
+    
+    def removeAt(self, index):
+        """Remove the child at the index position.
+
+        Args:
+            index (int): The child node index to be removed.
+
+        Raises:
+            AlgvizParamError: TreeNode child index type error or out of range.
+        """
+        children_ = super().__getattribute__('_children')
+        if type(index) != int or index < 0 or index >= len(children_):
+            raise AlgvizParamError('TreeNode child index type error or out of range.')
+        children_.pop(index)
+        self._on_update_neighbor_(None)
 
 
     def _neighbors_(self):

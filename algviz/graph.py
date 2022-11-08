@@ -8,7 +8,7 @@ License: GPLv3
 
 """
 
-from algviz.utility import AlgvizRuntimeError
+from algviz.utility import AlgvizRuntimeError, AlgvizParamError
 from algviz.graph_node_base import GraphNodeBase as NodeBase
 
 
@@ -37,10 +37,12 @@ class GraphNeighborIter():
 class GraphNode(NodeBase):
     """This class defined the type of typology graph node.
 
+    Attributes:
+        val (printable): The label to be displayed in the graph node.
     """
     def __init__(self, val):
         super().__init__(val)
-        super().__setattr__('_neighbors', dict())   # Key: Neighbor Node, Value: Edge Label.
+        super().__setattr__('_neighbors', list())   # tuple(Neighbor Node, Edge Label).
 
 
     def neighbors(self):
@@ -50,42 +52,106 @@ class GraphNode(NodeBase):
             GraphNeighborIter: Neighbor node iterator.
         """
         iter_neighbors = super().__getattribute__('_neighbors')
-        return GraphNeighborIter(self, tuple(iter_neighbors.items()))
+        return GraphNeighborIter(self, tuple(iter_neighbors))
     
 
-    def add(self, node, edge=None):
+    def neighborAt(self, index):
+        """Return the neighbor node, edge at the index position of the neighbors list.
+        
+        Args:
+            index (int): The position of the neighbor node.
+
+        Returns:
+            GraphNode: neighbor node.
+            printable: the edge between this node and the neighbor node.
+        
+        Raises:
+            AlgvizParamError: GraphNode neighbor index type error or out of range.
+        """
+        neighbors_ = super().__getattribute__('_neighbors')
+        if type(index) != int or index < 0 or index >= len(neighbors_):
+            raise AlgvizParamError('GraphNode neighbor index type error or out of range.')
+        return neighbors_[index][0], neighbors_[index][1]
+
+
+    def neighborIndex(self, node):
+        """Return the neighbor node index in the neighbors list.
+
+        Args:
+            node (GraphNode): The neighbor node object to be located.
+
+        Returns:
+            int: the index position of the neighbor node. If node not found, then return -1.
+        """
+        res = -1
+        neighbors_ = super().__getattribute__('_neighbors')
+        for i in range(len(neighbors_)):
+            if node == neighbors_[i][0]:
+                res = i
+        return res
+
+
+    def add(self, node, edge=None, index=None):
         """Add a neighbor node for this node.
         
         Args:
             node (GraphNode): The neighbor node object to be added.
             edge (printable): The weight value of the edge between this node and neighbor node.
+        
+        Raises:
+            AlgvizParamError: GraphNode neighbor index should be a positive integer!
         """
+        if (type(index) != int and index != None) or (type(index) == int and index < 0):
+            raise AlgvizParamError('GraphNode neighbor index should be a positive integer!')
         neighbors_ = super().__getattribute__('_neighbors')
-        if node not in neighbors_:
-            neighbors_[node] = edge
-            self._on_update_neighbor_(node)
+        for (n, _) in neighbors_:
+            if node == n:
+                return
+        if index == None or index >= len(neighbors_):
+            neighbors_.append((node, edge))
+        else:
+            neighbors_.insert(index, (node, edge))
+        self._on_update_neighbor_(node)
 
 
     def remove(self, node):
         """Remove one neighbor node. Do nothing if node not in neighbors collection.
         
         Args:
-            node (GraphNode): The node to be removed.
+            node (GraphNode): The neighbor node to be removed.
         """
         neighbors_ = super().__getattribute__('_neighbors')
-        if node in neighbors_:
-            neighbors_.pop(node)
-            self._on_update_neighbor_(None)
+        for i in range(len(neighbors_)):
+            if neighbors_[i][0] == node:
+                neighbors_.pop(i)
+                self._on_update_neighbor_(None)
+                return
+
+
+    def removeAt(self, index):
+        """Remove one neighbor node. Do nothing if node not in neighbors collection.
+        
+        Args:
+            index (int): The neighbor node index to be removed.
+
+        Raises:
+            AlgvizParamError: GraphNode neighbor index type error or out of range.
+        """
+        neighbors_ = super().__getattribute__('_neighbors')
+        if type(index) != int or index < 0 or index >= len(neighbors_):
+            raise AlgvizParamError('GraphNode neighbor index type error or out of range.')
+        neighbors_.pop(index)
+        self._on_update_neighbor_(None)
 
 
     def _neighbors_(self):
         """
 
         Returns:
-            list([neighbor_node, edge]): All the neighbors nodes and edges.
+            list[(neighbor_node, edge)]: All the neighbors nodes and edges.
         """
         neighbors_ = super().__getattribute__('_neighbors')
-        return tuple(neighbors_.items())
+        return neighbors_
 
 
 def updateGraphEdge(node1, node2, edge):
@@ -96,14 +162,16 @@ def updateGraphEdge(node1, node2, edge):
         edge (printable): New weight value for this edge.
     """
     node1_neighbors = node1._neighbors
-    if node2 in node1_neighbors:
-        node1_neighbors[node2] = edge
+    pos_1 = node1.neighborIndex(node2)
+    if pos_1 != -1:
+        node1_neighbors[pos_1] = (node2, edge)
         node1_bind_graphs = node1.bind_graphs()
         for graph in node1_bind_graphs:
             graph._updateEdgeLabel(node1, node2, edge)
     node2_neighbors = node2._neighbors
-    if node1 in node2_neighbors:
-        node2_neighbors[node1] = edge
+    pos_2 = node2.neighborIndex(node1)
+    if pos_2 != -1:
+        node2_neighbors[pos_2] = (node1, edge)
         node2_bind_graphs = node2.bind_graphs()
         for graph in node2_bind_graphs:
             graph._updateEdgeLabel(node2, node1, edge)
