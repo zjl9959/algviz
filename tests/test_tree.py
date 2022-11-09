@@ -184,6 +184,7 @@ def test_modify_tree():
     nodes, edges = get_graph_elements(tree._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    assert(root.childCount() == 4)
     # Test childIndex interface.
     expect_res = [0, 1, 2, 3]
     actual_res = []

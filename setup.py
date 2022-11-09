@@ -19,7 +19,7 @@ with open(readme_filepath, encoding='utf-8') as f:
 
 setup(
     name="algviz",
-    version="0.1.7",
+    version="0.1.8",
     author="zjl9959",
     author_email="zjl9959@gmail.com",
     description=("An algorithm visualization tool for jupyter notebook to show animation for vector, table, linked list, tree and graph data structures."),
@@ -42,11 +42,7 @@ setup(
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Topic :: Scientific/Engineering :: Visualization",
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3'
     ],
     zip_safe=False
 )

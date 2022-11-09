@@ -105,6 +105,8 @@ def test_modify_directed_graph():
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    assert(graph_nodes[2].neighborCount()==2)
+    assert(sub_graph_nodes[4].neighborCount()==1)
     # Test neighborIndex interface.
     expect_res = [0, 1, 0]
     actual_res = [

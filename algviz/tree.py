@@ -152,6 +152,16 @@ class TreeNode(NodeBase):
         return TreeChildrenIter(self, tuple(children_))
 
 
+    def childCount(self):
+        """Return the children count of this node.
+
+        Returns:
+            int: children count.
+        """
+        children_ = super().__getattribute__('_children')
+        return len(children_)
+
+
     def childAt(self, index):
         """Return the child node at the index position of the children list.
         

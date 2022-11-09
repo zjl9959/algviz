@@ -55,6 +55,16 @@ class GraphNode(NodeBase):
         return GraphNeighborIter(self, tuple(iter_neighbors))
     
 
+    def neighborCount(self):
+        """Return the neighbors count of this node.
+
+        Returns:
+            int: neighbors count.
+        """
+        neighbors_ = super().__getattribute__('_neighbors')
+        return len(neighbors_)
+
+
     def neighborAt(self, index):
         """Return the neighbor node, edge at the index position of the neighbors list.
         
