@@ -128,11 +128,11 @@ Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/
 [graph]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.parseGraph
 [GraphNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode
 
-[vector.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/vector.ipynb
-[table.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/table.ipynb
-[linked_list.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/linked_list.ipynb
-[tree.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/tree.ipynb
-[graph.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/graph.ipynb
+[vector.ipynb]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Fvector.ipynb
+[table.ipynb]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Ftable.ipynb
+[linked_list.ipynb]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Flinked_list.ipynb
+[tree.ipynb]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Ftree.ipynb
+[graph.ipynb]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Fgraph.ipynb
 [vector.ipynb colab]: https://colab.research.google.com/drive/1RgAoKbiSBXdSvBg65pwu9pJp5bQL1pCs?usp=sharing
 [table.ipynb colab]: https://colab.research.google.com/drive/1GH6XgKDpUA2GKxiLm5tljp19wUvmnDxO?usp=sharing
 [linked_list.ipynb colab]: https://colab.research.google.com/drive/1rsg-6irXzQODPi6DUZhtu-pKq_r55hwV?usp=sharing
