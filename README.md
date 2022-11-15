@@ -1,10 +1,16 @@
 # Algviz
 
-[Website](https://algviz.com/index_en.html) | 
-[中文官网](https://algviz.com/index.html) | 
-[GitHub](https://github.com/zjl9959/algviz) | 
-[PyPi](https://pypi.org/project/algviz/) | 
-[ReadtheDocs](https://algviz.readthedocs.io/en/latest/index.html)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/algviz)
+![PyPI](https://img.shields.io/pypi/v/algviz)
+![GitHub](https://img.shields.io/github/license/zjl9959/algviz)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/algviz)
+
+## Links
+
++ HomePage: [https://algviz.com](https://algviz.com)
++ GitHub: [https://github.com/zjl9959/algviz](https://github.com/zjl9959/algviz)
++ Documents: [https://algviz.readthedocs.io/en/latest/index.html](https://algviz.readthedocs.io/en/latest/index.html
+)
 
 ## Introduce
 
