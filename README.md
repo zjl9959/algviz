@@ -72,16 +72,22 @@ python -m pip install --upgrade pip
 pip install algviz
 ```
 
-## API Reference
+## Tutorial
+
+This [tutorial](https://algviz.com/en/examples.html) helps you start up using algviz quickly. ([中文版教程](https://algviz.com/cn/examples.html))
 
 All the API references for algviz can be found on [readthedocs](https://algviz.readthedocs.io/en/latest/api.html#).
 
 ## Examples
 
-The [examples](https://github.com/zjl9959/algviz/tree/main/examples) folder contains some tutorials on how to start with algviz. You can set up your local environment and try them in your notebook. And if you are a google [colab](https://colab.research.google.com/) user, you can try with the google colab links. Try your first cool algviz code and good luck!😀
+The [examples](https://github.com/zjl9959/algviz/tree/main/examples) folder contains some tutorials on how to start with algviz. You can set up your local environment and try them in your notebook. 
+
+### Try it online!!!
+
+You can try the online notebooks on [MyBinder](https://mybinder.org/) and if you are a [Google Colab](https://colab.research.google.com/) user, you can also try it on Colab.
 
 
-| Example         |  Github link            | Google Colab link          |  Description                       |
+| Example         |  MyBinder            | Google Colab         |  Description                       |
 | :----           | :------                 | :---------                 | :-------                           |
 | **vector**      | [vector.ipynb]          | [vector.ipynb colab]       | Basic operations on [Vector] class. <br> Example of `bubble sort algorithm`. |
 | **table**       | [table.ipynb]           | [table.ipynb colab]        | Basic operations on [Table] class.  |
@@ -122,11 +128,11 @@ Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/
 [graph]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.parseGraph
 [GraphNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode
 
-[vector.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/vector.ipynb
-[table.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/table.ipynb
-[linked_list.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/linked_list.ipynb
-[tree.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/tree.ipynb
-[graph.ipynb]: https://github.com/zjl9959/algviz/blob/main/examples/graph.ipynb
+[vector.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/vector.ipynb
+[table.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/table.ipynb
+[linked_list.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/linked_list.ipynb
+[tree.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/tree.ipynb
+[graph.ipynb]: https://hub.gke2.mybinder.org/user/zjl9959-algviz-0cxxr6l2/doc/tree/examples/graph.ipynb
 [vector.ipynb colab]: https://colab.research.google.com/drive/1RgAoKbiSBXdSvBg65pwu9pJp5bQL1pCs?usp=sharing
 [table.ipynb colab]: https://colab.research.google.com/drive/1GH6XgKDpUA2GKxiLm5tljp19wUvmnDxO?usp=sharing
 [linked_list.ipynb colab]: https://colab.research.google.com/drive/1rsg-6irXzQODPi6DUZhtu-pKq_r55hwV?usp=sharing
