@@ -97,7 +97,7 @@ You can try the online notebooks on [MyBinder](https://mybinder.org/) and if you
 
 ## Unit Test
 
-Make sure you have successfully installed [algviz](https://pypi.org/project/algviz/) from PyPi and download the [test codes](https://github.com/zjl9959/algviz/tree/main/tests) from Github.
+Make sure you have successfully installed [algviz](https://pypi.org/project/algviz/) from PyPi and download the [test codes](https://github.com/zjl9959/algviz/tree/main/tests) from GitHub.
 
 Then call the command:
 
