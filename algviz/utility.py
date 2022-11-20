@@ -279,6 +279,21 @@ def text_font_size(text_width, text):
         return 0
 
 
+def get_text_width(text, font_size):
+    """Calculate the total text width of the given text string.
+    
+    Args:
+        font_size (int): The font size of text.
+        text (str): The text content (should be unicode format string).
+    
+    Returns:
+        float: The total width of the text.
+    """
+    # TODO: Use more specific method to measure the text total width.
+    text_num = text_char_num(text)
+    return text_num*font_size*0.9
+
+
 def text_char_num(text):
     """Count the number of characters in the text.
     
