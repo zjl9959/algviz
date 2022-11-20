@@ -13,6 +13,8 @@ from algviz.utility import get_text_width
 from xml.dom.minidom import Document
 
 
+LOG_OFFSET_X = 5
+
 class Logger():
     """A log class to display strings into the screen.
 
@@ -20,7 +22,7 @@ class Logger():
     And if the buffer lines overflow, the oldest lines in the buffer will be discard.
     """
 
-    def __init__(self, buffer_lines, font_size=12):
+    def __init__(self, buffer_lines, font_size, show_line_num):
         """
         Args:
             buffer_lines (int): Set the max buffer lines for cached logs. Override the oldest line if overflow.
@@ -31,12 +33,13 @@ class Logger():
         if font_size > 1 and font_size <= 16:
             self._font_size = font_size
         self._logs = list()
-        self._log_text_nodes = list()
-        self._log_text_width = list()
         self._dom = Document()
         self._svg = self._dom.createElement('svg')
         self._svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
         self._dom.appendChild(self._svg)
+        self._next_node_id = 0
+        self._log_lines = 0
+        self._show_line_num = show_line_num
     
 
     def write(self, data):
@@ -46,43 +49,47 @@ class Logger():
             data (str): The log data string.
         """
         data_lines = data.split('\n')
+        if len(data_lines) > self._buffer_lines:
+            data_lines = data_lines[len(data_lines) - self._buffer_lines:]
+        if len(data_lines) + len(self._logs) > self._buffer_lines:
+            self._logs = self._logs[len(data_lines) + len(self._logs) - self._buffer_lines:]
         for line in data_lines:
-            if len(self._logs) >= self._buffer_lines:
-                self._logs.pop(0)
-            if len(self._log_text_width):
-                self._log_text_width.pop(0)
-            if len(self._log_text_nodes):
-                txt_node = self._log_text_nodes.pop(0)
-                self._svg.removeChild(txt_node)
-            self._logs.append(line)
+            if self._show_line_num:
+                self._logs.append('{}. {}'.format(self._log_lines, line))
+            else:
+                self._logs.append(line)
+            self._log_lines += 1
     
 
     def clear(self):
         """Clear all cached log string.
         """
+        for child in self._svg.childNodes:
+            self._svg.removeChild(child)
         self._logs.clear()
-        self._log_text_width.clear()
-        for node in self._log_text_nodes:
-            self._svg.removeChild(node)
-        self._log_text_nodes.clear()
 
     
     def _repr_svg_(self):
-        for i in range(len(self._log_text_nodes), len(self._logs)):
+        svg_width = 0
+        for child in self._svg.childNodes:
+            self._svg.removeChild(child)
+        g = self._dom.createElement('g')
+        g.setAttribute('id', str(self._next_node_id))
+        self._next_node_id += 1
+        for i in range(len(self._logs)):
             log = self._logs[i]
             txt = self._dom.createElement('text')
-            txt.setAttribute('x', '10')
+            txt.setAttribute('x', '{}'.format(LOG_OFFSET_X))
             txt.setAttribute('y', '{:.2f}'.format(self._font_size*(i*1.2+1)))
             txt.setAttribute('font-size', '{:.2f}'.format(self._font_size))
             txt.setAttribute('font-family', 'cursive')
             text = self._dom.createTextNode('{}'.format(log))
             txt.appendChild(text)
-            self._svg.appendChild(txt)
-            self._log_text_width.append(get_text_width(log, self._font_size))
-            self._log_text_nodes.append(txt)
+            g.appendChild(txt)
+            svg_width = max(svg_width, get_text_width(log, self._font_size) + LOG_OFFSET_X)
+        self._svg.appendChild(g)
         # Update svg width and height.
-        svg_width = max(self._log_text_width+[0])*0.6 + 10
-        svg_height = len(self._logs)*self._font_size*1.2
+        svg_height = len(self._logs)*self._font_size*1.3
         self._svg.setAttribute('width', '{:.0f}pt'.format(svg_width))
         self._svg.setAttribute('height', '{:.0f}pt'.format(svg_height))
         self._svg.setAttribute('viewBox', '0.00 0.00 {:.2f} {:.2f}'.format(svg_width, svg_height))

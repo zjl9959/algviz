@@ -291,7 +291,7 @@ def get_text_width(text, font_size):
     """
     # TODO: Use more specific method to measure the text total width.
     text_num = text_char_num(text)
-    return text_num*font_size*0.9
+    return text_num*font_size*0.5
 
 
 def text_char_num(text):

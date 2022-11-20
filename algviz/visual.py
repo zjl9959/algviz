@@ -178,7 +178,7 @@ class Visualizer():
         return gra
 
 
-    def createLogger(self, buffer_lines=10, name=None):
+    def createLogger(self, buffer_lines=10, name=None, font_size=12, show_line_num=True):
         """
         Args:
             buffer_lines (int): Maximum buffer line of this logger.
@@ -188,7 +188,7 @@ class Visualizer():
             Logger: Created Logger object.
         """
         global _next_display_id
-        logg = Logger(buffer_lines)
+        logg = Logger(buffer_lines, font_size, show_line_num)
         self._element2display[logg] = _next_display_id
         if name is not None:
             self._displayid2name[_next_display_id] = name
