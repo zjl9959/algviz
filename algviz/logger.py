@@ -64,6 +64,7 @@ class Logger():
     def clear(self):
         """Clear all cached log string.
         """
+        self._log_lines = 0
         for child in self._svg.childNodes:
             self._svg.removeChild(child)
         self._logs.clear()
