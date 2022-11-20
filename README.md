@@ -125,6 +125,7 @@ Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/
 [binary tree]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseBinaryTree
 [normal tree]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseTree
 [TreeNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.TreeNode
+[BinaryTreeNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.BinaryTreeNode
 [graph]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.parseGraph
 [GraphNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode
 
