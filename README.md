@@ -81,10 +81,11 @@ All the API references for algviz can be found on [readthedocs](https://algviz.r
 
 The [examples](https://github.com/zjl9959/algviz/tree/main/examples) folder contains some tutorials on how to start with algviz. You can set up your local environment and try them in your notebook. 
 
-### Try it online!!!
+### Try algviz online
 
-You can try the online notebooks on [MyBinder](https://mybinder.org/) and if you are a [Google Colab](https://colab.research.google.com/) or [Kaggle](https://www.kaggle.com/) user, you can also try it on Colab or Kaggle.
+You can try the online notebooks on [MyBinder](https://mybinder.org/) and if you are a [Google Colab](https://colab.research.google.com/), [Kaggle](https://www.kaggle.com/) or [Gitpod](https://www.gitpod.io/) user, you can also try it on Colab, Kaggle or Gitpod.
 
+[![Open algviz examples in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/zjl9959/algviz-launch)
 
 | Example         |  MyBinder           |   Kaggle       | Google Colab         |  Description                       |
 | :----           | :------             | :-------       | :---------                 | :-------                           |

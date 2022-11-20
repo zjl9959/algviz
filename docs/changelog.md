@@ -1,5 +1,12 @@
 # Changelog
 
+## algviz 0.1.8
+
++ **New interfaces**:
+    + [TreeNode.childCount](https://algviz.readthedocs.io/en/0.1.8/api.html#algviz.tree.TreeNode.childCount) returns the children nodes count. 
+    + [GraphNode.neighborCount](https://algviz.readthedocs.io/en/0.1.8/api.html#algviz.graph.GraphNode.neighborCount) returns the neighbors count of this node.
++ **Logger new display style**: set the log font size and wheather to show log line num in the [Visualizer.createLogger](https://algviz.readthedocs.io/en/0.1.8/api.html#algviz.visual.Visualizer.createLogger) interface.
+
 ## algviz 0.1.7
 
 + New interfaces [TreeNode.childAt](https://algviz.readthedocs.io/en/0.1.7/api.html#algviz.tree.TreeNode.childAt),
