@@ -127,7 +127,7 @@ class Table():
         self._update_svg_size_()
     
 
-    def mark(self, color, r, c, hold=False):
+    def mark(self, color, r, c, hold=False, r2=None, c2=None):
         """Emphasize one cell in the table by mark it's background color.
         
         Args:
@@ -135,6 +135,7 @@ class Table():
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
             r, c (int/Cursor): Index the cell's raw, column in the table to be marked.
             hold (bool): Whether to keep the mark color in future animation frames.
+            r2, c2 (int/Cursor): If r2, c2 are not None, this will mark cells in the rectange range(r, c, r2, c2).
         
         Raises:
             RuntimeError: Index:xx type is not int or Cursor.
@@ -142,9 +143,18 @@ class Table():
         """
         r = self._check_index_type_and_range_(r, self._row)
         c = self._check_index_type_and_range_(c, self._col)
-        gid = self._index2rect[(r, c)]
-        self._cell_tcs[gid].add(color)
-        self._frame_trace.append((gid, color, hold))
+        if r2 == None or c2 == None:
+            gid = self._index2rect[(r, c)]
+            self._cell_tcs[gid].add(color)
+            self._frame_trace.append((gid, color, hold))
+        else:
+            r2 = self._check_index_type_and_range_(r2, self._row)
+            c2 = self._check_index_type_and_range_(c2, self._col)
+            for i in range(r, r2 + 1):
+                for j in range(c, c2 + 1):
+                    gid = self._index2rect[(i, j)]
+                    self._cell_tcs[gid].add(color)
+                    self._frame_trace.append((gid, color, hold))
     
 
     def removeMark(self, color):
