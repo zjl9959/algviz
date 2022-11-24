@@ -169,6 +169,16 @@ class Table():
                 self._svg.update_rect_element(gid, fill=self._cell_tcs[gid].color())
     
 
+    def removeMarks(self, color_list):
+        """Remove the mark colors for cell(s).
+        
+        Args:
+            color_list ([(R,G,B), ...]): all the colors to be removed.
+        """
+        for color in color_list:
+            self.removeMark(color)
+
+
     def getItem(self, r, c):
         """Get the cell value in the table.
         

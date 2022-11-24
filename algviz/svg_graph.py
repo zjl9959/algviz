@@ -238,6 +238,16 @@ class SvgGraph():
                 self._update_edge_color_(edge, self._edge_tcs[k].color())
     
 
+    def removeMarks(self, color_list):
+        """Remove the mark colors for node(s) and edge(s).
+        
+        Args:
+            color_list ([(R,G,B), ...]): all the colors to be removed.
+        """
+        for color in color_list:
+            self.removeMark(color)
+
+
     def _init_graph_nodes(self, data):
         if not data:
             return

@@ -232,6 +232,16 @@ class Vector():
         for rid in self._index2rect.values():
             if self._cell_tcs[rid].remove(color):
                 self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
+
+    
+    def removeMarks(self, color_list):
+        """Remove the mark colors for cell(s).
+        
+        Args:
+            color_list ([(R,G,B), ...]): all the colors to be removed.
+        """
+        for color in color_list:
+            self.removeMark(color)
     
 
     def _add_cursor_(self, cursor):
