@@ -89,7 +89,14 @@ class Vector():
             RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
         """
-        index = self._check_index_type_and_range_(index)
+        if type(index) is Cursor:
+            index = index.index()
+        elif type(index) is not int:
+            raise RuntimeError('Index:{} type is not int or Cursor.'.format(index))
+        if index < 0:
+            index = 0
+        if index >= len(self._data):
+            return self.append(val)
         # Add a new rectangle node and animation to SVG.
         rect_pos_x = self._cell_width*index+self._cell_margin*(index+1)
         rect_pos_y = self._cell_margin + self._cursor_manager.get_cursors_occupy()
