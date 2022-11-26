@@ -58,6 +58,7 @@ class Vector():
         self._index2text = dict()       # The mapping relationship from vector index to the text object.
         self._label_font_size = int(min(12, self._cell_width*0.5))   # The font size of the vector's subscript index.
         self._next_iter = 0             # Mark the positon of current iteration.
+        self._items_to_update = dict()  # {key:rect_gid, val:rect_label} Cache all the items in the table to be update since last frame.
         self._svg = SvgTable(self._cell_margin, self._cell_margin)
         # Initial cursor manager.
         self._cursor_manager = _CursorManager((self._cell_width, self._cell_width), self._svg, 'D',
@@ -316,7 +317,7 @@ class Vector():
         label = val
         if val is None:
             label = ''
-        self._svg.update_rect_element(rid, text=label)
+        self._items_to_update[rid] = label
         self._data[index] = val
     
 
@@ -359,6 +360,9 @@ class Vector():
             self._svg.update_rect_element(rid, fill=self._cell_tcs[rid].color())
             if not hold:
                 self._frame_trace_old.append((rid, color))
+        for gid, label in self._items_to_update.items():
+            self._svg.update_rect_element(gid, text=label, delay=self._delay)
+        self._items_to_update.clear()
         self._frame_trace.clear()
         # Add animations of the disappearance of cells.
         disappear_animate_end_time = self._delay*0.2
@@ -455,7 +459,7 @@ class Vector():
                 num = '{:.0f}'.format(num)
             if self._data[i] is None:
                 num = None
-            self._svg.update_rect_element(rid, rect=(x, y, self._cell_width, abs(height)), text=num)
+            self._svg.update_rect_element(rid, rect=(x, y, self._cell_width, abs(height)))
 
 
     def _update_svg_size_(self, data_num):

@@ -394,10 +394,10 @@ class Table():
         self._row_cursor_mgr.refresh_cursors_animation(self._row, (0, self._delay))
         self._col_cursor_mgr.refresh_cursors_animation(self._col, (0, self._delay))
         res_svg = self._svg._repr_svg_()
+        self._svg.clear_animates()
         self._frame_trace.clear()
         self._row_cursor_mgr.update_cursors_position()
         self._col_cursor_mgr.update_cursors_position()
-        self._svg.clear_reacts_text_animation()
         return res_svg
 
 

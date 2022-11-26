@@ -254,8 +254,16 @@ def get_vector_elements(svg_str):
         texts = g.getElementsByTagName('text')
         element = None
         for text in texts:
-            if text.getAttribute('class') == 'txt' and text.firstChild:
-                element = text.firstChild.data
+            animates = text.getElementsByTagName('animate')
+            skip = False
+            for animate in animates:
+                if animate.getAttribute('to') == '0':
+                    skip = True
+                    break
+            if not skip and text.getAttribute('class') == 'txt':
+                for child in text.childNodes:
+                    if child.nodeType == xmldom.Node.TEXT_NODE:
+                        element = child.data
         elements_pos.append((pos, element))
     # Sort elements by positon and get elements string.
     elements_pos = sorted(elements_pos)

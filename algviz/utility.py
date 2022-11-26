@@ -173,6 +173,20 @@ def clear_svg_animates(svg):
     """
     gg = svg.getElementsByTagName('g')
     for g in gg:
+        texts = g.getElementsByTagName('text')
+        for txt in texts:
+            if txt.getAttribute('class') != 'txt':
+                continue
+            animates = txt.getElementsByTagName('animate')
+            for animate in animates:
+                if animate.getAttribute('attributeName') != 'font-size':
+                    continue
+                font_size_str = animate.getAttribute('to')
+                if font_size_str == '0':
+                    g.removeChild(txt)
+                else:
+                    txt.setAttribute('font-size', font_size_str)
+                    txt.removeChild(animate)
         animates_appear = g.getElementsByTagName('animate')
         if len(animates_appear):
             g.removeAttribute('style')
