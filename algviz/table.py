@@ -96,6 +96,7 @@ class Table():
         self._show_index = show_index       # Wheather to show subscript of rows and columns index in table.
         self._label_font_size = 0           # The font size of the subscript labels in table.
         self._index2rect = dict()           # Map the row and column index into rectangle's gid in SVG.
+        self._items_to_update = dict()      # {key:rect_gid, val:rect_label} Cache all the items in the table to be update since last frame.
         self._data = [[None for _ in range(self._col)] for _ in range(self._row)]
         self._svg = SvgTable(self._cell_margin, self._cell_margin)
         # Copy data into table.
@@ -222,7 +223,7 @@ class Table():
         label = val
         if val is None:
             label = ''
-        self._svg.update_rect_element(gid, text=label)
+        self._items_to_update[gid] = label
         self._data[r][c] = val
     
 
@@ -387,12 +388,16 @@ class Table():
             self._svg.update_rect_element(gid, fill=self._cell_tcs[gid].color())
             if not hold:
                 self._frame_trace_old.append((gid, color))
+        for gid, label in self._items_to_update.items():
+            self._svg.update_rect_element(gid, text=label, delay=self._delay)
+        self._items_to_update.clear()
         self._row_cursor_mgr.refresh_cursors_animation(self._row, (0, self._delay))
         self._col_cursor_mgr.refresh_cursors_animation(self._col, (0, self._delay))
         res_svg = self._svg._repr_svg_()
         self._frame_trace.clear()
         self._row_cursor_mgr.update_cursors_position()
         self._col_cursor_mgr.update_cursors_position()
+        self._svg.clear_reacts_text_animation()
         return res_svg
 
 

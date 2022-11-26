@@ -14,7 +14,7 @@ License: GPLv3
 
 from xml.dom.minidom import Document
 from algviz.utility import add_desc_into_svg, add_default_text_style, rgbcolor2str, text_font_size 
-from algviz.utility import auto_text_color, find_tag_by_id, str2rgbcolor, clamp
+from algviz.utility import auto_text_color, find_tag_by_id, str2rgbcolor, clamp, add_animate_scale_into_text
 from algviz.utility import add_animate_move_into_node, add_animate_appear_into_node, clear_svg_animates
 
 
@@ -158,7 +158,7 @@ class SvgTable():
             txt.setAttribute('fill', rgbcolor2str(fill))
 
 
-    def update_rect_element(self, gid, rect=None, text=None, fill=None, stroke=None, opacity=None):
+    def update_rect_element(self, gid, rect=None, text=None, fill=None, stroke=None, opacity=None, delay=0):
         """Update the color, text, fill, stroke and opacity attribute of specific rectangle element.
         
         Args:
@@ -168,6 +168,7 @@ class SvgTable():
             fill ((R,G,B) or None): New background color for this rectangle. Keep old background color if fill is None.
             stroke ((R,G,B) or None): New stroke color for this rectangle. Keep old stroke color if stroke is None.
             opacity (float or None): New opacity arrtibute for this rectangle. Keep old opacity if opacity is None.
+            delay (float): The total delay time of text scale animations.
         """
         g = find_tag_by_id(self._svg, 'g', str(gid))
         if g is None:
@@ -197,27 +198,31 @@ class SvgTable():
                 new_font = text_font_size(rect[2], '{}'.format(t[0].firstChild.nodeValue))
                 t[0].setAttribute('font-size', '{:.2f}'.format(min(new_font, rect[3]-1)))
         if text is not None:
-            if len(t) == 0:
-                t = self._dom.createElement('text')
-                g.appendChild(t)
-            else:
-                t = t[0]
             rx = float(r.getAttribute('x'))
             ry = float(r.getAttribute('y'))
             width = float(r.getAttribute('width'))
             height = float(r.getAttribute('height'))
             fc = str2rgbcolor(r.getAttribute('fill'))
-            t.setAttribute('class', 'txt')
-            t.setAttribute('x', '{:.2f}'.format(rx+width*0.5))
-            t.setAttribute('y', '{:.2f}'.format(ry+height*0.5))
+            time0 = (0, delay*0.5)
+            time1 = (delay*0.6, delay)
+            if len(t) != 0:
+                t0 = t[0]
+                font_size = float(t0.getAttribute('font-size'))
+                animate0 = self._dom.createElement('animate')
+                add_animate_scale_into_text(t0, animate0, time0, font_size, False)
+            t1 = self._dom.createElement('text')
+            g.appendChild(t1)
+            t1.setAttribute('class', 'txt')
+            t1.setAttribute('x', '{:.2f}'.format(rx+width*0.5))
+            t1.setAttribute('y', '{:.2f}'.format(ry+height*0.5))
             txt_font_size = text_font_size(width, '{}'.format(text))
             txt_font_size = min(height-1, txt_font_size)
-            t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
-            t.setAttribute('fill', auto_text_color(fc))
-            for t_child in t.childNodes:
-                t.removeChild(t_child)
+            t1.setAttribute('font-size', '0')
+            t1.setAttribute('fill', auto_text_color(fc))
             tt = self._dom.createTextNode('{}'.format(text))
-            t.appendChild(tt)
+            t1.appendChild(tt)
+            animate1 = self._dom.createElement('animate')
+            add_animate_scale_into_text(t1, animate1, time1, txt_font_size, True)
         if stroke is not None:
             r.setAttribute('stroke', rgbcolor2str(stroke))
     
@@ -232,6 +237,30 @@ class SvgTable():
         if g is not None:
             self._svg.removeChild(g)
     
+
+    def clear_reacts_text_animation(self):
+        """Clear text animations for all the rect elements.
+        """
+        groups = self._svg.getElementsByTagName('g')
+        for g in groups:
+            rects = g.getElementsByTagName('rect')
+            if len(rects) == 0:
+                continue
+            texts = g.getElementsByTagName('text')
+            if len(texts) == 0:
+                continue
+            for txt in texts:
+                animates = txt.getElementsByTagName('animate')
+                if len(animates) != 1:
+                    continue
+                animate = animates[0]
+                font_size_str = animate.getAttribute('to')
+                if font_size_str == '0':
+                    g.removeChild(txt)
+                else:
+                    txt.setAttribute('font-size', font_size_str)
+                    txt.removeChild(animate)
+
 
     def add_animate_move(self, gid, move, time, bessel=True):
         """Add move animation for specific element.

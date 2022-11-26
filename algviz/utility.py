@@ -217,6 +217,27 @@ def add_animate_appear_into_node(g, animate, time, appear=True):
     animate.setAttribute('fill', 'freeze')
 
 
+def add_animate_scale_into_text(t, animate, time, font_size, zoom_in=True):
+    """
+        t (xmldom.Node): The text node to add scale animation into.
+        animate (xmldom.Node): The animate node to be added into node g.
+        time (tuple(float, float)) (begin, end) The begin and end time of this animation.
+        font_size (float): The text nodes font size.
+        zoome_in (bool): True for zoom out animation; False for zoume in animation.
+    """
+    t.appendChild(animate)
+    animate.setAttribute('attributeName', 'font-size')
+    if zoom_in:
+        animate.setAttribute('from', '0')
+        animate.setAttribute('to', '{:.2f}'.format(font_size))
+    else:
+        animate.setAttribute('from', '{:.2f}'.format(font_size))
+        animate.setAttribute('to', '0')
+    animate.setAttribute('begin', '{:.2f}s'.format(time[0]))
+    animate.setAttribute('dur', '{:.2f}s'.format(time[1]-time[0]))
+    animate.setAttribute('fill', 'freeze')
+
+
 def auto_text_color(back_color):
     """Auto pick one text stroke color according to it's background color.
     
