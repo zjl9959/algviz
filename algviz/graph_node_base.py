@@ -52,7 +52,10 @@ class GraphNodeBase:
 
 
     def __str__(self):
-        return str(object.__getattribute__(self, 'val'))
+        value = object.__getattribute__(self, 'val')
+        if value == None:
+            value = ''
+        return str(value)
 
 
     def _on_update_value_(self, value):

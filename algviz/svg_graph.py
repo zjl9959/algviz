@@ -14,7 +14,7 @@ License: GPLv3
 from algviz.utility import str2rgbcolor, text_font_size, auto_text_color, rgbcolor2str
 from algviz.utility import add_animate_appear_into_node, add_animate_move_into_node
 from algviz.utility import TraceColorStack, ConsecutiveIdMap, AlgvizFatalError
-from algviz.utility import add_desc_into_svg, find_tag_by_id
+from algviz.utility import add_desc_into_svg, find_tag_by_id, add_animate_scale_into_text
 from algviz.graph import GraphNode
 from algviz.tree import BinaryTreeNode, TreeNode
 from algviz.linked_list import ForwardLinkedListNode, DoublyLinkedListNode
@@ -104,6 +104,8 @@ class SvgGraph():
         self._node_idmap = None         # Map node_index value to the corresponding node index in graphviz's output svg.
         self._edge_idmap = None         # Map edge_index value to the corresponding edge index in graphviz's output svg.
         self._add_history = set()       # Record all the nodes that have been added since graph created. Used to check duplicates when add/remove nodes in the graph.
+        self._nodes_label_update = dict()   # Cache all the nodes label in the graph to be update since last frame.
+        self._edges_lable_update = dict()   # Cache all the edges label in the graph to be update since last frame.
         self._type = _get_graph_type_by_data_(data)
         # Init graph nodes and svg.
         (self._svg, self._node_idmap, self._edge_idmap) = self._create_svg_()
@@ -268,29 +270,48 @@ class SvgGraph():
             node (subclass of GraphNodeBase): The node object to be updated. Can be a graph/tree/linked_list node.
             label (printable): New label content.
         """
-        node_id = 'node{}'.format(self._node_idmap.toConsecutiveId(node))
-        svg_node = find_tag_by_id(self._svg, 'g', node_id)
-        if svg_node is None or label is None:
-            return
-        ellipse = svg_node.getElementsByTagName('ellipse')[0]
-        cx = float(ellipse.getAttribute('cx'))
-        cy = float(ellipse.getAttribute('cy'))
-        fc = str2rgbcolor(ellipse.getAttribute('fill'))
-        text_svg = svg_node.getElementsByTagName('text')
-        if text_svg is not None:
-            svg_node.removeChild(text_svg[0])
-        t = self._svg.createElement('text')
-        t.setAttribute('alignment-baseline', 'middle')
-        t.setAttribute('text-anchor', 'middle')
-        t.setAttribute('font-family', 'Times,serif')
-        t.setAttribute('x', '{:.2f}'.format(cx))
-        t.setAttribute('y', '{:.2f}'.format(cy))
-        font_size = min(14, text_font_size(32, '{}'.format(label)))
-        t.setAttribute('font-size', '{:.2f}'.format(font_size))
-        t.setAttribute('fill', auto_text_color(fc))
-        tt = self._svg.createTextNode('{}'.format(label))
-        t.appendChild(tt)
-        svg_node.appendChild(t)
+        if label == None:
+            label = ''
+        self._nodes_label_update[node] = label
+    
+
+    def _update_svg_nodes_label(self, svg, node_idmap):
+        time0 = (0, self._delay*0.5)
+        time1 = (self._delay*0.6, self._delay)
+        for node, old_label in self._nodes_label_update.items():
+            node_id = 'node{}'.format(node_idmap.toConsecutiveId(node))
+            svg_node = find_tag_by_id(svg, 'g', node_id)
+            if svg_node is None:
+                return
+            ellipse = svg_node.getElementsByTagName('ellipse')[0]
+            cx = float(ellipse.getAttribute('cx'))
+            cy = float(ellipse.getAttribute('cy'))
+            fill_str = ellipse.getAttribute('fill')
+            if fill_str == 'none':
+                fc = (255, 255, 255)
+            else:
+                fc = str2rgbcolor(fill_str)
+            # Add animation zoom in for current text node.
+            text_nodes = svg_node.getElementsByTagName('text')
+            for t in text_nodes:
+                font_size = float(t.getAttribute('font-size'))
+                animate0 = svg.createElement('animate')
+                add_animate_scale_into_text(t, animate0, time0, font_size, False)
+            # New text node for animation zoom out.
+            t1 = svg.createElement('text')
+            t1.setAttribute('alignment-baseline', 'middle')
+            t1.setAttribute('text-anchor', 'middle')
+            t1.setAttribute('font-family', 'Times,serif')
+            t1.setAttribute('x', '{:.2f}'.format(cx))
+            t1.setAttribute('y', '{:.2f}'.format(cy))
+            font_size = min(14, text_font_size(32, '{}'.format(old_label)))
+            t1.setAttribute('font-size', '{:.2f}'.format(0))
+            t1.setAttribute('fill', auto_text_color(fc))
+            tt = svg.createTextNode('{}'.format(old_label))
+            t1.appendChild(tt)
+            animate1 = svg.createElement('animate')
+            add_animate_scale_into_text(t1, animate1, time1, font_size, True)
+            svg_node.appendChild(t1)
     
 
     def _updateEdgeLabel(self, node1, node2, label):
@@ -301,17 +322,35 @@ class SvgGraph():
             label (printable): New label content.
         """
         edge_key = self._make_edge_tuple_(node1, node2)
-        edge_id = 'edge{}'.format(self._edge_idmap.toConsecutiveId(edge_key))
-        svg_node = find_tag_by_id(self._svg, 'g', edge_id)
-        if svg_node is None or label is None:
-            return
-        text_list = svg_node.getElementsByTagName('text')
-        if text_list and len(text_list) > 0:
-            text = text_list[0]
-            for t in text.childNodes:
-                text.removeChild(t)
-            tt = self._svg.createTextNode('{}'.format(label))
-            text.appendChild(tt)
+        if label == None:
+            label = ''
+        self._edges_lable_update[edge_key] = label
+
+
+    def _update_svg_edges_label(self, svg, edge_idmap):
+        time0 = (0, self._delay*0.5)
+        time1 = (self._delay*0.6, self._delay)
+        for edge_key, old_label in self._edges_lable_update.items():
+            edge_id = 'edge{}'.format(edge_idmap.toConsecutiveId(edge_key))
+            svg_node = find_tag_by_id(svg, 'g', edge_id)
+            if svg_node is None:
+                return
+            text_nodes = svg_node.getElementsByTagName('text')
+            t0 = None
+            for t in text_nodes:
+                font_size = float(t.getAttribute('font-size'))
+                animate0 = svg.createElement('animate')
+                add_animate_scale_into_text(t, animate0, time0, font_size, False)
+                t0 = t
+            if t0 != None:
+                t1 = t0.cloneNode(deep=False)
+                tt = svg.createTextNode('{}'.format(old_label))
+                t1.appendChild(tt)
+                font_size = float(t1.getAttribute('font-size'))
+                t1.setAttribute('font-size', '0')
+                animate1 = svg.createElement('animate')
+                add_animate_scale_into_text(t1, animate1, time1, font_size, True)
+                svg_node.appendChild(t1)
     
 
     def _repr_svg_(self):
@@ -589,6 +628,11 @@ class SvgGraph():
                 graph.appendChild(clone_edge)
                 animate = self._svg.createElement('animate')
                 add_animate_appear_into_node(clone_edge, animate, (appear_animate_start_time, self._delay), True)
+        # Add node/edge label text zoom in/out animations.
+        self._update_svg_nodes_label(self._svg, self._node_idmap)
+        self._nodes_label_update.clear()
+        self._update_svg_edges_label(self._svg, self._edge_idmap)
+        self._edges_lable_update.clear()
     
 
     def _get_node_pos_(self, svg):
