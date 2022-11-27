@@ -1,5 +1,18 @@
 # Changelog
 
+## algviz 0.2.0
+
++ **New feature**: add animation effect for text labels in Vector, Table and Graph nodes.
+
+    ![vector_text_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/vector_text_animation.svg)
+
++ **New interfaces**: [Vector.removeMarks](https://algviz.readthedocs.io/en/0.2.0/api.html#algviz.vector.Vector.removeMarks), [Table.removeMarks](https://algviz.readthedocs.io/en/0.2.0/api.html#algviz.table.Table.removeMarks), [SvgGraph.removeMarks](https://algviz.readthedocs.io/en/0.2.0/api.html#algviz.svg_graph.SvgGraph.removeMarks) can remove multiple color marks in the display object.
++ **Change interface**: [Table.mark](https://algviz.readthedocs.io/en/0.2.0/api.html#algviz.table.Table.mark) adds two parameters `r2` and `c2` to support marking multiple elements in the given rectangle area.
++ **Fixed bugs**:
+    + Unit tests failed for Logger.
+    + Display area is clipped in some Logger object.
+    + Refresh error when calling [Logger.clear](https://algviz.readthedocs.io/en/0.2.0/api.html#algviz.logger.Logger.clear).
+
 ## algviz 0.1.8
 
 + **New interfaces**:
