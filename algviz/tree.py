@@ -325,9 +325,12 @@ class RecursiveTree():
             viz (Visualizer): The visualizer object that contains this recursive tree.
             name (printable): The display name of this recursive tree.
         """
-        self.root = TreeNode("root")
-        self.graph = viz.createGraph([self.root], name, True)
+        self.root = None
+        self.graph = None
+        self.viz = viz
+        self.name = name
         self.stack = list()     # Recursive stack.
+
 
     def forward(self, val=''):
         """Forward to a new depth of this recursive tree.
@@ -335,16 +338,24 @@ class RecursiveTree():
             val (printable): The label to be displayed in the recursive tree node.
         """
         node = TreeNode(val)
-        self.root.add(node)
+        if self.root == None:
+            self.root = node
+            self.graph = self.viz.createGraph([self.root], self.name, True)
+        else:
+            self.root.add(node)
         self.graph.removeMark((173, 255, 47))
         self.graph.markNode((173, 255, 47), node, hold=True)
         self.stack.append(self.root)
         self.root = node
 
-    def backward(self):
+    def backward(self, val=None):
         """Backward to the last visited node in the recursive tree.
+        Args:
+            val (printable): The update value to be displayed in the recursive tree node.
         """
         self.graph.markNode((192, 192, 192), self.root, hold=True)
+        if val != None:
+            self.root.val = val
         self.root = self.stack.pop()
         self.graph.removeMark((255, 99, 71))
         self.graph.markNode((255, 99, 71), self.root, hold=True)
