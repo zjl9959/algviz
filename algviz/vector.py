@@ -140,6 +140,9 @@ class Vector():
         Args:
             index (int/Cursor): The index position of value to pop out.
 
+        Returns:
+            printable: The element at the index position.
+
         Raises:
             RuntimeError: Index:xxx type is not int or Cursor.
             RuntimeError:  Vector index=xxx out of range!
