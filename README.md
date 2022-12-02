@@ -1,148 +1,79 @@
 # Algviz
 
+[<img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/>](https://algviz.com)
+
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/algviz)
 ![PyPI](https://img.shields.io/pypi/v/algviz)
-![GitHub](https://img.shields.io/github/license/zjl9959/algviz)
+![Conda-forge](https://img.shields.io/conda/vn/conda-forge/algviz)
+![License](https://img.shields.io/github/license/zjl9959/algviz)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/algviz)
 
-## Links
+## What is algviz?
 
-+ HomePage: [https://algviz.com](https://algviz.com)
-+ GitHub: [https://github.com/zjl9959/algviz](https://github.com/zjl9959/algviz)
-+ Documents: [https://algviz.readthedocs.io](https://algviz.readthedocs.io)
+[Algviz](https://algviz.com) is an algorithm animation engine for your Python code in [Jupyter](https://jupyter.org/), which supports multiple data structures such as `vector`, `table`, `linked_list`, `tree` and `graph`.
 
-## Introduce
+| Vector | Table | Tree | Graph |
+|:---:|:---:|:---:|:---:|
+|  ![vector.svg] |   ![table.svg]  |  ![tree.svg]   |  ![graph.svg]   |
 
-<div align=center><img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/></div>
-
-Algviz is an algorithm visualization tool for your Python code in [Jupyter-notebook](https://jupyter.org/).
-
-Algviz can generate visual animations for `vector`, `table`, `linked list`, `tree`, and `graph` data structures.
-You can bring alive animations in your notebook after inserting a few algviz [interfaces](https://algviz.readthedocs.io/en/latest/api.html#module-algviz) into code. For example, this animation shows a [bubble sort algorithm]:
-
-![bubble_sort_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/bubble_sort.svg)
-
-If you come up with a good algorithm that can solve a problem but don't know how to describe it to your friends. At this point, you can use algviz to create an intuitive animation demo to show the working process of your algorithm. The point is, that you don't need to know about the fundamentals of animation at all. Leave the dirty work to algviz and just focus on how to implement your algorithm.
-
-It's useful when you try to express the working process of a complex algorithm.
-For example, it's hard to imagine in mind the whole detail of [mirror binary tree](https://medium.com/@ajinkyajawale/convert-a-binary-tree-into-its-mirror-tree-42ea44cea237) algorithm.
-Because the algorithm includes some recursive operations on a binary tree, which subtree was moved first is a headache problem. But no matter how complex the binary tree is, algviz can tell you how the algorithm works by intuitive animations.
-
-![mirror_tree_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/mirror_tree_complete.svg)
-
-Furthermore, algviz provides some encapsulated data classes which support operations like Python built-in class. For example, you can iterate on the [algviz.Vector](https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector) class just like Python list:
+You can get live algorithm animation after bringing some algviz interfaces to your algorithm.
+For example, this code shows the bubble sort algorithm:
 
 ```python
-import algviz                   # Import algviz library.
-viz = algviz.Visualizer()       # Create a visualizer object.
-data = [1, 2, 3]
-vector = viz.createVector(data) # Create a vector data object.
-for num in vector:              # Iterate over all the elements in vector.
-    print(num)
-    viz.display()               # Refresh the animation in Jupyter-notebook.
+import algviz
+
+def bubble_sort(data):
+    viz = algviz.Visualizer(0.5)
+    vector = viz.createVector(data, cell_size=(40, 160), histogram=True)
+    for i in range(len(vector)):
+        for j in range(len(vector)-i-1):
+            if vector[j] > vector[j+1]:
+                vector.mark(algviz.cRed, j)
+                vector.mark(algviz.cGreen, j+1)
+                viz.display()
+                vector.swap(j, j+1)
+            else:
+                vector.mark(algviz.cRed, j+1)
+                vector.mark(algviz.cGreen, j)
+            viz.display()
+        vector.mark(algviz.cGray, len(vector)-i-1, hold=True)
+    vector.removeMark(algviz.cGray)
+    viz.display()
+
+bubble_sort([5, 4, -2, 1, -1, 3])
 ```
 
-You can modify the data multi-times, and algviz will record all the operations since the last time you call the [display](https://algviz.readthedocs.io/en/latest/api.html#algviz.visual.Visualizer.display) interface. Then it will merge all the operations in one animation when you call display next time. So the only thing you need to be concerned about is: `when to call the display interface?`
+The rendered animation looks like this:
 
-
-## Installation
-
-### Step1: Install Jupyter-notebook
-
-You can choose any of the following methods to install:
-
-+ If you are a [vscode](https://code.visualstudio.com/) user, you can install Jupyter [extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter) for vscode.
-+ [Install Jupyter](https://jupyter.org/install) on your computer and view the animation on your browser.
-+ [Install anaconda](https://docs.anaconda.com/anaconda/install/index.html) and [use Jupyter-notebook](https://docs.anaconda.com/ae-notebooks/user-guide/basic-tasks/apps/jupyter/index.html) in it.
-
-### Step2: Install Graphviz
-
-[Graphviz](https://graphviz.org/) is used to generate the static layout of the topology graph.
-It's a popular open-source software, you can download the program on it's [official site](https://graphviz.org/download/).
-
-*Note: please remember to add graphviz into your system's environment path so that other programs can call it directly.*
-
-### Step3: Install algviz
-
-Note: algviz runs on Python 3.7 or heigher versions.
-
-```shell
-python -m pip install --upgrade pip
-pip install algviz
-```
-
-## Tutorial
-
-This [tutorial](https://algviz.com/en/examples.html) helps you start up using algviz quickly. ([中文版教程](https://algviz.com/cn/examples.html))
-
-All the API references for algviz can be found on [readthedocs](https://algviz.readthedocs.io/en/latest/api.html#).
+![bubble_sort_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz-launch@master/svgs/BubbleSort.svg)
 
 ## Examples
 
-The [examples](https://github.com/zjl9959/algviz/tree/main/examples) folder contains some tutorials on how to start with algviz. You can set up your local environment and try them in your notebook. 
-
-### Try algviz online
-
-You can try the online notebooks on [MyBinder](https://mybinder.org/) and if you are a [Google Colab](https://colab.research.google.com/), [Kaggle](https://www.kaggle.com/) or [Gitpod](https://www.gitpod.io/) user, you can also try it on Colab, Kaggle or Gitpod.
+Ready to see the magic? Click this button to try more algorithms on Gitpod!
 
 [![Open algviz examples in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/zjl9959/algviz-launch)
 
-| Example         |  MyBinder           |   Kaggle       | Google Colab         |  Description                       |
-| :----           | :------             | :-------       | :---------                 | :-------                           |
-| **vector**      | [vector.ipynb binder]      |     [vector.ipynb kaggle]         | [vector.ipynb colab]       | Basic operations on [Vector] class. <br> Example of `bubble sort algorithm`. |
-| **table**       | [table.ipynb binder]       |     [table.ipynb kaggle]         | [table.ipynb colab]        | Basic operations on [Table] class.  |
-| **linked list** | [linked_list.ipynb binder] |     [linked_list.ipynb kaggle]        | [linked_list.ipynb colab]  | Create linked list and operate [ForwardLinkedNode], [DoublyLinkedNode] classes. |
-| **tree**        | [tree.ipynb binder]        |   [tree.ipynb kaggle]          | [tree.ipynb colab]         | Create [binary tree], [normal tree] <br> Operate [TreeNode], [BinaryTreeNode] classes. <br> Example of `mirror binary tree`. <br> Example of construct `trie tree`. |
-| **graph**       | [graph.ipynb binder]       |   [graph.ipynb kaggle]    | [graph.ipynb colab]        | Create [graph] and operate [GraphNode] class. |
+## Installation
 
+Please follow this [installation guide](https://algviz.com/en/installation.html) to setup algviz.
 
-## Unit Test
+## Tutorial
 
-Make sure you have successfully installed [algviz](https://pypi.org/project/algviz/) from PyPi and download the [test codes](https://github.com/zjl9959/algviz/tree/main/tests) from GitHub.
+This [tutorial](https://algviz.com/en/examples.html) gives you a quick start on using algviz.
 
-Then call the command:
-
-```shell
-python tests/run.py
-```
-
-If you see the output like this:
-
-> Congratulations, everything is OK !!!
-
-It means algviz works fine in your environment.
-But if you get any unexpected errors, please [report](https://github.com/zjl9959/algviz/issues) the bug.
+All the API references can be found at [readthedocs](https://algviz.readthedocs.io/en/latest/api.html#).
 
 ## License
 
 Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/main/LICENSE). You can use it freely for learning and communication.
 
+## Contribute
 
-[Vector]: https://algviz.readthedocs.io/en/latest/api.html#algviz.vector.Vector
-[Table]: https://algviz.readthedocs.io/en/latest/api.html#algviz.table.Table
-[ForwardLinkedNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.linked_list.ForwardLinkedListNode
-[DoublyLinkedNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.linked_list.DoublyLinkedListNode
-[binary tree]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseBinaryTree
-[normal tree]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.parseTree
-[TreeNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.TreeNode
-[BinaryTreeNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.tree.BinaryTreeNode
-[graph]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.parseGraph
-[GraphNode]: https://algviz.readthedocs.io/en/latest/api.html#algviz.graph.GraphNode
+Any form of contribution is welcomed! Please feel free to report a [bug](https://github.com/zjl9959/algviz/issues) or create a [pull request](https://github.com/zjl9959/algviz/pulls).
 
-[vector.ipynb binder]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Fvector.ipynb
-[table.ipynb binder]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Ftable.ipynb
-[linked_list.ipynb binder]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Flinked_list.ipynb
-[tree.ipynb binder]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Ftree.ipynb
-[graph.ipynb binder]: https://mybinder.org/v2/gh/zjl9959/algviz/main?labpath=examples%2Fgraph.ipynb
-[vector.ipynb kaggle]: https://www.kaggle.com/code/algviz/vector-example
-[table.ipynb kaggle]: https://www.kaggle.com/algviz/table-example
-[linked_list.ipynb kaggle]: https://www.kaggle.com/algviz/linked-list-example
-[tree.ipynb kaggle]: https://www.kaggle.com/algviz/tree-example
-[graph.ipynb kaggle]: https://www.kaggle.com/algviz/graph-example
-[vector.ipynb colab]: https://colab.research.google.com/drive/1RgAoKbiSBXdSvBg65pwu9pJp5bQL1pCs?usp=sharing
-[table.ipynb colab]: https://colab.research.google.com/drive/1GH6XgKDpUA2GKxiLm5tljp19wUvmnDxO?usp=sharing
-[linked_list.ipynb colab]: https://colab.research.google.com/drive/1rsg-6irXzQODPi6DUZhtu-pKq_r55hwV?usp=sharing
-[tree.ipynb colab]: https://colab.research.google.com/drive/138pnzwoS2vdhssZyTx-k5rwBQNb2Hi9N?usp=sharing
-[graph.ipynb colab]: https://colab.research.google.com/drive/14hF30-N9VGBb5-vkERPuURvmnB9VspU9?usp=sharing
 
 [bubble sort algorithm]: https://en.wikipedia.org/wiki/Bubble_sort
+[vector.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_vector.svg
+[table.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_table.svg
+[tree.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_tree.svg
+[graph.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_graph.svg
