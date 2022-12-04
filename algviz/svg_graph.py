@@ -715,7 +715,7 @@ class SvgGraph():
         if self._directed:
             dot = graphviz_Digraph(format='svg')
         else:
-            dot = graphviz_Graph(format='svg')
+            dot = graphviz_Graph(format='svg', engine='neato')
         if self._type.rankdir == 'LR':
             dot.graph_attr['rankdir'] = 'LR'
         dot.graph_attr['bgcolor'] = '#00000000'
