@@ -1,5 +1,10 @@
 # Changelog
 
+## algviz 0.2.1
+
++ Layout and display optimizations for [RecursiveTree](https://algviz.readthedocs.io/en/0.2.1/api.html#algviz.tree.RecursiveTree) and undirected graph.
++ Fix some typos and small mistakes.
+
 ## algviz 0.2.0
 
 + **New feature**: add animation effect for text labels in Vector, Table and Graph nodes.
