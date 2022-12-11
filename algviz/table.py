@@ -242,7 +242,7 @@ class Table():
         Raises:
             AlgvizParamError: Table row or col number should > 0.
         """
-        if row <=0 or col <=0:
+        if row < 0 or col < 0:
             raise AlgvizParamError('Table row or col number should > 0.')
         if row > self._row:
             # Add new rows into table.
