@@ -8,6 +8,7 @@
 import algviz
 from result import TestResult
 from utility import equal, equal_table, get_graph_elements, hack_graph
+from algviz.utility import AlgvizParamError
 
 def test_binary_tree():
     res = TestResult()
@@ -216,4 +217,28 @@ def test_modify_tree():
     nodes, edges = get_graph_elements(tree._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'add/removeAt',
                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    return res
+
+def test_regression_issue_4():
+    # case1: regression from https://github.com/zjl9959/algviz/issues/4
+    res = TestResult()
+    nodes = [1,2,2,3,4,4,3,5,6,7,8,8,7,5]
+    root = algviz.parseBinaryTree(nodes)
+    index = 0
+    queue = [root]
+    while len(queue) > 0:
+        root = queue.pop(0)
+        if root != None:
+            assert(nodes[index]==root.val)
+            index += 1
+            queue.append(root.left)
+            queue.append(root.right)
+    res.add_case(index == len(nodes), 'parseBinaryTree', index, len(nodes))
+    # case2: invalid input parmeter check.
+    nodes = [0, None, 2, 3, 4]
+    try:
+        root = algviz.parseBinaryTree(nodes)
+        res.add_case(False ,'invalidInputCheck')
+    except AlgvizParamError as e:
+        res.add_case(True, 'invalidInputCheck')
     return res

@@ -78,7 +78,7 @@ def parseBinaryTree(tree_info):
     Returns:
         TreeNode: Root node object of this tree.
     """
-    if len(tree_info) == 0:
+    if len(tree_info) == 0 or tree_info[0] == None:
         return None
     root = BinaryTreeNode(tree_info[0])
     node_queue = [root]
@@ -91,16 +91,22 @@ def parseBinaryTree(tree_info):
         if tree_info[index] is not None:
             left_node = BinaryTreeNode(tree_info[index])
         node_queue.append(left_node)
-        if index + 1 >= len(tree_info):
-            break
-        right_node = None
-        if tree_info[index + 1] is not None:
-            right_node = BinaryTreeNode(tree_info[index+1])
-        node_queue.append(right_node)
         if cur_node is not None:
             cur_node.left = left_node
+        else:
+            raise AlgvizParamError('parseBinaryTree: the parent node of {} is None'.format(left_node.val))
+        index += 1
+        if index >= len(tree_info):
+            break
+        right_node = None
+        if tree_info[index] is not None:
+            right_node = BinaryTreeNode(tree_info[index])
+        node_queue.append(right_node)
+        if cur_node is not None:
             cur_node.right = right_node
-        index += 2
+        else:
+            raise AlgvizParamError('parseBinaryTree: the parent node of {} is None'.format(right_node.val))
+        index += 1
     return root
 
 
