@@ -1,5 +1,13 @@
 # Changelog
 
+## algviz 0.2.2
+
++ Add a new class [Map](https://algviz.readthedocs.io/en/0.2.2/api.html#algviz.map.Map) which can be used like the Python `dict` builtin.
+
+    ![map_class_example](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/animation_images/map_class_example.svg)
+
++ Fix bugs: `table.reshape` error, [algviz.parseBinaryTree issue](https://github.com/zjl9959/algviz/issues/4).
+
 ## algviz 0.2.1
 
 + Layout and display optimizations for [RecursiveTree](https://algviz.readthedocs.io/en/0.2.1/api.html#algviz.tree.RecursiveTree) and undirected graph.

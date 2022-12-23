@@ -61,6 +61,14 @@ algviz.graph module
    :undoc-members:
    :show-inheritance:
 
+algviz.map module
+-------------------
+
+.. automodule:: algviz.map
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 algviz.logger module
 --------------------
 
