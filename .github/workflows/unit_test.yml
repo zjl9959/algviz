@@ -24,4 +24,4 @@ jobs:
           python setup.py install
       - name: Run unit test
         run: |
-          python tests\run.py
+          python tests/run.py
