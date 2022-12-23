@@ -53,6 +53,9 @@ def test_iterate_on_map():
     for k, v in map.items():
         iter_values.append((k, v))
     res.add_case(equal(except_values, iter_values), 'Iterate on items', iter_values, except_values)
+    # Test contains operation.
+    assert 1 in map
+    assert 4 not in map
     return res
 
 
