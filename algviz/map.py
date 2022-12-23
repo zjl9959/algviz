@@ -30,7 +30,8 @@ class Map():
             self._data = dict()
         elif not isinstance(data, dict):
             raise AlgvizParamError("Map.init input data's type should be a dict")
-        self._data = data
+        else:
+            self._data = data
         self._delay = delay
         self._graph_nodes = dict()
         self._graph = SvgGraph([], True, self._delay)
@@ -45,7 +46,7 @@ class Map():
 
     def get(self, k, default=None):
         """Returns the value of the item with the specified key.
-        
+
         Returns the default value set by default if the key is not in the map.
 
         Args:
@@ -160,7 +161,7 @@ class Map():
 
     def __contains__(self, k):
         """Check if the specified key in this map.
-        
+
         Returns:
             boolean: True if key in this map, else return False.
         """
