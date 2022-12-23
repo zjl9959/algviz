@@ -67,7 +67,7 @@ All the API references can be found at [readthedocs](https://algviz.readthedocs.
 
 Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/main/LICENSE). You can use it freely for learning and communication.
 
-## Contribute
+## Contribution
 
 Any form of contribution is welcomed! Please feel free to report a [bug](https://github.com/zjl9959/algviz/issues) or create a [pull request](https://github.com/zjl9959/algviz/pulls).
 
