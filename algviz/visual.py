@@ -39,7 +39,7 @@ class _NameDisplay():
 _next_display_id = 0
 
 
-class Visualizer(): 
+class Visualizer():
 
     def __init__(self, delay=2.0, wait=0.5):
         """
@@ -54,11 +54,11 @@ class Visualizer():
         self._wait = wait
         if type(self._wait) != bool and type(self._wait) != float and type(self._wait) != int:
             self._wait = 0.5
-        if type(self._wait) == bool and self._wait == False:
+        if type(self._wait) == bool and self._wait is False:
             self._wait = 0.5
         if type(self._wait) != bool and self._wait < 0:
             self._wait = 0
-        
+
         # The mapping relationship between the display object and the display id.
         self._element2display = WeakKeyDictionary()
         # Record the displayed id. If object is not displayed, call the display interface, otherwise call the update interface.
@@ -68,14 +68,13 @@ class Visualizer():
         # The next unique cursor id created by this visualizer.
         self._next_cursor_id = -1
 
-
     def display(self, delay=None):
         """Refresh all created display objects.
-        
+
         Args:
             delay (float): Specific the delay time for this animation frame (in seconds).
         """
-        if delay == None:
+        if delay is None:
             delay = self._delay
         if type(self._wait) == float or type(self._wait) == int:
             for elem in self._element2display.keyrefs():
@@ -109,13 +108,12 @@ class Visualizer():
                 if did in self._displayid2name:
                     svg_title = SvgTable(400, 17)
                     title_name = '{}:'.format(self._displayid2name[did])
-                    svg_title.add_text_element((4, 14), title_name, font_size=14, fill=(0,0,0))
+                    svg_title.add_text_element((4, 14), title_name, font_size=14, fill=(0, 0, 0))
                     display.display(svg_title, display_id='algviz_{}'.format(did))
                 elem()._delay = delay
                 display.display(elem(), display_id='algviz{}'.format(did))
                 self._displayed.add(did)
             return input('Input `Enter` to continue:')
-
 
     def createTable(self, row, col, data=None, name=None, cell_size=(40, 40), show_index=True):
         """
@@ -125,7 +123,7 @@ class Visualizer():
             name (str): The name of this table object.
             cell_size tuple(float, float): Table cell size (width, height).
             show_index (bool): Whether to display table row and column labels.
-        
+
         Returns:
             Table: New created Table object.
         """
@@ -137,7 +135,6 @@ class Visualizer():
         _next_display_id += 1
         return tab
 
-
     def createVector(self, data=None, name=None, cell_size=(40, 40), histogram=False, show_index=True):
         """
         Args:
@@ -146,7 +143,7 @@ class Visualizer():
             cell_size tuple(float, float): Vector cell size (width, height).
             histogram (bool): Display the data in the form of a histogram or not.
             show_index (bool): Whether to display the vector index label.
-        
+
         Returns:
             Vector: New created Vector object.
         """
@@ -158,14 +155,13 @@ class Visualizer():
         _next_display_id += 1
         return vec
 
-
     def createGraph(self, data=None, name=None, directed=True):
         """
         Args:
             data (iterable): The root node(s) to initialize the topology graph.
             name (str): The name of this Vector object.
             directed (bool): Should this graph be directed graph or undirected.
-        
+
         Returns:
             SvgGraph: Created SvgGraph object.
         """
@@ -177,13 +173,12 @@ class Visualizer():
         _next_display_id += 1
         return gra
 
-
     def createLogger(self, buffer_lines=10, name=None, font_size=12, show_line_num=True):
         """
         Args:
             buffer_lines (int): Maximum buffer line of this logger.
             name (str): The name of this Vector object.
-        
+
         Returns:
             Logger: Created Logger object.
         """
@@ -194,7 +189,6 @@ class Visualizer():
             self._displayid2name[_next_display_id] = name
         _next_display_id += 1
         return logg
-
 
     def createCursor(self, offset=0, name=None):
         """
@@ -210,7 +204,6 @@ class Visualizer():
         self._next_cursor_id += 1
         return Cursor(name, offset, self._next_cursor_id)
 
-
     def removeCursor(self, cursor):
         """
         Args:
@@ -223,7 +216,6 @@ class Visualizer():
             if not element or (type(element) != Vector and type(element) != Table):
                 continue
             element._remove_cursor_(cursor)
-
 
     def cursorRange(self, st, ed, step=1, name=None):
         """

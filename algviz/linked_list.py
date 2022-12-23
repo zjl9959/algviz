@@ -8,9 +8,9 @@ and parseForwardLinkedList, parseDoublyLinkedList function to parse linked list 
 Typical usage example:
 
   head = parseForwardLinkedList([1, 2, 3])  # Create a forward linked list: 1->2-3
-  
+
   new_head = ForwardLinkedListNode(0)       # Create a forward linked list node: 0
-  
+
   new_head.next = head                      # Link node into linked list, and get: 0->1->2->3
 
 Author: zjl9959@gmail.com
@@ -40,7 +40,6 @@ class ForwardLinkedListNode(NodeBase):
         super().__setattr__('next', next)
         self._on_update_neighbor_(next)
 
-
     def __getattribute__(self, name):
         if name == 'next':
             # Visit next node in the forward linked list and update the node's visit state.
@@ -48,7 +47,6 @@ class ForwardLinkedListNode(NodeBase):
             return node
         else:
             return super().__getattribute__(name)
-    
 
     def __setattr__(self, name, value):
         if name == 'next':
@@ -56,7 +54,6 @@ class ForwardLinkedListNode(NodeBase):
             self._on_update_neighbor_(value)
         else:
             super().__setattr__(name, value)
-    
 
     def _neighbors_(self):
         """Interface for SvgGraph. Get this node's neighbors(next node).
@@ -90,7 +87,6 @@ class DoublyLinkedListNode(NodeBase):
         super().__setattr__('next', next)
         self._on_update_neighbor_(next)
 
-
     def __getattribute__(self, name):
         if name == 'next' or name == 'prev':
             # Visit next node in the doubly linked list and update the node's visit state.
@@ -99,7 +95,6 @@ class DoublyLinkedListNode(NodeBase):
         else:
             return super().__getattribute__(name)
 
-
     def __setattr__(self, name, value):
         if name == 'next' or name == 'prev':
             super().__setattr__(name, value)
@@ -107,10 +102,9 @@ class DoublyLinkedListNode(NodeBase):
         else:
             super().__setattr__(name, value)
 
-
     def _neighbors_(self):
         """Interface for SvgGraph. Get this node's neighbors(next node).
-        
+
         Returns:
             list(tuple(next_node, None)): The neighbors list of this node.
         """
@@ -121,10 +115,10 @@ class DoublyLinkedListNode(NodeBase):
 
 def parseForwardLinkedList(list_info):
     """Create a new forward linked list object and return it's head node.
-    
+
     Args:
         list_info (list(printable)): The labels to display in the forward linked list's nodes.
-    
+
     Returns:
         ForwardLinkedListNode: The head node objet for this forward linked list.
     """
@@ -140,10 +134,10 @@ def parseForwardLinkedList(list_info):
 
 def parseDoublyLinkedList(list_info):
     """Create a new doubly linked list object and return it's head and tail node.
-    
+
     Args:
         list_info (list(printable)): The labels to display in the doubly linked list's nodes.
-    
+
     Returns:
         DoublyLinkedListNode, DoublyLinkedListNode: The head and tail node objects for this doubly linked list.
     """

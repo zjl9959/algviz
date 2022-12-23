@@ -33,7 +33,6 @@ class BinaryTreeNode(NodeBase):
         self._on_update_neighbor_(left)
         super().__setattr__('right', right)
         self._on_update_neighbor_(right)
-    
 
     def __getattribute__(self, name):
         if name == 'left' or name == 'right':
@@ -41,7 +40,6 @@ class BinaryTreeNode(NodeBase):
             return node
         else:
             return super().__getattribute__(name)
-    
 
     def __setattr__(self, name, value):
         if name == 'left' or name == 'right':
@@ -50,10 +48,9 @@ class BinaryTreeNode(NodeBase):
         else:
             super().__setattr__(name, value)
 
-
     def _neighbors_(self):
         """Return all children nodes of this tree node.
-        
+
         Returns:
             list(tuple(BinaryTreeNode, None)): Return left child node and right child node.
         """
@@ -70,15 +67,15 @@ class BinaryTreeNode(NodeBase):
 
 def parseBinaryTree(tree_info):
     """ Create a new Tree from given node values.
-    
+
     Args:
         tree_info (list(printable)): The label of each node in the tree must be given.
             Empty node is represented by None. eg:([1, None, 2, None, None, 3, 4])
-    
+
     Returns:
         TreeNode: Root node object of this tree.
     """
-    if len(tree_info) == 0 or tree_info[0] == None:
+    if len(tree_info) == 0 or tree_info[0] is None:
         return None
     root = BinaryTreeNode(tree_info[0])
     node_queue = [root]
@@ -118,11 +115,9 @@ class TreeChildrenIter():
         self._children = children
         self._next_index = 0
 
-
     def __iter__(self):
         self._next_index = 0
         return self
-
 
     def __next__(self):
         if self._next_index >= len(self._children):
@@ -146,17 +141,15 @@ class TreeNode(NodeBase):
         """
         super().__init__(val)
         super().__setattr__('_children', list())
-    
 
     def children(self):
         """Return an iterator to iter over all the children nodes of this node.
-        
+
         Returns:
             TreeChildrenIter: Children node iterator.
         """
         children_ = super().__getattribute__('_children')
         return TreeChildrenIter(self, tuple(children_))
-
 
     def childCount(self):
         """Return the children count of this node.
@@ -167,10 +160,9 @@ class TreeNode(NodeBase):
         children_ = super().__getattribute__('_children')
         return len(children_)
 
-
     def childAt(self, index):
         """Return the child node at the index position of the children list.
-        
+
         Args:
             index (int): The position of the child node.
 
@@ -184,7 +176,6 @@ class TreeNode(NodeBase):
         if type(index) != int or index < 0 or index >= len(children_):
             raise AlgvizParamError('TreeNode child index type error or out of range.')
         return children_[index]
-
 
     def childIndex(self, child):
         """Return the child node index in the children list.
@@ -202,10 +193,9 @@ class TreeNode(NodeBase):
                 res = i
         return res
 
-
     def add(self, child, index=None):
         """Add a child node for this node.
-        
+
         Args:
             child (TreeNode): The child node object to be added.
             index (int): The position to insert the child node.
@@ -213,22 +203,21 @@ class TreeNode(NodeBase):
         Raises:
             AlgvizParamError: TreeNode child index should be a positive integer!
         """
-        if (type(index) != int and index != None) or (type(index) == int and index < 0):
+        if (type(index) != int and index is not None) or (type(index) == int and index < 0):
             raise AlgvizParamError('TreeNode child index should be a positive integer!')
         children_ = super().__getattribute__('_children')
         for n in children_:
             if child == n:
                 return
-        if index == None or index >= len(children_):
+        if index is None or index >= len(children_):
             children_.append(child)
         else:
             children_.insert(index, child)
         self._on_update_neighbor_(child)
 
-
     def remove(self, child):
         """Remove one child node.
-        
+
         Args:
             child (TreeNode): The child node to be removed.
         """
@@ -239,7 +228,6 @@ class TreeNode(NodeBase):
                 self._on_update_neighbor_(None)
                 return
 
-    
     def removeAt(self, index):
         """Remove the child at the index position.
 
@@ -255,7 +243,6 @@ class TreeNode(NodeBase):
         children_.pop(index)
         self._on_update_neighbor_(None)
 
-
     def _neighbors_(self):
         children_ = super().__getattribute__('_children')
         res = list()
@@ -266,9 +253,9 @@ class TreeNode(NodeBase):
 
 def parseTree(tree_info, nodes_label=None):
     """Create a Tree from node_map information and return the root node.
-    
+
     Input tree_info should meet these constraints:
-        
+
         1. Each node must have one parent node expect for the root node.
 
         2. The node id in tree info should be unique,
@@ -278,7 +265,7 @@ def parseTree(tree_info, nodes_label=None):
         tree_info (dict(printable:list(printable))): Describe the linked information of this tree.
             Key is the label of root node, Value is the list of it's children nodes label.
         nodes_label (dict(printable:printable)): Map the node id into it's display label.
-    
+
     Returns:
         TreeNode: The root node of this tree.
 
@@ -337,14 +324,13 @@ class RecursiveTree():
         self.name = name
         self.stack = list()     # Recursive stack.
 
-
     def forward(self, val=''):
         """Forward to a new depth of this recursive tree.
         Args:
             val (printable): The label to be displayed in the recursive tree node.
         """
         node = TreeNode(val)
-        if self.root == None:
+        if self.root is None:
             self.root = node
             self.graph = self.viz.createGraph([self.root], self.name, True)
         else:
@@ -360,7 +346,7 @@ class RecursiveTree():
             val (printable): The update value to be displayed in the recursive tree node.
         """
         self.graph.markNode((192, 192, 192), self.root, hold=True)
-        if val != None:
+        if val is not None:
             self.root.val = val
         self.root = self.stack.pop()
         self.graph.removeMark((255, 99, 71))

@@ -24,14 +24,14 @@ def test_create_table():
                  tab_elems, expect_res)
     # Test create table with different type.
     table_data = [[3.21, 'hi', 0], [-2, None, True],
-                 [(-7, 8), (3), TestCustomPrintableClass(3.6, 'Test')]]
+                  [(-7, 8), (3), TestCustomPrintableClass(3.6, 'Test')]]
     table = viz.createTable(3, 3, table_data, show_index=False)
     tab_elems = get_table_elements(table._repr_svg_())
     res.add_case(equal_table(tab_elems, table_data), 'Multi-data type',
                  tab_elems, table_data)
     # Test the shape interface of table.
     row, col = table.shape()
-    res.add_case(row==3 and col==3, 'Table shape', (row, col), (3, 3))
+    res.add_case(row == 3 and col == 3, 'Table shape', (row, col), (3, 3))
     # Test invalid input row/col. (Throw AlgvizParamError if input row, col is invalid)
     case_ok = False
     try:
@@ -55,7 +55,7 @@ def test_visit_element():
     viz = algviz.Visualizer()
     # Test random access index.
     table_data = [[3.21, 'hi', 0], [-2, None, True],
-                 [(-7, 8), (3), 5]]
+                  [(-7, 8), (3), 5]]
     table = viz.createTable(3, 3, table_data)
     index_list = [(0, 0), (2, 2), (1, 0), (2, 1)]
     expect_res = [3.21, 5, -2, (3)]
@@ -69,7 +69,7 @@ def test_visit_element():
     for tab_row in table:
         for elem in tab_row:
             visit_elems.append(elem)
-    expect_res =  [3.21, 'hi', 0, -2, None, True, (-7, 8), (3), 5]
+    expect_res = [3.21, 'hi', 0, -2, None, True, (-7, 8), (3), 5]
     res.add_case(equal(visit_elems, expect_res), 'Visit element by iterator',
                  visit_elems, expect_res)
     # Test invalid row/col index.
@@ -85,19 +85,13 @@ def test_visit_element():
 def test_update_element():
     res = TestResult()
     viz = algviz.Visualizer()
-    table_data = [
-                    [1, 2, 3],
-                    [-4, 5.67989, 4.32],
-                    [5, 0, 3829]
-                ]
+    table_data = [[1, 2, 3], [-4, 5.67989, 4.32],
+                  [5, 0, 3829]]
     table = viz.createTable(3, 3, table_data)
     # Test update element by random index.
     index_list = [(0, 0), (1, 1), (2, 2)]
-    expect_res = [
-                    [2, 2, 3],
-                    [-4, 6.67989, 4.32],
-                    [5, 0, 3830]
-                ]
+    expect_res = [[2, 2, 3], [-4, 6.67989, 4.32],
+                  [5, 0, 3830]]
     for r, c in index_list:
         table[r][c] += 1
     table_elems = get_table_elements(table._repr_svg_())
@@ -173,7 +167,7 @@ def test_table_cursor():
     while r < 3:
         c << 0
         while c < 3:
-            table[r][c] = r.index()*3+c.index()
+            table[r][c] = r.index() * 3 + c.index()
             c += 1
         r += 1
     expect_results = [
@@ -183,7 +177,7 @@ def test_table_cursor():
     ]
     table_elems = get_table_elements(table._repr_svg_())
     res.add_case(equal_table(table_elems, expect_results), 'Modify elements',
-        table_elems, expect_results)
+                 table_elems, expect_results)
     # Test visit elements by table cursor.
     expect_results = [8, 7, 6, 5, 4, 3, 2, 1, 0]
     table_elems = list()
@@ -200,7 +194,7 @@ def test_table_cursor():
             c -= 1
         r -= 1
     res.add_case(equal(table_elems, expect_results), 'Visit elements',
-        table_elems, expect_results)
+                 table_elems, expect_results)
     # Test index out of range.
     case_ok = False
     try:
@@ -224,14 +218,14 @@ def test_multiply_cursors():
         i << i // 3
         i << i + 1
         for j in viz.cursorRange(0, 3, name='j'):
-            k << j + i*3
+            k << j + i * 3
             k %= 9
             if k % 5 < 5:
                 tab[i][j] = vec[k]
     table_elems = get_table_elements(tab._repr_svg_())
     expect_results = [[-1, -2, -3], [-4, -5, -6], [-7, -8, -9]]
     res.add_case(equal_table(table_elems, expect_results), 'Copy vector data into table',
-        table_elems, expect_results)
+                 table_elems, expect_results)
     return res
 
 
@@ -243,18 +237,18 @@ def test_reshape_table():
     table.reshape(3, 2)
     table[0][1] = 1
     table[1][1] = 3
-    assert(table.shape()==(3, 2))
+    assert table.shape() == (3, 2)
     expect_results = [[0, 1], [None, 3], [None, None]]
     table_elems = get_table_elements(table._repr_svg_())
     res.add_case(equal_table(table_elems, expect_results), 'Extend row and col',
-        table_elems, expect_results)
+                 table_elems, expect_results)
     # Test remove row and col.
     table.reshape(1, 2)
-    assert(table.shape()==(1, 2))
+    assert table.shape() == (1, 2)
     expect_results = [[0, 1]]
     table_elems = get_table_elements(table._repr_svg_())
     res.add_case(equal_table(table_elems, expect_results), 'Remove row and col',
-        table_elems, expect_results)
+                 table_elems, expect_results)
     return res
 
 
@@ -263,7 +257,7 @@ def get_table_elements(svg_str):
     @function: Parse table elements from it's display SVG string.
         Then sort the elements by their relative positions (top,left -> down,right).
     @param: {svg_str->str} The table display string.
-    @return: {list(list(str))} Return the elements string representation. 
+    @return: {list(list(str))} Return the elements string representation.
     '''
     svg = xmldom.parseString(svg_str)
     grids = svg.getElementsByTagName('g')
@@ -287,7 +281,7 @@ def get_table_elements(svg_str):
     for i in range(len(elements_pos)):
         if elements_pos[i][0] != last_pos_y:
             result.append(list())
-            cur_row +=1
+            cur_row += 1
         result[cur_row].append(elements_pos[i][2])
         last_pos_y = elements_pos[i][0]
     return result
@@ -298,7 +292,7 @@ def get_table_bgcolors(svg_str):
     @function: Parse table rect's background color from it's display SVG string.
         Then sort the colors by their relative positions (top,left -> down,right).
     @param: {svg_str->str} The table display string.
-    @return: {list(list(str))} Return the bgcolors list. 
+    @return: {list(list(str))} Return the bgcolors list.
     '''
     svg = xmldom.parseString(svg_str)
     grids = svg.getElementsByTagName('g')
@@ -317,7 +311,7 @@ def get_table_bgcolors(svg_str):
     for i in range(len(colors_pos)):
         if colors_pos[i][0] != last_pos_y:
             result.append(list())
-            cur_row +=1
+            cur_row += 1
         result[cur_row].append(colors_pos[i][2])
         last_pos_y = colors_pos[i][0]
     return result

@@ -16,8 +16,7 @@ class TestResult:
         str = "  - Total subcases:{0}, Passed subcases:{1}, Failed subcases:{2}\r\n".format(
             self._nb_pass + self._nb_failed,
             self._nb_pass,
-            self._nb_failed
-            )
+            self._nb_failed)
         for case, desc in self._failed_cases.items():
             str += "   - Case:{0}, Expect:{1}, Actual:{2}\r\n".format(case, desc[1], desc[0])
         return str

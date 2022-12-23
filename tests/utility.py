@@ -13,7 +13,7 @@ class TestCustomPrintableClass:
     '''
     @class: This class used to test if display objects can display self defined class noramlly.
     '''
-    
+
     def __init__(self, v1, v2) -> None:
         self._v1 = v1
         self._v2 = v2
@@ -101,9 +101,8 @@ def get_graph_elements(svg_str):
             start_node_val = node_id2label[start_node]
             end_node_val = node_id2label[end_node]
             if not directed:
-                res_edges.append(
-                    (min(start_node_val, end_node_val),
-                    max(start_node_val, end_node_val), edge_val))
+                res_edges.append((min(start_node_val, end_node_val),
+                                 max(start_node_val, end_node_val), edge_val))
             else:
                 res_edges.append((start_node_val, end_node_val, edge_val))
     return sorted(list(node_id2label.values())), sorted(res_edges)

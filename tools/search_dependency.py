@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Search for the earliest version of each dependency library. 
+"""Search for the earliest version of each dependency library.
 
 The search Algorithm is: Search the library one by one.
 For the searching library, binary/linear search from the latest version to earlier version on it.
@@ -25,12 +25,13 @@ dep_libs = {
                   '6.5.1', '6.6.0', '6.6.1', '6.7.0'],
     # https://pypi.org/project/graphviz/
     'graphviz': ['0.8.4', '0.9', '0.10', '0.10.1', '0.11',
-                '0.11.1', '0.12', '0.13', '0.13.1', '0.13.2', '0.14',
-                '0.14.1', '0.14.2', '0.15', '0.16', '0.17', '0.18',
-                '0.18.1', '0.18.2', '0.19', '0.19.1'],
+                 '0.11.1', '0.12', '0.13', '0.13.1', '0.13.2', '0.14',
+                 '0.14.1', '0.14.2', '0.15', '0.16', '0.17', '0.18',
+                 '0.18.1', '0.18.2', '0.19', '0.19.1'],
 }
 
-PYTHON_='python'
+PYTHON_ = 'python'
+
 
 def binary_search():
     earliest = list()
@@ -42,14 +43,14 @@ def binary_search():
             if other_lib != lib:
                 other_libs_cmd += '{}=={},'.format(other_lib, other_versions[-1])
         while st < ed:
-            mid = st + (ed-st)//2
+            mid = st + (ed - st) // 2
             libs_cmd = other_libs_cmd + '{}=={}'.format(lib, versions[mid])
             print("Test {}:{}".format(lib, versions[mid]))
             res = call_dependency_test(libs_cmd)
             if res < 0:
                 raise Exception('Environment error when running test.')
             elif res > 0:
-                st = mid+1
+                st = mid + 1
             else:
                 last_sucess_version = versions[mid]
                 ed = mid
@@ -66,7 +67,7 @@ def linear_search():
             if other_lib != lib:
                 other_libs_cmd += '{}=={},'.format(other_lib, other_versions[-1])
         for version in versions[::-1]:
-            libs_cmd = other_libs_cmd + '{}=={}'.format(lib,version)
+            libs_cmd = other_libs_cmd + '{}=={}'.format(lib, version)
             print("Test {}:{}".format(lib, version))
             res = call_dependency_test(libs_cmd)
             if res < 0:
@@ -80,6 +81,8 @@ def linear_search():
 
 
 platform_type = None    # 0:Windows;1:Linux;-1:Unknow
+
+
 def call_dependency_test(test_libs):
     global platform_type
     if not platform_type:
@@ -108,7 +111,7 @@ def main():
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     earliest = list()
     if len(sys.argv) >= 2:
-        PYTHON_=sys.argv[1]
+        PYTHON_ = sys.argv[1]
     if len(sys.argv) >= 3:
         search_mode = sys.argv[2]
         if search_mode == 'B':
@@ -120,11 +123,11 @@ def main():
     else:
         earliest = binary_search()
     if len(earliest):
-        print('*'*45)
+        print('*' * 45)
         print('These librarie(s) earliest version can be supported.')
         for test in earliest:
             print('Lib:{}, ENV:{}'.format(test[0], test[1]))
-        print('*'*45)
+        print('*' * 45)
 
 
 if __name__ == "__main__":

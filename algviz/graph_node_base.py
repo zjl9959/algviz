@@ -11,18 +11,19 @@ License: GPLv3
 
 """
 
+
 class GraphNodeBase:
     """Base class for all the graph nodes.
-    
+
     GraphNodeBase's subclasses contain:
     GraphNode, BinaryTreeNode, ForwardLinkedListNode and DoublyLinkedListNode.
     If you want to get/set attribute in subclass, don't use dot operation like 'self.attr'.
     Please use these interfaces instead:
 
         super().__getattribute__(attr)
-        
+
         super().__setattr__(attr, new_value)
-    
+
     Attributes:
         val (printable): The label to be displayed in the graph node.
     """
@@ -35,13 +36,11 @@ class GraphNodeBase:
         object.__setattr__(self, 'val', val)
         object.__setattr__(self, '_bind_graphs', set())
 
-    
     def __getattribute__(self, name):
         if name == 'val':
             return object.__getattribute__(self, 'val')
         else:
             return object.__getattribute__(self, name)
-
 
     def __setattr__(self, name, value):
         if name == 'val':
@@ -50,13 +49,11 @@ class GraphNodeBase:
         else:
             object.__setattr__(self, name, value)
 
-
     def __str__(self):
         value = object.__getattribute__(self, 'val')
-        if value == None:
+        if value is None:
             value = ''
         return str(value)
-
 
     def _on_update_value_(self, value):
         """Notify the bind graph to update the displayed node mark and value.
@@ -68,7 +65,6 @@ class GraphNodeBase:
         for graph in bind_graphs:
             graph._updateNodeLabel(self, value)
 
-    
     def _on_update_neighbor_(self, new_neighbor):
         """
         Notify the bind graph to update the displayed edge color between this node and it's neighbor.
@@ -86,7 +82,6 @@ class GraphNodeBase:
             for graph in bind_graphs:
                 graph.addNode(new_neighbor)
 
-
     def bind_graphs(self):
         """
         Returns:
@@ -94,10 +89,9 @@ class GraphNodeBase:
         """
         return object.__getattribute__(self, '_bind_graphs')
 
-
     def _bind_new_graph_(self, graph):
         """Bind a new SvgGraph object for this graph node object.
-        
+
         Args:
             graph (SvgGraph): New SvgGraph object to track this node.
         """
@@ -105,10 +99,9 @@ class GraphNodeBase:
         if graph not in bind_graphs:
             bind_graphs.add(graph)
 
-
     def _remove_bind_graph_(self, graph):
         """Remove the SvgGraph object binded to this graph node object.
-        
+
         The graph object will not track the change of this node, if it is successfully removed from bind_graphs.
 
         Args:

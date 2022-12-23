@@ -34,7 +34,7 @@ class Cursor:
     you can access the element in any Vector/Table object with
     the created cursor just like an integer index.
     The index in the cursor should be an integer number.
-    
+
     Assignment operation: <<
 
     Mathmatics operations:
@@ -43,7 +43,7 @@ class Cursor:
         Changes the cursor's index and returns itself: +=, -=, *=, //=, %=
 
     Compare operations: >, <, >=, <=, ==, !=
-    
+
     The right-hand value of those operations above can be a cursor or an integer number.
 
 
@@ -55,7 +55,7 @@ class Cursor:
         i += j                          # The index in cursor i change from 3 into 8(3+5).
 
         j << i - 1                      # The index in cursor j change from 5 into 7(8-1).
-        
+
         i > j                           # True: 8 > 7 is true.
     """
 
@@ -161,7 +161,7 @@ class Cursor:
 
 
 def _get_rhs_index(rhs):
-    if rhs == None:
+    if rhs is None:
         return None
     elif type(rhs) is int:
         return rhs
@@ -256,7 +256,6 @@ class _CursorManager:
         self._cursor2id[id(cursor)] = cursor_id
         cursor._add_manager_(self)
 
-
     def remove_cursor(self, cursor):
         """Untrack the specific cursor from this cursor manager.
         """
@@ -278,7 +277,7 @@ class _CursorManager:
             else:
                 self._svg.update_cursor_element(gid, (0, -self._cursor_height))
         # Update the cursors who's sequence behind the cursor to be removed.
-        for i in range(cursor_seq+1, len(self._cursors_id_list)):
+        for i in range(cursor_seq + 1, len(self._cursors_id_list)):
             cid = self._cursors_id_list[i]
             if cid not in self._cursors_info:
                 print('[WARNING] _CursorManager.remove_cursor cursor {} not found in cursors_info.'.format(cid))
@@ -290,8 +289,8 @@ class _CursorManager:
             cursor_index = 0
             if cid in self._old_cursors_index:
                 cursor_index = self._old_cursors_index[cid]
-            cursor_pos = self._calculate_cursor_position_(i-1, cursor_index)
-            cursor_pos_correct = (len(self._cursors_id_list)-i-1)*self._cursor_height
+            cursor_pos = self._calculate_cursor_position_(i - 1, cursor_index)
+            cursor_pos_correct = (len(self._cursors_id_list) - i - 1) * self._cursor_height
             if self._dir == 'R':
                 cursor_pos[0] += cursor_pos_correct
             else:
@@ -325,7 +324,7 @@ class _CursorManager:
 
     def refresh_cursors_animation(self, max_index, time):
         """Refresh all the animations in cursors node.
-        
+
         Args:
             max_index (int): Used to check the max value of the cursor.
             time (tuple(float, float)): (begin, end) The begin and end time of cursor move animation.
@@ -370,14 +369,14 @@ class _CursorManager:
 
     def _calculate_cursor_position_(self, cursor_seq, index):
         offset_sign = 1 if cursor_seq % 2 else -1
-        cursor_offset = ((cursor_seq+1)//2)*self._cursor_offset*offset_sign
+        cursor_offset = ((cursor_seq + 1) // 2) * self._cursor_offset * offset_sign
         cursor_pos_x, cursor_pos_y = 0, 0
         if self._dir == 'R':
             cursor_pos_x = self._cursor_height * (cursor_seq + 1) + self._cursor_margin
-            cursor_pos_y = self._svg_margin[1] + index*(self._cell_height + self._cell_margin) + self._cell_height*0.5
+            cursor_pos_y = self._svg_margin[1] + index * (self._cell_height + self._cell_margin) + self._cell_height * 0.5
             cursor_width = self._cell_height
         else:
-            cursor_pos_x = self._svg_margin[0] + index*(self._cell_width + self._cell_margin) + self._cell_width*0.5
+            cursor_pos_x = self._svg_margin[0] + index * (self._cell_width + self._cell_margin) + self._cell_width * 0.5
             cursor_pos_y = self._cursor_height * (cursor_seq + 1) + self._cursor_margin
             cursor_width = self._cell_width
         cursor_height = self._cursor_height * (cursor_seq + 1)

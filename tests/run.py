@@ -24,12 +24,12 @@ def main():
     nb_failed += run_test_module(test_tree)
     import test_graph
     nb_failed += run_test_module(test_graph)
-    print("*"*45)
+    print("*" * 45)
     if nb_failed == 0:
         print('Congratulations, everything is OK !!!')
     else:
         print('Oops, {} test function(s) failed !!!'.format(nb_failed))
-    print("*"*45)
+    print("*" * 45)
     return nb_failed
 
 
@@ -37,7 +37,7 @@ def run_test_module(test_module):
     # Filter test_xxx functions in test_module and call test.
     num_pass, num_failed = 0, 0
     test_funcs = [o for o in dir(test_module) if o.startswith('test')]
-    print("-"*45, "\r\n>>>> Begin <{0}>.".format(test_module.__name__))
+    print("-" * 45, "\r\n>>>> Begin <{0}>.".format(test_module.__name__))
     results = dict()
     start_time = time.time()
     for func in test_funcs:
@@ -65,7 +65,7 @@ def run_test_module(test_module):
         if not result.ok():
             print(" - [ERROR] {0}".format(func))
             print(result, end='')
-    print(">>>> End <{0}> ({1:.2f} ms).".format(test_module.__name__, (end_time-start_time)*1000))
+    print(">>>> End <{0}> ({1:.2f} ms).".format(test_module.__name__, (end_time - start_time) * 1000))
     return num_failed
 
 

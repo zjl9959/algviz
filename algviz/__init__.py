@@ -5,7 +5,7 @@
 Algviz can generate visual animations for
 vector, table, linked list, tree, and graph data structures.
 You can bring alive animations in your notebook after
-inserting a few algviz interfaces into code. 
+inserting a few algviz interfaces into code.
 
 Author: zjl9959@gmail.com
 

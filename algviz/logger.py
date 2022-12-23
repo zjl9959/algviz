@@ -15,6 +15,7 @@ from xml.dom.minidom import Document
 
 LOG_OFFSET_X = 5
 
+
 class Logger():
     """A log class to display strings into the screen.
 
@@ -40,11 +41,10 @@ class Logger():
         self._next_node_id = 0
         self._log_lines = 0
         self._show_line_num = show_line_num
-    
 
     def write(self, data):
         """Write log data. Use \\n to split multi-lines.
-        
+
         Args:
             data (str): The log data string.
         """
@@ -59,7 +59,6 @@ class Logger():
             else:
                 self._logs.append(line)
             self._log_lines += 1
-    
 
     def clear(self):
         """Clear all cached log string.
@@ -69,7 +68,6 @@ class Logger():
             self._svg.removeChild(child)
         self._logs.clear()
 
-    
     def _repr_svg_(self):
         svg_width = 0
         for child in self._svg.childNodes:
@@ -81,7 +79,7 @@ class Logger():
             log = self._logs[i]
             txt = self._dom.createElement('text')
             txt.setAttribute('x', '{}'.format(LOG_OFFSET_X))
-            txt.setAttribute('y', '{:.2f}'.format(self._font_size*(i*1.2+1)))
+            txt.setAttribute('y', '{:.2f}'.format(self._font_size * (i * 1.2 + 1)))
             txt.setAttribute('font-size', '{:.2f}'.format(self._font_size))
             txt.setAttribute('font-family', 'cursive')
             text = self._dom.createTextNode('{}'.format(log))
@@ -90,7 +88,7 @@ class Logger():
             svg_width = max(svg_width, get_text_width(log, self._font_size) + LOG_OFFSET_X)
         self._svg.appendChild(g)
         # Update svg width and height.
-        svg_height = len(self._logs)*self._font_size*1.3
+        svg_height = len(self._logs) * self._font_size * 1.3
         self._svg.setAttribute('width', '{:.0f}pt'.format(svg_width))
         self._svg.setAttribute('height', '{:.0f}pt'.format(svg_height))
         self._svg.setAttribute('viewBox', '0.00 0.00 {:.2f} {:.2f}'.format(svg_width, svg_height))

@@ -18,7 +18,7 @@ def test_create_vector():
     # Test create an empty vector.
     vec = viz.createVector()
     vec_elems = get_vector_elements(vec._repr_svg_())
-    res.add_case(len(vec_elems)==0, 'Empty vector', vec_elems)
+    res.add_case(len(vec_elems) == 0, 'Empty vector', vec_elems)
     # Test create an normal vector.
     vec_data = [1, 2, 3]
     vec = viz.createVector(vec_data)
@@ -26,7 +26,7 @@ def test_create_vector():
     res.add_case(equal(vec_data, vec_elems), 'Normal vector',
                  vec_elems, vec_data)
     # Test create vector with different type in it.
-    vec_data = [-3.56, 'hi', (2.4, 7), None, 6, TestCustomPrintableClass(1,2)]
+    vec_data = [-3.56, 'hi', (2.4, 7), None, 6, TestCustomPrintableClass(1, 2)]
     vec = viz.createVector(vec_data)
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_data, vec_elems), 'Multi-data type vector',
@@ -96,8 +96,11 @@ def test_update_elements():
                  vec_elems, new_data)
     # Test repeat update one elements multi-times.
     expect_results = [3, -4, 7, -2, 'str', 3]
-    vec[1] = 6; vec[1] = -4
-    vec[len(vec)-1] = 9; vec[len(vec)-1] = 3; vec[len(vec)-1] = 3
+    vec[1] = 6
+    vec[1] = -4
+    vec[len(vec) - 1] = 9
+    vec[len(vec) - 1] = 3
+    vec[len(vec) - 1] = 3
     vec_elems = get_vector_elements(vec._repr_svg_())
     res.add_case(equal(vec_elems, expect_results), 'Repeat update',
                  vec_elems, expect_results)
@@ -216,7 +219,7 @@ def test_vector_cursor():
         j << i
         if j == 4:
             vec[j] = -5
-        if j != i.index()-1:
+        if j != i.index() - 1:
             vec.insert(j, 7)
         if j <= 4:
             j -= 4
@@ -241,7 +244,7 @@ def get_vector_elements(svg_str):
     @function: Parse vector elements from it's display SVG string.
         Then sort the elements by their relative positions.
     @param: {svg_str->str} The vector display string.
-    @return: {list(str)} Return the elements string representation. 
+    @return: {list(str)} Return the elements string representation.
     '''
     svg = xmldom.parseString(svg_str)
     grids = svg.getElementsByTagName('g')
@@ -278,7 +281,7 @@ def get_vector_bgcolors(svg_str):
     @function: Parse vector rect's background color from it's display SVG string.
         Then sort the colors by their relative positions.
     @param: {svg_str->str} The vector display string.
-    @return: {list(str)} Return the bgcolors list. 
+    @return: {list(str)} Return the bgcolors list.
     '''
     svg = xmldom.parseString(svg_str)
     grids = svg.getElementsByTagName('g')

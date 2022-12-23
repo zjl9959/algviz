@@ -57,26 +57,24 @@ class TraceColorStack():
         """
         self._colors = list()
         self._bgcolor = bgcolor
-    
 
     def add(self, color):
         """Add a new color into TraceColorStack.
-        
+
         Args:
             color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
         """
         if not len(self._colors) or color != self._colors[-1]:
             self._colors.append(color)
-    
 
     def remove(self, color):
         """Remove color from TraceColorStack.
-        
+
         Args:
             color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-        
+
         Returns:
             bool: Return False if can't color. Return True if successfully deleted color.
         """
@@ -89,11 +87,10 @@ class TraceColorStack():
             res = True
         self._colors = colors_new
         return res
-    
 
     def color(self):
         """Get the merged color in TraceColorStack.
-        
+
         Returns:
             color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
         """
@@ -115,14 +112,13 @@ class ConsecutiveIdMap():
         self._next_id = offset
         self._attr2id = dict()
         self._id2attr = list()
-    
 
     def toConsecutiveId(self, attr_id):
         """Create or get the continuous ID for an unordered ID.
-        
+
         Args:
             attr_id (hashable): Unordered ID object.
-        
+
         Returns:
             int: Continuous ID value.
         """
@@ -133,14 +129,13 @@ class ConsecutiveIdMap():
             self._id2attr.append(attr_id)
             self._next_id += 1
             return self._next_id - 1
-    
 
     def toAttributeId(self, cons_id):
         """Given a continuous ID, return it's correspond unordered ID.
-        
+
         Args:
             cons_id (int): Continuous ID value.
-       
+
         Returns:
             hashable: Unordered ID object.
         """
@@ -155,7 +150,7 @@ def find_tag_by_id(node, tag_name, tag_id):
         node (xmldom.Node): The XML node object to search.
         tag_name (str): The tag name of the element.
         tag_id (str) The id value of the element.
-    
+
     Returns:
         xmldom.Node or None: Return the XML node object if found it, otherwise return None.
     """
@@ -206,11 +201,11 @@ def add_animate_move_into_node(g, animate, move, time, bessel):
     """
     g.appendChild(animate)
     if bessel:
-        animate.setAttribute('path', 'm0,0 q{:.2f},{:.2f} {:.2f},{:.2f}'.format(move[0]*0.5-move[1]*0.2, move[1]*0.5+move[0]*0.2, move[0], move[1]))
+        animate.setAttribute('path', 'm0,0 q{:.2f},{:.2f} {:.2f},{:.2f}'.format(move[0] * 0.5 - move[1] * 0.2, move[1] * 0.5 + move[0] * 0.2, move[0], move[1]))
     else:
         animate.setAttribute('path', 'm0,0 l{:.2f},{:.2f}'.format(move[0], move[1]))
     animate.setAttribute('begin', '{:.2f}s'.format(time[0]))
-    animate.setAttribute('dur', '{:.2f}s'.format(time[1]-time[0]))
+    animate.setAttribute('dur', '{:.2f}s'.format(time[1] - time[0]))
     animate.setAttribute('fill', 'freeze')
 
 
@@ -227,7 +222,7 @@ def add_animate_appear_into_node(g, animate, time, appear=True):
     animate.setAttribute('from', '{:.0f}'.format(not appear))
     animate.setAttribute('to', '{:.0f}'.format(appear))
     animate.setAttribute('begin', '{:.2f}s'.format(time[0]))
-    animate.setAttribute('dur', '{:.2f}s'.format(time[1]-time[0]))
+    animate.setAttribute('dur', '{:.2f}s'.format(time[1] - time[0]))
     animate.setAttribute('fill', 'freeze')
 
 
@@ -248,22 +243,22 @@ def add_animate_scale_into_text(t, animate, time, font_size, zoom_in=True):
         animate.setAttribute('from', '{:.2f}'.format(font_size))
         animate.setAttribute('to', '0')
     animate.setAttribute('begin', '{:.2f}s'.format(time[0]))
-    animate.setAttribute('dur', '{:.2f}s'.format(time[1]-time[0]))
+    animate.setAttribute('dur', '{:.2f}s'.format(time[1] - time[0]))
     animate.setAttribute('fill', 'freeze')
 
 
 def auto_text_color(back_color):
     """Auto pick one text stroke color according to it's background color.
-    
+
     Args:
         back_color ((R,G,B)): Text background color. R, G, B stand for color channel for red, green, blue.
             R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-    
+
     Returns:
         str: Text stroke color value formatted with hexadecimal number(SVG format).
             eg: '#FFFFFF'
     """
-    rgb_sum = back_color[0]+back_color[1]+back_color[2]
+    rgb_sum = back_color[0] + back_color[1] + back_color[2]
     if rgb_sum < 150:
         return '#FFFFFF'
     else:
@@ -272,11 +267,11 @@ def auto_text_color(back_color):
 
 def rgbcolor2str(color):
     """Convert (R, G, B) formatted color into hexadecimal formatted string.
-    
+
     Args:
         color ((R,G,B)): R, G, B stand for color channel for red, green, blue.
             R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-    
+
     Returns:
         str: Hexadecimal formatted string. (SVG format). eg: '#FFFFFF'
     """
@@ -285,10 +280,10 @@ def rgbcolor2str(color):
 
 def str2rgbcolor(color_str):
     """Convert hexadecimal formatted string into (R, G, B) formatted color.
-    
+
     Args:
         color_str (str): Hexadecimal formatted string. (SVG format). eg: '#FFFFFF'
-    
+
     Returns:
         (R,G,B): R, G, B stand for color channel for red, green, blue.
             R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
@@ -299,42 +294,42 @@ def str2rgbcolor(color_str):
 
 def text_font_size(text_width, text):
     """Calculate the font size based on the total width of the text and the text content.
-        
+
     Args:
         text_width (float): The total width of the text.
         text (str): The text content (should be unicode format string).
-    
+
     Returns:
         float: Text font size.
     """
     display_len = text_char_num(text)
     if display_len > 0:
-        return min(16, text_width*1.6/display_len, text_width*0.8)
+        return min(16, text_width * 1.6 / display_len, text_width * 0.8)
     else:
         return 0
 
 
 def get_text_width(text, font_size):
     """Calculate the total text width of the given text string.
-    
+
     Args:
         font_size (int): The font size of text.
         text (str): The text content (should be unicode format string).
-    
+
     Returns:
         float: The total width of the text.
     """
     # TODO: Use more specific method to measure the text total width.
     text_num = text_char_num(text)
-    return text_num*font_size*0.55
+    return text_num * font_size * 0.55
 
 
 def text_char_num(text):
     """Count the number of characters in the text.
-    
+
     Args:
         text (str): The text content (should be unicode format string).
-    
+
     Returns:
         int: The number of characters in the text.
     """
@@ -357,7 +352,7 @@ def clamp(val, min_val, max_val):
 
 def add_desc_into_svg(dom):
     """Add description meta data into SVG dom tree.
-    
+
     Args:
         dom (xmldom.document) The dom object to contain the description.
     """
@@ -378,7 +373,7 @@ def add_desc_into_svg(dom):
 
 def add_default_text_style(dom):
     """Add the default text style into svg.
-    
+
     Args:
         dom (xmldom.document) The dom object to contain the description.
     """

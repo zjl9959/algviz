@@ -23,13 +23,13 @@ def test_create_graph():
         [3, 5, 'e3_5'], [4, 1, None], [4, 6, None],
         [5, 2, 'e5_2'], [5, 4, None],
     ]
-    graph_nodes = algviz.parseGraph(nodes, edges, {7:'node_7'})
+    graph_nodes = algviz.parseGraph(nodes, edges, {7: 'node_7'})
     graph = viz.createGraph(graph_nodes)
     hack_graph(graph)
     svg_nodes, svg_edges = get_graph_elements(graph._repr_svg_())
     expect_nodes = [0, 1, 2, 3, 4, 5, 6, 'node_7']
     res.add_case(equal(expect_nodes, svg_nodes) and equal_table(edges, svg_edges), 'Create directed graph',
-                'nodes:{};edges:{}'.format(svg_nodes, svg_edges), 'nodes:{};edges:{}'.format(expect_nodes, edges))
+                 'nodes:{};edges:{}'.format(svg_nodes, svg_edges), 'nodes:{};edges:{}'.format(expect_nodes, edges))
     # Test create undirected graph.
     nodes = [0, 1, 2, 3, 4, 5, 6, 7]
     edges = [
@@ -37,12 +37,12 @@ def test_create_graph():
         [1, 4, None], [2, 5, 'e5_2'], [3, 5, 'e3_5'],
         [4, 5, None], [4, 6, None],
     ]
-    graph_nodes = algviz.parseGraph(nodes, edges, {7:'node_7'}, directed=False)
+    graph_nodes = algviz.parseGraph(nodes, edges, {7: 'node_7'}, directed=False)
     graph = viz.createGraph(graph_nodes, directed=False)
     hack_graph(graph)
     svg_nodes, svg_edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, svg_nodes) and equal_table(edges, svg_edges), 'Create undirected graph',
-                'nodes:{};edges:{}'.format(svg_nodes, svg_edges), 'nodes:{};edges:{}'.format(expect_nodes, edges))
+                 'nodes:{};edges:{}'.format(svg_nodes, svg_edges), 'nodes:{};edges:{}'.format(expect_nodes, edges))
     return res
 
 
@@ -56,6 +56,7 @@ def test_traverse_graph():
     graph = viz.createGraph(graph_nodes)
     hack_graph(graph)
     visit_res, visited_nodes = list(), set()
+
     def traverse_graph(root):
         if root and root not in visited_nodes:
             visit_res.append(root.val)
@@ -68,7 +69,7 @@ def test_traverse_graph():
     res.add_case(equal(nodes, visit_res), 'Traverse directed graph', visit_res, nodes)
     # Test update graph node value.
     svg_nodes, _ = get_graph_elements(graph._repr_svg_())
-    nodes = [i+1 for i in nodes]
+    nodes = [i + 1 for i in nodes]
     res.add_case(equal(nodes, svg_nodes), 'Update node value', svg_nodes, nodes)
     # Test traverse undirected graph.
     nodes = [0, 1, 2, 3, 4, 5, 6]
@@ -84,8 +85,8 @@ def test_traverse_graph():
 def test_modify_directed_graph():
     res = TestResult()
     viz = algviz.Visualizer()
-    graph_nodes = algviz.parseGraph([0, 1, 2],
-            [[0, 1, None], [0, 2, 'e0_2'],[2, 1, None]])
+    graph_nodes = algviz.parseGraph([0, 1, 2], [[0, 1, None],
+                                    [0, 2, 'e0_2'], [2, 1, None]])
     graph = viz.createGraph(graph_nodes)
     hack_graph(graph)
     # Test add nodes into directed graph.
@@ -93,8 +94,8 @@ def test_modify_directed_graph():
     node2 = graph_nodes[2]
     custom_edge = TestCustomPrintableClass('e2', 'e3')
     node2.add(node3, custom_edge)
-    sub_graph_nodes = algviz.parseGraph([4, 5, 6],
-            [[4, 5, None], [5, 6, 'e5_6'], [6, 4, None]])
+    sub_graph_nodes = algviz.parseGraph([4, 5, 6], [[4, 5, None],
+                                        [5, 6, 'e5_6'], [6, 4, None]])
     node3.add(sub_graph_nodes[4])
     expect_nodes = [0, 1, 2, 3, 4, 5, 6]
     expect_edges = [
@@ -104,9 +105,9 @@ def test_modify_directed_graph():
     ]
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
-    assert(graph_nodes[2].neighborCount()==2)
-    assert(sub_graph_nodes[4].neighborCount()==1)
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    assert graph_nodes[2].neighborCount() == 2
+    assert sub_graph_nodes[4].neighborCount() == 1
     # Test neighborIndex interface.
     expect_res = [0, 1, 0]
     actual_res = [
@@ -134,7 +135,7 @@ def test_modify_directed_graph():
     graph._repr_svg_()  # Skip the animation frame.
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove node neighbors',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     # Test remove nodes in graph.
     graph.removeNode(sub_graph_nodes[4], True)  # Remove all the subgraph.
     graph.removeNode(graph_nodes[1])
@@ -143,7 +144,7 @@ def test_modify_directed_graph():
     graph._repr_svg_()  # Skip the animation frame.
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes(1)',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     # Test remove nodes in graph.
     graph_nodes[0].remove(graph_nodes[1])
     graph.removeNode(graph_nodes[1])
@@ -152,14 +153,14 @@ def test_modify_directed_graph():
     graph._repr_svg_()  # Skip the animation frame.
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes(2)',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     # Test update graph edge.
     algviz.updateGraphEdge(node2, node3, -23)
     expect_edges = [[0, 2, 'e0_2'], [2, 3, -23]]
     graph._repr_svg_()  # Skip the animation frame.
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Update edge',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     # Test add/removeAt interfaces.
     expect_nodes = [2, 3, 7]
     expect_edges = [[2, 3, -23], [2, 7, 'e2_7']]
@@ -169,7 +170,7 @@ def test_modify_directed_graph():
     graph._repr_svg_()  # Skip the animation frame.
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'add/removeAt',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     return res
 
 
@@ -182,9 +183,12 @@ def test_modify_undirected_graph():
     graph = viz.createGraph(graph_nodes, directed=False)
     hack_graph(graph)
     # Test add nodes into undirected graph.
-    node4 = algviz.GraphNode(4); node5 = algviz.GraphNode(5)
-    graph_nodes[0].add(node4); node4.add(graph_nodes[2])
-    graph_nodes[1].add(node5); node5.add(graph_nodes[3], '3<->5')
+    node4 = algviz.GraphNode(4)
+    node5 = algviz.GraphNode(5)
+    graph_nodes[0].add(node4)
+    node4.add(graph_nodes[2])
+    graph_nodes[1].add(node5)
+    node5.add(graph_nodes[3], '3<->5')
     expect_nodes = [0, 1, 2, 3, 4, 5]
     expect_edges = [
         [0, 1, None], [0, 3, '3<->0'], [0, 4, None],
@@ -192,12 +196,14 @@ def test_modify_undirected_graph():
         [2, 3, '2<->3'], [2, 4, None], [3, 5, '3<->5']]
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Add nodes',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     # Test remove nodes from undirected graph.
-    graph_nodes[2].remove(graph_nodes[1]); graph_nodes[1].remove(graph_nodes[2])
-    graph_nodes[2].remove(graph_nodes[3]); graph_nodes[3].remove(graph_nodes[2])
+    graph_nodes[2].remove(graph_nodes[1])
+    graph_nodes[1].remove(graph_nodes[2])
+    graph_nodes[2].remove(graph_nodes[3])
+    graph_nodes[3].remove(graph_nodes[2])
     node4.remove(graph_nodes[2])
-    assert(graph.removeNode(graph_nodes[2])==1)
+    assert graph.removeNode(graph_nodes[2]) == 1
     expect_nodes = [0, 1, 3, 4, 5]
     expect_edges = [
         [0, 1, None], [0, 3, '3<->0'], [0, 4, None],
@@ -205,5 +211,5 @@ def test_modify_undirected_graph():
     graph._repr_svg_()
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes',
-                'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+                 'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
     return res
