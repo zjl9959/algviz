@@ -37,7 +37,7 @@ setup(
         'graphviz >= 0.8.4, != 0.18, <= 0.19.1',
         'ipykernel >= 6.4.0, <= 6.7.0'
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
