@@ -28,12 +28,13 @@ from xml.dom.minidom import parseString as mindom_parseString
 class _SvgGraphType:
     """This class is used to specific the layout parameter for SvgGraph class.
     """
-    def __init__(self, rankdir=None):
+    def __init__(self, rankdir=None, shape='circle'):
         """
         Args:
             rankdir (str): The layout direction for graph. example: 'LR'
         """
         self.rankdir = rankdir
+        self.shape = shape
 
 
 def _get_graph_type_by_data_(data):
@@ -696,7 +697,7 @@ class SvgGraph():
         if self._type.rankdir == 'LR':
             dot.graph_attr['rankdir'] = 'LR'
         dot.graph_attr['bgcolor'] = '#00000000'
-        dot.node_attr.update(shape='circle', fixedsize='shape', color='#7B7B7B')
+        dot.node_attr.update(shape=self._type.shape, fixedsize='shape', color='#7B7B7B')
         dot.edge_attr.update(arrowhead='vee', color='#7B7B7B')
         for node in self._node_seq:
             node_id = node_idmap.toConsecutiveId(node)

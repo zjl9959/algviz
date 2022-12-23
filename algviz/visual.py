@@ -18,6 +18,7 @@ from algviz.svg_graph import SvgGraph
 from algviz.svg_table import SvgTable
 from algviz.logger import Logger
 from algviz.cursor import Cursor, _CursorRange
+from algviz.map import Map
 from algviz.utility import AlgvizParamError, AlgvizTypeError, kMaxNameChars
 
 
@@ -74,7 +75,7 @@ class Visualizer():
         Args:
             delay (float): Specific the delay time for this animation frame (in seconds).
         """
-        if delay is None:
+        if delay is None or delay < 0:
             delay = self._delay
         if type(self._wait) == float or type(self._wait) == int:
             for elem in self._element2display.keyrefs():
@@ -172,6 +173,23 @@ class Visualizer():
             self._displayid2name[_next_display_id] = name
         _next_display_id += 1
         return gra
+
+    def createMap(self, data=None, name=None):
+        """
+        Args:
+            data (dict): The initial key and values of this map.
+            name (str): The name of this Map object.
+
+        Returns:
+            Map: Created Map object.
+        """
+        global _next_display_id
+        map = Map(data, self._delay)
+        self._element2display[map] = _next_display_id
+        if name is not None:
+            self._displayid2name[_next_display_id] = name
+        _next_display_id += 1
+        return map
 
     def createLogger(self, buffer_lines=10, name=None, font_size=12, show_line_num=True):
         """
