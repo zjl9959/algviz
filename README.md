@@ -51,7 +51,7 @@ The rendered animation looks like this:
 
 Ready to see the magic? Click this button to try more algorithms on Gitpod!
 
-[![Open algviz examples in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/zjl9959/algviz-launch)
+[![Open algviz examples in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/zjl9959/algviz-launch) *Need to login with your github account.*
 
 ## Installation
 
@@ -71,6 +71,7 @@ Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/
 
 Any form of contribution is welcomed! Please feel free to report a [bug](https://github.com/zjl9959/algviz/issues) or create a [pull request](https://github.com/zjl9959/algviz/pulls).
 
+If you want to share your algorithm animation notebooks using algviz, you can create a [PR](https://github.com/zjl9959/algviz-launch/pulls) from this repo: 👉 [algviz-launch](https://github.com/zjl9959/algviz-launch).
 
 [bubble sort algorithm]: https://en.wikipedia.org/wiki/Bubble_sort
 [vector.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_vector.svg
