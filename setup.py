@@ -34,8 +34,8 @@ setup(
     },
     packages=['algviz'],
     install_requires=[
-        'graphviz >= 0.8.4, != 0.18, <= 0.19.1',
-        'ipykernel >= 6.4.0, <= 6.7.0'
+        'graphviz >= 0.8.4, != 0.18',
+        'ipykernel >= 6.4.0'
     ],
     python_requires='>=3.8',
     classifiers=[
