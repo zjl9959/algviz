@@ -249,11 +249,13 @@ class Table():
             # Remove row in table.
             for r in range(row, self._row):
                 self._data.pop()
-                self._svg.delete_element(self._row_index2text[r])
-                self._row_index2text.pop(r)
                 for c in range(self._col):
                     self._svg.delete_element(self._index2rect[(r, c)])
                     self._index2rect.pop((r, c))
+            if self._show_index:
+                for r in range(row, self._row):
+                    self._svg.delete_element(self._row_index2text[r])
+                    self._row_index2text.pop(r)
         if col > self._col:
             # Add new columns into table.
             for r in range(min(self._row, row)):
@@ -268,8 +270,10 @@ class Table():
                     self._data[r].pop()
                     self._svg.delete_element(self._index2rect[(r, c)])
                     self._index2rect.pop((r, c))
-            for c in range(col, self._col):
-                self._svg.delete_element(self._col_index2text[c])
+            if self._show_index:
+                for c in range(col, self._col):
+                    self._svg.delete_element(self._col_index2text[c])
+                    self._col_index2text.pop(c)
         self._row = row
         self._col = col
         self._update_svg_size_()
@@ -407,6 +411,8 @@ class Table():
                 self._svg.update_rect_element(gid, rect)
 
     def _update_subscripts_position_(self):
+        if not self._show_index:
+            return
         for r in range(self._row):
             pos_x = self._col * self._cell_width + self._cell_margin * 2 + self._row_cursor_mgr.get_cursors_occupy()
             pos_y = (r + 0.5) * self._cell_height + self._label_font_size * 0.5 + self._cell_margin + self._col_cursor_mgr.get_cursors_occupy()
@@ -437,12 +443,16 @@ class Table():
         self._cell_tcs[gid] = TraceColorStack()
 
     def _new_row_index_text_in_svg_(self, r):
+        if not self._show_index:
+            return
         pos_x = self._col * self._cell_width + self._cell_margin * 2 + self._row_cursor_mgr.get_cursors_occupy()
         pos_y = (r + 0.5) * self._cell_height + self._label_font_size * 0.5 + self._cell_margin + self._col_cursor_mgr.get_cursors_occupy()
         gid = self._svg.add_text_element((pos_x, pos_y), r, self._label_font_size)
         self._row_index2text[r] = gid
 
     def _new_col_index_text_in_svg_(self, c):
+        if not self._show_index:
+            return
         pos_x = (c + 0.5) * self._cell_width - self._label_font_size * len(str(c)) * 0.25 + self._cell_margin + self._row_cursor_mgr.get_cursors_occupy()
         pos_y = self._row * self._cell_height + 1 + self._label_font_size + self._cell_margin + self._col_cursor_mgr.get_cursors_occupy()
         gid = self._svg.add_text_element((pos_x, pos_y), c, self._label_font_size)

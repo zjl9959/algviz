@@ -26,6 +26,8 @@ def main():
     nb_failed += run_test_module(test_graph)
     import test_map
     nb_failed += run_test_module(test_map)
+    import test_regression
+    nb_failed += run_test_module(test_regression)
     print("*" * 45)
     if nb_failed == 0:
         print('Congratulations, everything is OK !!!')
