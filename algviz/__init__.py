@@ -81,7 +81,7 @@ color_yellow = (255, 255, 0)
 
 __all__ = [
     'Visualizer',
-    'GraphNode', 'parseGraph', 'updateGraphEdge', 'generateRandomGraph', 'graphToString'
+    'GraphNode', 'parseGraph', 'updateGraphEdge', 'generateRandomGraph', 'graphToString',
     'BinaryTreeNode', 'TreeNode', 'RecursiveTree', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',
