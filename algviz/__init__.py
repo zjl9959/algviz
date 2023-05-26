@@ -14,7 +14,7 @@ License: GPLv3
 """
 
 from .visual import Visualizer
-from .graph import GraphNode, parseGraph, updateGraphEdge
+from .graph import GraphNode, parseGraph, updateGraphEdge, generateRandomGraph, graphToString
 from .tree import BinaryTreeNode, TreeNode, RecursiveTree, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
@@ -81,7 +81,7 @@ color_yellow = (255, 255, 0)
 
 __all__ = [
     'Visualizer',
-    'GraphNode', 'parseGraph', 'updateGraphEdge',
+    'GraphNode', 'parseGraph', 'updateGraphEdge', 'generateRandomGraph', 'graphToString'
     'BinaryTreeNode', 'TreeNode', 'RecursiveTree', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',

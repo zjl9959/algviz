@@ -7,7 +7,7 @@
 
 
 import algviz
-from algviz.graph import parseGraph
+from algviz.graph import parseGraph, generateRandomGraph
 from result import TestResult
 from utility import equal, equal_table, get_graph_elements, hack_graph
 from utility import TestCustomPrintableClass
@@ -212,4 +212,35 @@ def test_modify_undirected_graph():
     nodes, edges = get_graph_elements(graph._repr_svg_())
     res.add_case(equal(expect_nodes, nodes) and equal_table(expect_edges, edges), 'Remove nodes',
                  'nodes:{};edges:{}'.format(nodes, edges), 'nodes:{};edges:{}'.format(expect_nodes, expect_edges))
+    return res
+
+
+def test_generate_random_graph():
+    res = TestResult()
+    # Test generate an undirected graph.
+    try:
+        graph_nodes = generateRandomGraph(5, 8, 4)
+        assert len(graph_nodes) == 5
+        nb_edges = 0
+        for node in graph_nodes.values():
+            nb_edges += node.neighborCount()
+            assert node.neighborCount() <= 4
+        assert nb_edges == 8 * 2
+        res.add_case(True, 'Generate undirected graph')
+    except Exception as e:
+        print('test_generate_random_undirected_graph exception:', e)
+        res.add_case(False, 'Generate undirected graph')
+    # Test generate an directed graph.
+    try:
+        graph_nodes = generateRandomGraph(5, 10, 4, True)
+        assert len(graph_nodes) == 5
+        nb_edges = 0
+        for node in graph_nodes.values():
+            nb_edges += node.neighborCount()
+            assert node.neighborCount() <= 4
+        assert nb_edges == 10
+        res.add_case(True, 'Generate directed graph')
+    except Exception as e:
+        print('test_generate_random_directed_graph exception:', e)
+        res.add_case(False, 'Generate directed graph')
     return res
