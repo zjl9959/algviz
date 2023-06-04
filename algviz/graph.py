@@ -232,8 +232,7 @@ def generateRandomGraph(nb_nodes, nb_edges, max_degree=None, directed=False):
         directed (boolean): is this a directed graph or not.
 
     Returns:
-        nodes (set(printable)): All the nodes in this graph.
-        edges (list(tuple(node1, node2, edge))): All the edges in this graph.
+        nodes (set(printable)), edges (list(tuple(node1, node2, edge))): all the nodes in this graph and all the edges in this graph.
 
     Raises:
         AlgvizParamError: generateRandomGraph: input nodes number should be greater than 0.

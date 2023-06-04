@@ -1,5 +1,11 @@
 # Changelog
 
+## algviz 0.2.3
+
++ Adaptation to recent versions of the ipython library (8.0.0 ~ 8.12.0).
++ **New feature**: Added the [`generateRandomGraph`](https://algviz.readthedocs.io/en/0.2.3/api.html#algviz.graph.generateRandomGraph) interface, related [issue7](https://github.com/zjl9959/algviz/issues/7).
++ **Fix bug**: [Access table with cursor throw exception when "show_index=False"](https://github.com/zjl9959/algviz/issues/5)
+
 ## algviz 0.2.2
 
 + Add a new class [Map](https://algviz.readthedocs.io/en/0.2.2/api.html#algviz.map.Map) which can be used like the Python `dict` builtin.
