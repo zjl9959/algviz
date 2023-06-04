@@ -10,6 +10,7 @@ License: GPLv3
 
 _version = '0.2.2'                  # algviz version
 _url = 'https://algviz.com'         # The homepage for algviz
+RANDOM_SEED = None
 KFATAL_HELP_INFO = """You can report this bug from link: https://github.com/zjl9959/algviz/issues"""
 
 
@@ -21,12 +22,12 @@ class AlgvizParamError(Exception):
 
 class AlgvizRuntimeError(Exception):
     def __init__(self, message):
-        super().__init__('[AlgvizRuntimeError] {}\n{}'.format(message, KFATAL_HELP_INFO))
+        super().__init__('[AlgvizRuntimeError] {}\nrandom_seed={}\n{}'.format(message, RANDOM_SEED, KFATAL_HELP_INFO))
 
 
 class AlgvizFatalError(Exception):
     def __init__(self, message):
-        super().__init__('[AlgvizFatalError] {}\n{}'.format(message, KFATAL_HELP_INFO))
+        super().__init__('[AlgvizFatalError] {}\nrandom_seed={}\n{}'.format(message, RANDOM_SEED, KFATAL_HELP_INFO))
 
 
 class AlgvizTypeError(Exception):
@@ -386,3 +387,15 @@ def add_default_text_style(dom):
     text = dom.createTextNode(style_content)
     style.appendChild(text)
     svg.appendChild(style)
+
+
+def set_up_random_seed():
+    """Set up the random just once when program startup.
+    """
+    global RANDOM_SEED
+    if RANDOM_SEED is not None:
+        return
+    from random import seed
+    from time import time
+    RANDOM_SEED = int(time())
+    seed(RANDOM_SEED)

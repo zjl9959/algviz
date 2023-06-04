@@ -232,7 +232,8 @@ def generateRandomGraph(nb_nodes, nb_edges, max_degree=None, directed=False):
         directed (boolean): is this a directed graph or not.
 
     Returns:
-        dict(printable): All the graph nodes in this graph. Key is node label in nodes parameter, Value is GraphNode object.
+        nodes (set(printable)): All the nodes in this graph.
+        edges (list(tuple(node1, node2, edge))): All the edges in this graph.
 
     Raises:
         AlgvizParamError: generateRandomGraph: input nodes number should be greater than 0.
@@ -265,15 +266,14 @@ def generateRandomGraph(nb_nodes, nb_edges, max_degree=None, directed=False):
         raise AlgvizParamError('generateRandomGraph: max_degree is not enough to generate such edges.')
     from random import randint
     # Create nodes for this graph.
-    nodes_dict = dict()
+    nodes_not_in_graph = list()
     nodes_degree = dict()
     for i in range(nb_nodes):
-        nodes_dict[i] = GraphNode(str(i))
+        nodes_not_in_graph.append(i)
         nodes_degree[i] = 0
     # Random pick nodes and generate edges.
     edges = list()
     # Make sure none node is isolate.
-    nodes_not_in_graph = list(nodes_dict.keys())
     nodes_in_graph = list()
     while len(nodes_not_in_graph) > 0:
         index1 = randint(0, len(nodes_not_in_graph) - 1)
@@ -290,13 +290,8 @@ def generateRandomGraph(nb_nodes, nb_edges, max_degree=None, directed=False):
     # Generate the rest edges randomly.
     while len(edges) < nb_edges:
         n1 = random_pick_nodes(nodes_in_graph, nodes_degree)
-        if directed:
-            # Allow self cycle for directed graph.
-            n2 = random_pick_nodes(nodes_in_graph, nodes_degree)
-        else:
-            n2 = random_pick_nodes(nodes_in_graph, nodes_degree, [n1])
+        n2 = random_pick_nodes(nodes_in_graph, nodes_degree, [n1])
         if n1 is None or n2 is None:
-            print(edges, nodes_degree)
             raise AlgvizRuntimeError('generateRandomGraph: can not pick a suitable node.')
         if randint(0, 1) == 1:
             n1, n2 = n2, n1
@@ -309,41 +304,4 @@ def generateRandomGraph(nb_nodes, nb_edges, max_degree=None, directed=False):
         edges.append((n1, n2))
         nodes_degree[n1] += 1
         nodes_degree[n2] += 1
-    # Link edges for this graph.
-    for (n1, n2) in edges:
-        nodes_dict[n1].add(nodes_dict[n2])
-        if directed is False:
-            nodes_dict[n2].add(nodes_dict[n1])
-    return nodes_dict
-
-
-def graphToString(graph_nodes, directed=False):
-    """Convert the graph nodes add edges into string.
-
-    Args:
-        dict(printable): All the graph nodes in this graph. Key is node label in nodes parameter, Value is GraphNode object.
-        directed (boolean): is this a directed graph or not.
-
-    Returns:
-        string: the formated graph with "nodes = [n1, n2, n3]\n labels = { n1:label1, n2:label2 }\n edges = [(n1, n2), ...]".
-    """
-    labels = dict()
-    node2index = dict()
-    for i, n in graph_nodes.items():
-        if str(i) != str(n.val):
-            labels[i] = n.val
-        node2index[n] = i
-    edges = list()
-    for i, n in graph_nodes.items():
-        for neigh_node, neigh_label in n.neighbors():
-            n1, n2 = i, node2index[neigh_node]
-            if not directed and n1 > n2:
-                n1, n2 = n2, n1
-            if (n1, n2, neigh_label) not in edges:
-                edges.append((n1, n2, neigh_label))
-    res = "nodes = "
-    res += str(list(graph_nodes.keys()))
-    res += '\nedges = {}'.format(edges)
-    if len(labels):
-        res += '\nlabels = {}'.format(labels)
-    return res
+    return sorted(nodes_in_graph), edges

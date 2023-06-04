@@ -14,11 +14,12 @@ License: GPLv3
 """
 
 from .visual import Visualizer
-from .graph import GraphNode, parseGraph, updateGraphEdge, generateRandomGraph, graphToString
+from .graph import GraphNode, parseGraph, updateGraphEdge, generateRandomGraph
 from .tree import BinaryTreeNode, TreeNode, RecursiveTree, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
-from .utility import _version, AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError, AlgvizTypeError
+from .utility import _version, set_up_random_seed
+from .utility import AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError, AlgvizTypeError
 
 
 # Common colors name to RGB map (see: https://www.w3schools.com/tags/ref_colornames.asp)
@@ -81,7 +82,7 @@ color_yellow = (255, 255, 0)
 
 __all__ = [
     'Visualizer',
-    'GraphNode', 'parseGraph', 'updateGraphEdge', 'generateRandomGraph', 'graphToString',
+    'GraphNode', 'parseGraph', 'updateGraphEdge', 'generateRandomGraph',
     'BinaryTreeNode', 'TreeNode', 'RecursiveTree', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',
@@ -94,3 +95,7 @@ __version__ = _version
 __author__ = 'zjl9959@gmail.com'
 __license__ = 'GNU General Public License (GPLv3)'
 __help__ = "Visit https://algviz.com for more information."
+
+
+# Init the module.
+set_up_random_seed()
