@@ -19,7 +19,8 @@ from algviz.svg_table import SvgTable
 from algviz.logger import Logger
 from algviz.cursor import Cursor, _CursorRange
 from algviz.map import Map
-from algviz.utility import AlgvizParamError, AlgvizTypeError, kMaxNameChars
+from algviz.utility import AlgvizParamError, AlgvizTypeError, AlgvizRuntimeError, kMaxNameChars
+from algviz.layouter import Layouter, is_layout_supported
 
 
 class _NoDisplay():
@@ -42,12 +43,14 @@ _next_display_id = 0
 
 class Visualizer():
 
-    def __init__(self, delay=2.0, wait=0.5):
+    def __init__(self, delay=2.0, wait=0.5, display_engine='ipython'):
         """
         Args:
             delay (float): Animation delay time (in seconds).
             wait (True/float/int): (True) wait for the key input to continue execute the code.
                                    (float/int) the wait time before start the next frame of animation.
+            display_engine (string): 'ipython' using the ipython to display the animation while code running.
+                                     'layouter' using the builtin layout engine to layout animation after code finished executing.
         """
         self._delay = 2.0               # Set default delay time for animation as 3.0 seconds.
         if delay > 0:
@@ -68,6 +71,11 @@ class Visualizer():
         self._displayid2name = dict()
         # The next unique cursor id created by this visualizer.
         self._next_cursor_id = -1
+        # Init display engine.
+        if display_engine == 'layouter' and is_layout_supported():
+            self._layouter = Layouter()
+        else:
+            self._layouter = None
 
     def display(self, delay=None):
         """Refresh all created display objects.
@@ -83,26 +91,29 @@ class Visualizer():
                 if did not in self._displayed:
                     if did in self._displayid2name:
                         svg_title = _NameDisplay(self._displayid2name[did])
-                        display.display(svg_title, display_id='algviz_{}'.format(did))
+                        self._display(svg_title, 'algviz_{}'.format(did))
                     elem()._delay = delay
-                    display.display(elem(), display_id='algviz{}'.format(did))
+                    self._display(elem(), 'algviz{}'.format(did))
                     self._displayed.add(did)
                 else:
                     if did in self._displayid2name:
                         svg_title = _NameDisplay(self._displayid2name[did])
-                        display.update_display(svg_title, display_id='algviz_{}'.format(did))
+                        self._update_display(svg_title, 'algviz_{}'.format(did))
                     elem()._delay = delay
-                    display.update_display(elem(), display_id='algviz{}'.format(did))
+                    self._update_display(elem(), 'algviz{}'.format(did))
             temp_displayed = list(self._displayed)
             for did in temp_displayed:
                 if did not in self._element2display.values():
                     if did in self._displayid2name:
-                        display.update_display(_NoDisplay(), display_id='algviz_{}'.format(did))
-                    display.update_display(_NoDisplay(), display_id='algviz{}'.format(did))
+                        self._update_display(_NoDisplay(), 'algviz_{}'.format(did))
+                    self._update_display(_NoDisplay(), 'algviz{}'.format(did))
                     self._displayed.remove(did)
-            sleep(delay + self._wait)
+            if self._layouter is not None:
+                self._layouter.next_frame(delay + self._wait)
+            else:
+                sleep(delay + self._wait)
             return None
-        else:
+        elif self._wait is True and self._layouter is None:
             display.clear_output(wait=True)
             for elem in self._element2display.keyrefs():
                 did = self._element2display[elem()]
@@ -115,6 +126,8 @@ class Visualizer():
                 display.display(elem(), display_id='algviz{}'.format(did))
                 self._displayed.add(did)
             return input('Input `Enter` to continue:')
+        else:
+            raise AlgvizRuntimeError('Invalid wait:{} parameter'.format(self._wait))
 
     def createTable(self, row, col, data=None, name=None, cell_size=(40, 40), show_index=True):
         """
@@ -251,3 +264,30 @@ class Visualizer():
             ed = ed.index()
         self._next_cursor_id += 1
         return _CursorRange(self._next_cursor_id, name, st, ed, step)
+
+    def layout(self, max_width=800):
+        """Layout all the svg animation pictures.
+        Args:
+            max_width (int): The maximum strip width limit to layouter.
+
+        Returns:
+            str: The final svg string to display.
+        """
+        if self._layouter is None:
+            return
+        global _next_display_id
+        self._layouter._max_width = max_width
+        display.display(self._layouter, display_id='algviz_{}'.format(_next_display_id))
+        _next_display_id += 1
+
+    def _display(self, content, did):
+        if self._layouter is None:
+            display.display(content, display_id=did)
+        else:
+            self._layouter.display(content, display_id=did)
+
+    def _update_display(self, content, did):
+        if self._layouter is None:
+            display.update_display(content, display_id=did)
+        else:
+            self._layouter.update_display(content, display_id=did)

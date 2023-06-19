@@ -33,6 +33,9 @@ setup(
         "Issue Tracker": "https://github.com/zjl9959/algviz/issues",
     },
     packages=['algviz'],
+    package_data={
+        'algviz': ['lib/packing_solver*']
+    },
     install_requires=[
         'graphviz >= 0.8.4, != 0.18, <= 0.20.1',
         'ipykernel >= 6.4.0, <= 6.23.1',

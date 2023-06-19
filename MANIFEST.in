@@ -1,0 +1,2 @@
+include algviz/lib/packing_solver_linux_amd64.so
+include algviz\\lib\\packing_solver_win_amd64.dll
