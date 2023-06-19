@@ -78,3 +78,10 @@ If you want to share your algorithm animation notebooks using algviz, you can cr
 [table.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_table.svg
 [tree.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_tree.svg
 [graph.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_graph.svg
+
+
+## Discussion
+
+**QQ group**: 334605370
+
+**Telegram**: https://t.me/+mvF8Sivxr3thZWY1
