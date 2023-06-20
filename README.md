@@ -82,6 +82,6 @@ If you want to share your algorithm animation notebooks using algviz, you can cr
 
 ## Discussion
 
-**QQ group**: 334605370
+**QQ group**: [334605370](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=NYzoqZd6B8sryXf0S8o1uv72b_p2M5ai&authKey=qTbFUbVoI%2F8RWZVmlabPkuBHnuY2RzywEnKeNZlV8dOhcdcKY%2BoiYnPklmdfpwlE&noverify=0&group_code=334605370)
 
 **Telegram**: https://t.me/+mvF8Sivxr3thZWY1
