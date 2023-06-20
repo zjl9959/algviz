@@ -1,5 +1,17 @@
 # Changelog
 
+## algviz 0.3.0
+
++ Support to layout different display objects and assemble the animation sequences. To use this feature, you need to do these things:
+
+    1. The layout engine is platform specific, please make sure your OS is `Windows` or `Linux` and your platform is `amd64/x86_64` architecture.
+    2. Add the `layout=True` parameter when creating the [`Visualizer`](https://algviz.readthedocs.io/en/0.3.0/api.html#algviz.visual.Visualizer) object (the default value of `layout` is `False` for compatibility).
+    3. Add the [`Visualizer.layout`](https://algviz.readthedocs.io/en/0.3.0/api.html#algviz.visual.Visualizer.layout) function in your code where you want to assemble the animation sequences (usually at the end of the code path).
+
+    <img src="https://raw.githubusercontent.com/zjl9959/algviz/main/docs/animation_images/layout_example.gif" alt="layout_example.gif" width=400px/>
+
++ **Fix bug**: [Histogram vector zero height cell text size error](https://github.com/zjl9959/algviz/issues/8).
+
 ## algviz 0.2.3
 
 + Adaptation to recent versions of the ipython library (8.0.0 ~ 8.12.0).

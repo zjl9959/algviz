@@ -24,7 +24,7 @@ copyright = '2022, zjl9959'
 author = 'zjl9959'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.3'
+release = '0.3.0'
 
 
 # -- General configuration ---------------------------------------------------
