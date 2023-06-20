@@ -43,14 +43,13 @@ _next_display_id = 0
 
 class Visualizer():
 
-    def __init__(self, delay=2.0, wait=0.5, display_engine='ipython'):
+    def __init__(self, delay=2.0, wait=0.5, layout=False):
         """
         Args:
             delay (float): Animation delay time (in seconds).
             wait (True/float/int): (True) wait for the key input to continue execute the code.
                                    (float/int) the wait time before start the next frame of animation.
-            display_engine (string): 'ipython' using the ipython to display the animation while code running.
-                                     'layouter' using the builtin layout engine to layout animation after code finished executing.
+            layout (boolean): wheather to layout different display objects or not.
         """
         self._delay = 2.0               # Set default delay time for animation as 3.0 seconds.
         if delay > 0:
@@ -72,7 +71,7 @@ class Visualizer():
         # The next unique cursor id created by this visualizer.
         self._next_cursor_id = -1
         # Init display engine.
-        if display_engine == 'layouter' and is_layout_supported():
+        if layout is True and is_layout_supported():
             self._layouter = Layouter()
         else:
             self._layouter = None
