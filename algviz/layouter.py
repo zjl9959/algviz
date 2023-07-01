@@ -64,6 +64,7 @@ class Layouter:
         rects_data = RectArrayType()
         id_map = dict()
         next_id = 0
+        max_rect_width = 0
         for did, seq in self._display_id2seq.items():
             rects_data[next_id].id = next_id
             id_map[next_id] = did
@@ -79,8 +80,9 @@ class Layouter:
                 self._display_id2name[did][1] = title_font
             rects_data[next_id].w = seq_size[0] + SVG_MARGIN
             rects_data[next_id].h = ceil(seq_size[1] + title_font * 1.5 + SVG_MARGIN)
+            max_rect_width = max(max_rect_width, rects_data[next_id].w)
             next_id = next_id + 1
-        strip_w = c_int(strip_width)
+        strip_w = c_int(max(strip_width, max_rect_width + 50))
         rect_num_c = c_int(rects_num)
         try:
             packing_solver = load_dll()

@@ -71,7 +71,7 @@ Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/
 
 Any form of contribution is welcomed! Please feel free to report a [bug](https://github.com/zjl9959/algviz/issues) or create a [pull request](https://github.com/zjl9959/algviz/pulls).
 
-If you want to share your algorithm animation notebooks using algviz, you can create a [PR](https://github.com/zjl9959/algviz-launch/pulls) from this repo: 👉 [algviz-launch](https://github.com/zjl9959/algviz-launch).
+If you want to share your algorithms using algviz, you can create a [PR](https://github.com/zjl9959/algviz-launch/pulls) from this repo: 👉 [algviz-launch](https://github.com/zjl9959/algviz-launch).
 
 [bubble sort algorithm]: https://en.wikipedia.org/wiki/Bubble_sort
 [vector.svg]: https://cdn.jsdelivr.net/gh/zjl9959/algviz.com@master/assets/img/data_vector.svg
