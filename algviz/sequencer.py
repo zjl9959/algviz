@@ -13,7 +13,8 @@ from xml.dom.minidom import parseString, Document
 
 
 class Sequencer:
-    def __init__(self, display_obj, root_dom, uid):
+    def __init__(self, vid, display_obj, root_dom, uid):
+        self._vid = vid                     # This id bound with the Visualizer and Layouter.
         self._display_obj = display_obj     # The data object to be displayed.
         self._root_dom = root_dom           # The root dom Document to contain all the new created nodes.
         self._uid = uid                     # Unique id for this sequencer.
@@ -126,7 +127,7 @@ class Sequencer:
     def _create_first_frame_animate(self, frame_start, frame_end, first_frame, last_frame, frame_delays):
         animate = self._root_dom.createElement('animate')
         animate.setAttribute('attributeName', 'opacity')
-        animate.setAttribute('id', '{}S{}'.format(self._uid, first_frame))
+        animate.setAttribute('id', 'V{}_{}S{}'.format(self._vid, self._uid, first_frame))
         animate.setAttribute('from', '0')
         animate.setAttribute('to', '1')
         start_delay_time = 0
@@ -135,8 +136,8 @@ class Sequencer:
         end_delay_time = 0
         for i in range(last_frame + 1, frame_end):
             end_delay_time += frame_delays[i]
-        animate.setAttribute('begin', '{}s;{}E{}.end+{}s'.format(
-            start_delay_time, self._uid, last_frame, start_delay_time + end_delay_time))
+        animate.setAttribute('begin', '{}s;V{}_{}E{}.end+{}s'.format(
+            start_delay_time, self._vid, self._uid, last_frame, start_delay_time + end_delay_time))
         animate.setAttribute('dur', '0.01s')
         animate.setAttribute('fill', 'freeze')
         return animate
@@ -144,10 +145,10 @@ class Sequencer:
     def _create_frame_appear_animate_(self, frame, last_frame):
         animate = self._root_dom.createElement('animate')
         animate.setAttribute('attributeName', 'opacity')
-        animate.setAttribute('id', '{}S{}'.format(self._uid, frame))
+        animate.setAttribute('id', 'V{}_{}S{}'.format(self._vid, self._uid, frame))
         animate.setAttribute('from', '0')
         animate.setAttribute('to', '1')
-        animate.setAttribute('begin', '{}E{}.begin'.format(self._uid, last_frame))
+        animate.setAttribute('begin', 'V{}_{}E{}.begin'.format(self._vid, self._uid, last_frame))
         animate.setAttribute('dur', '0.01s')
         animate.setAttribute('fill', 'freeze')
         return animate
@@ -155,8 +156,8 @@ class Sequencer:
     def _create_frame_disappear_animate_(self, frame, delay):
         animate = self._root_dom.createElement('animate')
         animate.setAttribute('attributeName', 'opacity')
-        animate.setAttribute('id', '{}E{}'.format(self._uid, frame))
-        animate.setAttribute('begin', '{}S{}.begin+{}s'.format(self._uid, frame, delay))
+        animate.setAttribute('id', 'V{}_{}E{}'.format(self._vid, self._uid, frame))
+        animate.setAttribute('begin', 'V{}_{}S{}.begin+{}s'.format(self._vid, self._uid, frame, delay))
         animate.setAttribute('from', '1')
         animate.setAttribute('to', '0')
         animate.setAttribute('dur', '0.01s')
@@ -165,7 +166,7 @@ class Sequencer:
 
     def _update_animate_opacity_(self, animate_node, frame):
         begin = animate_node.getAttribute('begin')
-        animate_node.setAttribute('begin', '{}S{}.end+{}'.format(self._uid, frame, begin))
+        animate_node.setAttribute('begin', 'V{}_{}S{}.end+{}'.format(self._vid, self._uid, frame, begin))
         parent_node = animate_node.parentNode
         if parent_node:
             from_opacity = float(animate_node.getAttribute('from'))
@@ -175,27 +176,27 @@ class Sequencer:
             fade_animate.setAttribute('attributeName', 'opacity')
             fade_animate.setAttribute('from', '{:.0f}'.format(1 - from_opacity))
             fade_animate.setAttribute('to', '{:.0f}'.format(1 - to_opacity))
-            fade_animate.setAttribute('begin', '{}E{}.end'.format(self._uid, frame))
+            fade_animate.setAttribute('begin', 'V{}_{}E{}.end'.format(self._vid, self._uid, frame))
             fade_animate.setAttribute('dur', '0.01s')
             fade_animate.setAttribute('fill', 'freeze')
             parent_node.appendChild(fade_animate)
 
     def _update_animate_motion(self, animate_node, frame):
         begin = animate_node.getAttribute('begin')
-        animate_node.setAttribute('begin', '{}S{}.end+{}'.format(self._uid, frame, begin))
+        animate_node.setAttribute('begin', 'V{}_{}S{}.end+{}'.format(self._vid, self._uid, frame, begin))
         parent_node = animate_node.parentNode
         # Reset node position after frame end.
         if parent_node:
             reset_animate = self._root_dom.createElement('animateMotion')
             reset_animate.setAttribute('path', 'm0,0 l0,0')
-            reset_animate.setAttribute('begin', '{}E{}.end'.format(self._uid, frame))
+            reset_animate.setAttribute('begin', 'V{}_{}E{}.end'.format(self._vid, self._uid, frame))
             reset_animate.setAttribute('dur', '0.01s')
             reset_animate.setAttribute('fill', 'freeze')
             parent_node.appendChild(reset_animate)
 
     def _update_text_animate(self, animate_node, frame):
         begin = animate_node.getAttribute('begin')
-        animate_node.setAttribute('begin', '{}S{}.end+{}'.format(self._uid, frame, begin))
+        animate_node.setAttribute('begin', 'V{}_{}S{}.end+{}'.format(self._vid, self._uid, frame, begin))
         parent_node = animate_node.parentNode
         if parent_node:
             from_font_size = animate_node.getAttribute('from')
@@ -204,7 +205,7 @@ class Sequencer:
             reset_animate.setAttribute('attributeName', 'font-size')
             reset_animate.setAttribute('from', to_font_size)
             reset_animate.setAttribute('to', from_font_size)
-            reset_animate.setAttribute('begin', '{}E{}.end'.format(self._uid, frame))
+            reset_animate.setAttribute('begin', 'V{}_{}E{}.end'.format(self._vid, self._uid, frame))
             reset_animate.setAttribute('dur', '0.01s')
             reset_animate.setAttribute('fill', 'freeze')
             parent_node.appendChild(reset_animate)

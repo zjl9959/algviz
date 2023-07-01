@@ -39,6 +39,7 @@ class _NameDisplay():
 
 
 _next_display_id = 0
+_next_visualizer_id = 0
 
 
 class Visualizer():
@@ -51,6 +52,9 @@ class Visualizer():
                                    (float/int) the wait time before start the next frame of animation.
             layout (boolean): wheather to layout different display objects or not.
         """
+        global _next_visualizer_id
+        self._vid = _next_visualizer_id  # One notebook may contain multply visualizers, use vid to identify them.
+        _next_visualizer_id += 1
         self._delay = 2.0               # Set default delay time for animation as 3.0 seconds.
         if delay > 0:
             self._delay = delay
@@ -72,7 +76,7 @@ class Visualizer():
         self._next_cursor_id = -1
         # Init display engine.
         if layout is True and is_layout_supported():
-            self._layouter = Layouter()
+            self._layouter = Layouter(self._vid)
         else:
             self._layouter = None
 

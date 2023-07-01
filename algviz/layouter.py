@@ -30,7 +30,8 @@ NAME_MARGIN = 5
 
 
 class Layouter:
-    def __init__(self):
+    def __init__(self, vid):
+        self._vid = vid                     # Identify different layouter.
         self._display_id2seq = dict()       # Key:display_id; Value:Sequencer
         self._display_id2name = dict()      # Key:display_id; Value:(ObjNameString, title_font)
         self._delays = list()               # Record the delay time for each frame.
@@ -122,7 +123,7 @@ class Layouter:
                 display_id = display_id.replace('algviz_', '')
                 self._display_id2name[display_id] = [title, 0]     # Record title string and font size.
         elif display_id not in self._display_id2seq:
-            seq = Sequencer(display_obj, self._dom, self._next_seq_id)
+            seq = Sequencer(self._vid, display_obj, self._dom, self._next_seq_id)
             for i in range(len(self._delays)):
                 seq.update(i, skip=True)    # Skip none displayed frames.
             seq.update(len(self._delays))
@@ -142,7 +143,7 @@ class Layouter:
 
     def _add_logo_(self, start_frame, end_frame):
         logo = get_logo(self._svg_width, self._svg_height)
-        seq = Sequencer(logo, self._dom, self._next_seq_id)
+        seq = Sequencer(self._vid, logo, self._dom, self._next_seq_id)
         for i in range(end_frame):
             seq.update(i, skip=True)
         seq.update(end_frame)
@@ -155,7 +156,7 @@ class Layouter:
         # Add disappear animate.
         bg_disappear = self._dom.createElement('animate')
         bg_disappear.setAttribute('attributeName', 'opacity')
-        bg_disappear.setAttribute('begin', '{}S{}.begin'.format(self._next_seq_id, end_frame))
+        bg_disappear.setAttribute('begin', 'V{}_{}S{}.begin'.format(self._vid, self._next_seq_id, end_frame))
         bg_disappear.setAttribute('from', '1')
         bg_disappear.setAttribute('to', '0')
         bg_disappear.setAttribute('dur', '0.01s')
@@ -166,7 +167,7 @@ class Layouter:
         bg_appear.setAttribute('attributeName', 'opacity')
         bg_appear.setAttribute('from', '0')
         bg_appear.setAttribute('to', '1')
-        bg_appear.setAttribute('begin', '{}E{}.end'.format(self._next_seq_id, end_frame))
+        bg_appear.setAttribute('begin', 'V{}_{}E{}.end'.format(self._vid, self._next_seq_id, end_frame))
         bg_appear.setAttribute('dur', '0.01s')
         bg_appear.setAttribute('fill', 'freeze')
         bg_group.appendChild(bg_appear)
