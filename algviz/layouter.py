@@ -18,7 +18,7 @@ from ctypes import c_int
 from ctypes import Structure as ctypes_Structure
 from math import ceil
 
-from algviz.utility import add_default_text_style, text_char_num, AlgvizRuntimeError
+from algviz.utility import add_default_text_style, text_char_num, AlgvizRuntimeError, FONT_FAMILY
 from algviz.sequencer import Sequencer
 from algviz.logo import get_logo, get_logo_size
 
@@ -175,7 +175,7 @@ class Layouter:
             t = self._dom.createElement('text')
             t.setAttribute('x', '{:.2f}'.format(offset[0] + NAME_MARGIN))
             t.setAttribute('y', '{:.2f}'.format(offset[1] - txt_font * 0.3))
-            t.setAttribute('font-family', 'Times,serif')
+            t.setAttribute('font-family', FONT_FAMILY)
             t.setAttribute('font-weight', 'bold')
             t.setAttribute('font-size', '{:.2f}'.format(txt_font))
             t.setAttribute('fill', '#808080')

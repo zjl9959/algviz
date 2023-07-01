@@ -13,7 +13,7 @@ License: GPLv3
 """
 
 from xml.dom.minidom import Document, Node
-from algviz.utility import add_desc_into_svg, add_default_text_style, rgbcolor2str, text_font_size
+from algviz.utility import add_desc_into_svg, add_default_text_style, rgbcolor2str, text_font_size, FONT_FAMILY
 from algviz.utility import auto_text_color, find_tag_by_id, str2rgbcolor, clamp, add_animate_scale_into_text
 from algviz.utility import add_animate_move_into_node, add_animate_appear_into_node, clear_svg_animates
 
@@ -116,7 +116,7 @@ class SvgTable():
         t.setAttribute('x', '{:.2f}'.format(pos[0]))
         t.setAttribute('y', '{:.2f}'.format(pos[1]))
         t.setAttribute('font-size', '{:.2f}'.format(font_size))
-        t.setAttribute('font-family', 'Times,serif')
+        t.setAttribute('font-family', FONT_FAMILY)
         t.setAttribute('fill', rgbcolor2str(fill))
         tt = self._dom.createTextNode('{}'.format(text))
         t.appendChild(tt)

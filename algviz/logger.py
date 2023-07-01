@@ -8,7 +8,7 @@ License: GPLv3
 
 """
 
-from algviz.utility import get_text_width
+from algviz.utility import get_text_width, FONT_FAMILY
 
 from xml.dom.minidom import Document
 
@@ -81,7 +81,7 @@ class Logger():
             txt.setAttribute('x', '{}'.format(LOG_OFFSET_X))
             txt.setAttribute('y', '{:.2f}'.format(self._font_size * (i * 1.2 + 1)))
             txt.setAttribute('font-size', '{:.2f}'.format(self._font_size))
-            txt.setAttribute('font-family', 'cursive')
+            txt.setAttribute('font-family', FONT_FAMILY)
             text = self._dom.createTextNode('{}'.format(log))
             txt.appendChild(text)
             g.appendChild(txt)

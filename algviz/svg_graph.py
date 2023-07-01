@@ -11,7 +11,7 @@ License: GPLv3
 
 """
 
-from algviz.utility import str2rgbcolor, text_font_size, auto_text_color, rgbcolor2str
+from algviz.utility import str2rgbcolor, text_font_size, auto_text_color, rgbcolor2str, FONT_FAMILY
 from algviz.utility import add_animate_appear_into_node, add_animate_move_into_node
 from algviz.utility import TraceColorStack, ConsecutiveIdMap, AlgvizFatalError
 from algviz.utility import add_desc_into_svg, find_tag_by_id, add_animate_scale_into_text
@@ -293,7 +293,7 @@ class SvgGraph():
             t1 = svg.createElement('text')
             t1.setAttribute('alignment-baseline', 'middle')
             t1.setAttribute('text-anchor', 'middle')
-            t1.setAttribute('font-family', 'Times,serif')
+            t1.setAttribute('font-family', FONT_FAMILY)
             t1.setAttribute('x', '{:.2f}'.format(cx))
             t1.setAttribute('y', '{:.2f}'.format(cy))
             font_size = min(14, text_font_size(32, '{}'.format(old_label)))
@@ -697,8 +697,8 @@ class SvgGraph():
         if self._type.rankdir == 'LR':
             dot.graph_attr['rankdir'] = 'LR'
         dot.graph_attr['bgcolor'] = '#00000000'
-        dot.node_attr.update(shape=self._type.shape, fixedsize='shape', color='#7B7B7B')
-        dot.edge_attr.update(arrowhead='vee', color='#7B7B7B')
+        dot.node_attr.update(shape=self._type.shape, fixedsize='shape', color='#7B7B7B', fontname=FONT_FAMILY)
+        dot.edge_attr.update(arrowhead='vee', color='#7B7B7B', fontname=FONT_FAMILY)
         for node in self._node_seq:
             node_id = node_idmap.toConsecutiveId(node)
             if node is None:

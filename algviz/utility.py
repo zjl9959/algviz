@@ -12,6 +12,7 @@ _version = '0.3.0'                  # algviz version
 _url = 'https://algviz.com'         # The homepage for algviz
 RANDOM_SEED = None
 KFATAL_HELP_INFO = """You can report this bug from link: https://github.com/zjl9959/algviz/issues"""
+FONT_FAMILY = 'Courier,monospace'
 
 
 # Define exceptions for algviz runtime.
@@ -322,7 +323,7 @@ def get_text_width(text, font_size):
     """
     # TODO: Use more specific method to measure the text total width.
     text_num = text_char_num(text)
-    return text_num * font_size * 0.55
+    return text_num * font_size * 0.625
 
 
 def text_char_num(text):
@@ -383,7 +384,12 @@ def add_default_text_style(dom):
         return
     svg = svgs[0]
     style = dom.createElement('style')
-    style_content = r".txt { alignment-baseline:middle; text-anchor:middle; font-family:Times,serif; }"
+    style_content = ''.join([
+        ".txt {",
+        "alignment-baseline:middle;",
+        "text-anchor:middle;"
+        "font-family:{};".format(FONT_FAMILY),
+        "}"])
     text = dom.createTextNode(style_content)
     style.appendChild(text)
     svg.appendChild(style)
