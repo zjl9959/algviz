@@ -201,13 +201,26 @@ class SvgGraph():
             self._node_tcs[node].add(color)
             self._frame_trace.append((node, color, hold))
 
+    def markNodes(self, color, nodes, hold=False):
+        """Emphasize some nodes by mark it's background color.
+
+        Args:
+            color ((R,G,B)): The background color for the marked node. R, G, B stand for color channel for red, green, blue.
+                R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
+            nodes list(subclass of GraphNodeBase): A list of node objects to be marked. Can be a graph/tree/linked_list node.
+            hold (bool): Whether to keep the mark color in future animation frames.
+        """
+        for node in nodes:
+            self.markNode(color, node, hold)
+
     def markEdge(self, color, node1, node2, hold=False):
         """Emphasize one edge by mark it's stoke color.
 
         Args:
             color ((R,G,B)): The stroke color for the marked edge. R, G, B stand for color channel for red, green, blue.
                 R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
-            node1, node2 (subclass of GraphNodeBase): The begin and end node in the edge to be marked. Can be a graph/tree/linked_list node.
+            node1, node2 (subclass of GraphNodeBase):
+                The begin and end node in the edge to be marked. Can be a graph/tree/linked_list node.
             hold (bool): Whether to keep the mark color in future animation frames.
         """
         if node1 is not None and node2 is not None:
@@ -216,6 +229,20 @@ class SvgGraph():
                 self._edge_tcs[edge_key] = TraceColorStack(bgcolor=(123, 123, 123))
             self._edge_tcs[edge_key].add(color)
             self._frame_trace.append((edge_key, color, hold))
+
+    def markEdges(self, color, edges, hold=False):
+        """Emphasize some edges by mark it's stoke color.
+
+        Args:
+            color ((R,G,B)): The stroke color for the marked edge. R, G, B stand for color channel for red, green, blue.
+                R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
+            edges list(((subclass of GraphNodeBase), (subclass of GraphNodeBase))):
+                The list of edges to be markd. One edge contains the begin and end node in the edge to be marked.
+            hold (bool): Whether to keep the mark color in future animation frames.
+        """
+        for edge in edges:
+            if len(edge) == 2:
+                self.markEdge(color, edge[0], edge[1], hold)
 
     def removeMark(self, color):
         """Remove the mark color for node(s) and edge(s).

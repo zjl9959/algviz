@@ -199,7 +199,7 @@ class Vector():
         self._data[index1] = temp_data
 
     def mark(self, color, st, ed=None, hold=False):
-        """Emphasize one cell in the Vector by mark it's background color.
+        """Emphasize one or more cell(s) in the Vector by mark it's background color.
 
         Args:
             color ((R,G,B)): The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
@@ -218,6 +218,21 @@ class Vector():
             rid = self._index2rect[i]
             self._cell_tcs[rid].add(color)
             self._frame_trace.append((rid, color, hold))
+
+    def marks(self, color, ranges, hold=False):
+        """Emphasize one or more cell(s) in the Vector by mark it's background color.
+
+        Args:
+            color ((R,G,B)): The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
+                R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
+            ranges list(((int/Cursor), (int/Cursor))): A list of range's index in Vector to be marked.
+            hold (bool): Whether to keep the mark color in future animation frames.
+        """
+        for range in ranges:
+            if type(range) is Cursor or type(range) is int:
+                self.mark(color, range, None, hold)
+            elif len(range) == 2:
+                self.mark(color, range[0], range[1], hold)
 
     def removeMark(self, color):
         """Remove the mark color for cell(s).

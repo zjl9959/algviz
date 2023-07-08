@@ -395,13 +395,17 @@ def add_default_text_style(dom):
     svg.appendChild(style)
 
 
-def set_up_random_seed():
-    """Set up the random just once when program startup.
+def setUpRandomSeed(sed=None):
+    """Set up the random seed when program startup or manually
     """
     global RANDOM_SEED
+    from random import seed
+    if sed is not None:
+        RANDOM_SEED = sed
+        seed(RANDOM_SEED)
+        return
     if RANDOM_SEED is not None:
         return
-    from random import seed
     from time import time
     RANDOM_SEED = int(time())
     seed(RANDOM_SEED)

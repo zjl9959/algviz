@@ -156,6 +156,25 @@ class Table():
                     self._cell_tcs[gid].add(color)
                     self._frame_trace.append((gid, color, hold))
 
+    def marks(self, color, points, hold=False):
+        """Emphasize one cell in the table by mark it's background color.
+
+        Args:
+            color ((R,G,B)): The background color for the marked cell. R, G, B stand for color channel for red, green, blue.
+                R,G,B should be int value and 0 <= R,G,B <= 255. eg:(0, 255, 0)
+            points: list(((int/Cursor), (int/Cursor))): A list of indexs represent of the cell's raw, column in the table to be marked.
+            hold (bool): Whether to keep the mark color in future animation frames.
+
+        Raises:
+            RuntimeError: Index:xx type is not int or Cursor.
+            RuntimeError: Table index=xxx out of range.
+        """
+        for point in points:
+            if len(point) == 2:
+                self.mark(color, point[0], point[1], hold)
+            elif len(point) == 4:
+                self.mark(color, point[0], point[1], hold, point[2], point[3])
+
     def removeMark(self, color):
         """Remove the mark color for cell(s).
 

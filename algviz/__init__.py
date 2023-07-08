@@ -18,7 +18,7 @@ from .graph import GraphNode, parseGraph, updateGraphEdge, generateRandomGraph
 from .tree import BinaryTreeNode, TreeNode, RecursiveTree, parseBinaryTree, parseTree
 from .linked_list import ForwardLinkedListNode, DoublyLinkedListNode
 from .linked_list import parseForwardLinkedList, parseDoublyLinkedList
-from .utility import _version, set_up_random_seed
+from .utility import _version, setUpRandomSeed
 from .utility import AlgvizParamError, AlgvizRuntimeError, AlgvizFatalError, AlgvizTypeError
 
 
@@ -86,7 +86,8 @@ __all__ = [
     'BinaryTreeNode', 'TreeNode', 'RecursiveTree', 'parseBinaryTree', 'parseTree',
     'ForwardLinkedListNode', 'DoublyLinkedListNode',
     'parseForwardLinkedList', 'parseDoublyLinkedList',
-    'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError', 'AlgvizTypeError'
+    'AlgvizParamError', 'AlgvizRuntimeError', 'AlgvizFatalError', 'AlgvizTypeError',
+    'setUpRandomSeed'
 ]
 
 
@@ -98,4 +99,4 @@ __help__ = "Visit https://algviz.com for more information."
 
 
 # Init the module.
-set_up_random_seed()
+setUpRandomSeed()
