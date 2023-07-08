@@ -69,7 +69,7 @@ bubble_sort([5, 4, -2, 1, -1, 3])
 
 ## 教程
 
-该链接中的 [教程](https://algviz.com/en/examples.html) 会帮你快速上手 algviz。
+该链接中的 [教程](https://algviz.com/cn/examples.html) 会帮你快速上手 algviz。
 
 完整的接口文档请参考：[algviz API reference](https://algviz.readthedocs.io/en/latest/api.html#).
 
