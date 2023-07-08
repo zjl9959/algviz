@@ -306,6 +306,7 @@ class _CursorManager:
         if cursor_id in self._new_cursors_index:
             self._new_cursors_index.pop(cursor_id)
         self._cursors_id_list.remove(cursor_id)
+        self._cursor2id.pop(id(cursor))
 
     def get_cursors_occupy(self):
         """

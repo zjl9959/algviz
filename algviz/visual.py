@@ -251,6 +251,14 @@ class Visualizer():
                 continue
             element._remove_cursor_(cursor)
 
+    def removeCursors(self, cursors):
+        """
+        Args:
+            cursor list(Cursor): The list of cursor objects to be removed from this visualizer.
+        """
+        for cursor in cursors:
+            self.removeCursor(cursor)
+
     def cursorRange(self, st, ed, step=1, name=None):
         """
         Args:
