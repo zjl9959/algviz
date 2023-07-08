@@ -6,7 +6,8 @@
 ![PyPI](https://img.shields.io/pypi/v/algviz)
 ![Conda-forge](https://img.shields.io/conda/vn/conda-forge/algviz)
 ![License](https://img.shields.io/github/license/zjl9959/algviz)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/algviz)
+
+[中文介绍文档](README_CN.md)
 
 ## What is algviz?
 
@@ -17,7 +18,11 @@
 |  ![vector.svg] |   ![table.svg]  |  ![tree.svg]   |  ![graph.svg]   |
 
 You can get live algorithm animation after bringing some algviz interfaces to your algorithm.
-For example, this code shows the bubble sort algorithm:
+For example, this code below shows the bubble sort algorithm:
+
+<details>
+
+<summary>Click to show the code example</summary>
 
 ```python
 import algviz
@@ -43,9 +48,15 @@ def bubble_sort(data):
 bubble_sort([5, 4, -2, 1, -1, 3])
 ```
 
+</details>
+
+<br>
+
 The rendered animation looks like this:
 
 ![bubble_sort_animation](https://cdn.jsdelivr.net/gh/zjl9959/algviz-launch@master/svgs/BubbleSort.svg)
+
+*If you are interested in this project, please give me a star⭐, thanks!*
 
 ## Examples
 
@@ -61,11 +72,11 @@ Please follow this [installation guide](https://algviz.com/en/installation.html)
 
 This [tutorial](https://algviz.com/en/examples.html) gives you a quick start on using algviz.
 
-All the API references can be found at [readthedocs](https://algviz.readthedocs.io/en/latest/api.html#).
+All the API references can be found at [algviz API reference](https://algviz.readthedocs.io/en/latest/api.html#).
 
 ## License
 
-Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/main/LICENSE). You can use it freely for learning and communication.
+Algviz uses GNU general public [LICENSE](https://github.com/zjl9959/algviz/blob/main/LICENSE). You can use it freely for learning and communication. For the commercial usage, please contact the author.
 
 ## Contribution
 
