@@ -743,14 +743,18 @@ class SvgGraph():
                 dot.edge('{}'.format(node1_id), '{}'.format(node2_id), label='{}'.format(label), fontcolor='#C0C0C0', fontsize='12')
             edge_idmap.toConsecutiveId((node1, node2))
         raw_svg_str = ''
-        try:
-            callable(getattr(dot, '_repr_svg_'))
-            raw_svg_str = dot._repr_svg_()
-        except Exception:
+        if hasattr(dot, '_repr_svg_') and callable(getattr(dot, '_repr_svg_')):
             try:
-                # graphviz replaced interface '_repr_svg_' since version 0.19 (https://graphviz.readthedocs.io/en/stable/changelog.html#version-0-19)
-                callable(getattr(dot, '_repr_image_svg_xml'))
+                raw_svg_str = dot._repr_svg_()
+            except Exception as e:
+                raise AlgvizFatalError('Error when rendering graph:{}'.format(e))
+        elif hasattr(dot, '_repr_image_svg_xml') and callable(getattr(dot, '_repr_image_svg_xml')):
+            # graphviz replaced interface '_repr_svg_' since version 0.19
+            # Link: https://graphviz.readthedocs.io/en/stable/changelog.html#version-0-19
+            try:
                 raw_svg_str = dot._repr_image_svg_xml()
-            except Exception:
-                raise AlgvizFatalError('Unsupported graphviz version {}'.format(graphviz_version))
+            except Exception as e:
+                raise AlgvizFatalError('Error when rendering graph:{}'.format(e))
+        else:
+            raise AlgvizFatalError('Unsupported graphviz version {}'.format(graphviz_version))
         return (mindom_parseString(raw_svg_str), node_idmap, edge_idmap)
