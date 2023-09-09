@@ -16,6 +16,7 @@ from xml.dom.minidom import Document, Node
 from algviz.utility import add_desc_into_svg, add_default_text_style, rgbcolor2str, text_font_size, FONT_FAMILY
 from algviz.utility import auto_text_color, find_tag_by_id, str2rgbcolor, clamp, add_animate_scale_into_text
 from algviz.utility import add_animate_move_into_node, add_animate_appear_into_node, clear_svg_animates
+from algviz.utility import layout_text
 
 
 class SvgTable():
@@ -81,17 +82,19 @@ class SvgTable():
         r.setAttribute('stroke', rgbcolor2str(stroke))
         g.appendChild(r)
         if text is not None:
-            t = self._dom.createElement('text')
-            t.setAttribute('class', 'txt')
-            t.setAttribute('x', '{:.2f}'.format(rect[0] + rect[2] * 0.5))
-            t.setAttribute('y', '{:.2f}'.format(rect[1] + rect[3] * 0.5))
             txt_font_size = min(rect[3] - 1, text_font_size(rect[2], '{}'.format(text)))
             txt_font_size = max(txt_font_size, 4)
-            t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
-            t.setAttribute('fill', auto_text_color(fill))
-            tt = self._dom.createTextNode('{}'.format(text))
-            t.appendChild(tt)
-            g.appendChild(t)
+            text_info = layout_text(str(text), rect[2], rect[3], txt_font_size)
+            for (s, pos_x, pos_y) in text_info:
+                t = self._dom.createElement('text')
+                t.setAttribute('class', 'txt')
+                t.setAttribute('x', '{:.2f}'.format(rect[0] + pos_x))
+                t.setAttribute('y', '{:.2f}'.format(rect[1] + pos_y))
+                t.setAttribute('font-size', '{:.2f}'.format(txt_font_size))
+                t.setAttribute('fill', auto_text_color(fill))
+                tt = self._dom.createTextNode('{}'.format(s))
+                t.appendChild(tt)
+                g.appendChild(t)
         return int(gid)
 
     def add_text_element(self, pos, text, font_size=16, fill=(123, 123, 123)):
@@ -138,21 +141,19 @@ class SvgTable():
         if g is None:
             return
         t = g.getElementsByTagName('text')
-        if len(t) == 0:
-            return
-        txt = t[0]
-        if pos is not None:
-            txt.setAttribute('x', '{:.2f}'.format(pos[0]))
-            txt.setAttribute('y', '{:.2f}'.format(pos[1]))
-        if text is not None:
-            for t_child in txt.childNodes:
-                txt.removeChild(t_child)
-            tt = self._dom.createTextNode('{}'.format(text))
-            txt.appendChild(tt)
-        if font_size is not None:
-            txt.setAttribute('font-size', '{:.2f}'.format(font_size))
-        if fill is not None:
-            txt.setAttribute('fill', rgbcolor2str(fill))
+        for txt in t:
+            if pos is not None:
+                txt.setAttribute('x', '{:.2f}'.format(pos[0]))
+                txt.setAttribute('y', '{:.2f}'.format(pos[1]))
+            if text is not None:
+                for t_child in txt.childNodes:
+                    txt.removeChild(t_child)
+                tt = self._dom.createTextNode('{}'.format(text))
+                txt.appendChild(tt)
+            if font_size is not None:
+                txt.setAttribute('font-size', '{:.2f}'.format(font_size))
+            if fill is not None:
+                txt.setAttribute('fill', rgbcolor2str(fill))
 
     def update_rect_element(self, gid, rect=None, text=None, fill=None, stroke=None, opacity=None, delay=0):
         """Update the color, text, fill, stroke and opacity attribute of specific rectangle element.
@@ -188,17 +189,35 @@ class SvgTable():
             if r.getAttribute('rx') != '':
                 r.setAttribute('rx', '{:.2f}'.format(min(rect[2], rect[3]) * 0.1))
                 r.setAttribute('ry', '{:.2f}'.format(min(rect[2], rect[3]) * 0.1))
+            texts = ['', '']
+            split_text_nodes = [[], []]
             for t in text_nodes:
-                t.setAttribute('x', '{:.2f}'.format(rect[0] + rect[2] * 0.5))
-                t.setAttribute('y', '{:.2f}'.format(rect[1] + rect[3] * 0.5))
-                if t.getAttribute('font-size') == '0':
-                    continue
                 for child in t.childNodes:
                     if child.nodeType == Node.TEXT_NODE:
-                        new_font = text_font_size(rect[2], '{}'.format(child.data))
-                        new_font = max(4, min(new_font, rect[3] - 1))
-                        t.setAttribute('font-size', '{:.2f}'.format(new_font))
+                        if t.getAttribute('font-size') == '0':
+                            texts[0] += child.data + '\n'
+                            split_text_nodes[0].append(t)
+                        else:
+                            texts[1] += child.data + '\n'
+                            split_text_nodes[1].append(t)
                         break
+            for i in range(len(texts)):
+                temp_text = texts[i][0:-1]
+                new_font = text_font_size(rect[2], '{}'.format(temp_text))
+                new_font = max(4, min(new_font, rect[3] - 1))
+                text_info = layout_text(str(temp_text), rect[2], rect[3], new_font)
+                for j in range(len(text_info)):
+                    t = split_text_nodes[i][j]
+                    (s, pos_x, pos_y) = text_info[j]
+                    t.setAttribute('x', '{:.2f}'.format(rect[0] + pos_x))
+                    t.setAttribute('y', '{:.2f}'.format(rect[1] + pos_y))
+                    if t.getAttribute('font-size') == '0':
+                        continue
+                    for child in t.childNodes:
+                        if child.nodeType == Node.TEXT_NODE:
+                            t.setAttribute('font-size', '{:.2f}'.format(new_font))
+                            assert(s == child.data)
+                            break
         if text is not None:
             rx = float(r.getAttribute('x'))
             ry = float(r.getAttribute('y'))
@@ -211,20 +230,22 @@ class SvgTable():
                 font_size = float(t.getAttribute('font-size'))
                 animate0 = self._dom.createElement('animate')
                 add_animate_scale_into_text(t, animate0, time0, font_size, False)
-            t1 = self._dom.createElement('text')
-            g.appendChild(t1)
-            t1.setAttribute('class', 'txt')
-            t1.setAttribute('x', '{:.2f}'.format(rx + width * 0.5))
-            t1.setAttribute('y', '{:.2f}'.format(ry + height * 0.5))
             txt_font_size = text_font_size(width, '{}'.format(text))
             txt_font_size = min(height - 1, txt_font_size)
             txt_font_size = max(txt_font_size, 4)
-            t1.setAttribute('font-size', '0')
-            t1.setAttribute('fill', auto_text_color(fc))
-            tt = self._dom.createTextNode('{}'.format(text))
-            t1.appendChild(tt)
-            animate1 = self._dom.createElement('animate')
-            add_animate_scale_into_text(t1, animate1, time1, txt_font_size, True)
+            text_info = layout_text(str(text), width, height, txt_font_size)
+            for (s, pos_x, pos_y) in text_info:
+                t1 = self._dom.createElement('text')
+                g.appendChild(t1)
+                t1.setAttribute('class', 'txt')
+                t1.setAttribute('x', '{:.2f}'.format(rx + pos_x))
+                t1.setAttribute('y', '{:.2f}'.format(ry + pos_y))
+                t1.setAttribute('font-size', '0')
+                t1.setAttribute('fill', auto_text_color(fc))
+                tt = self._dom.createTextNode('{}'.format(s))
+                t1.appendChild(tt)
+                animate1 = self._dom.createElement('animate')
+                add_animate_scale_into_text(t1, animate1, time1, txt_font_size, True)
         if stroke is not None:
             r.setAttribute('stroke', rgbcolor2str(stroke))
 

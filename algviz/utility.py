@@ -184,6 +184,7 @@ def clear_svg_animates(svg):
                 font_size_str = animate.getAttribute('to')
                 if font_size_str == '0':
                     g.removeChild(txt)
+                    break
                 else:
                     txt.setAttribute('font-size', font_size_str)
                     txt.removeChild(animate)
@@ -374,6 +375,8 @@ def layout_text(text, width, height, font_size):
         list(tuple(str, int, int)): (string, x_pos, y_pos)
             return the layout text strings and their position information.
     """
+    if text == '':
+        return []
     res = []
     x = width / 2
     y = height / 2
