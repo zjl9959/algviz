@@ -12,7 +12,7 @@ License: GPLv3
 """
 
 from algviz.utility import str2rgbcolor, text_font_size, auto_text_color, rgbcolor2str, FONT_FAMILY
-from algviz.utility import add_animate_appear_into_node, add_animate_move_into_node
+from algviz.utility import add_animate_appear_into_node, add_animate_move_into_node, layout_text
 from algviz.utility import TraceColorStack, ConsecutiveIdMap, AlgvizFatalError
 from algviz.utility import add_desc_into_svg, find_tag_by_id, add_animate_scale_into_text
 from algviz.graph import GraphNode
@@ -24,6 +24,8 @@ from graphviz import Graph as graphviz_Graph
 from graphviz import __version__ as graphviz_version
 from xml.dom.minidom import parseString as mindom_parseString
 
+
+SVG_GRAPH_NODE_WIDTH = 32
 
 class _SvgGraphType:
     """This class is used to specific the layout parameter for SvgGraph class.
@@ -317,20 +319,22 @@ class SvgGraph():
                 animate0 = svg.createElement('animate')
                 add_animate_scale_into_text(t, animate0, time0, font_size, False)
             # New text node for animation zoom out.
-            t1 = svg.createElement('text')
-            t1.setAttribute('alignment-baseline', 'middle')
-            t1.setAttribute('text-anchor', 'middle')
-            t1.setAttribute('font-family', FONT_FAMILY)
-            t1.setAttribute('x', '{:.2f}'.format(cx))
-            t1.setAttribute('y', '{:.2f}'.format(cy))
-            font_size = min(14, text_font_size(32, '{}'.format(old_label)))
-            t1.setAttribute('font-size', '{:.2f}'.format(0))
-            t1.setAttribute('fill', auto_text_color(fc))
-            tt = svg.createTextNode('{}'.format(old_label))
-            t1.appendChild(tt)
-            animate1 = svg.createElement('animate')
-            add_animate_scale_into_text(t1, animate1, time1, font_size, True)
-            svg_node.appendChild(t1)
+            font_size = min(14, text_font_size(SVG_GRAPH_NODE_WIDTH, '{}'.format(old_label)))
+            text_info = layout_text(str(old_label), SVG_GRAPH_NODE_WIDTH, SVG_GRAPH_NODE_WIDTH, font_size)
+            for (s, pos_x, pos_y) in text_info:
+                t1 = svg.createElement('text')
+                t1.setAttribute('alignment-baseline', 'middle')
+                t1.setAttribute('text-anchor', 'middle')
+                t1.setAttribute('font-family', FONT_FAMILY)
+                t1.setAttribute('x', '{:.2f}'.format(cx - SVG_GRAPH_NODE_WIDTH * 0.5 + pos_x))
+                t1.setAttribute('y', '{:.2f}'.format(cy - SVG_GRAPH_NODE_WIDTH * 0.5 + pos_y))
+                t1.setAttribute('font-size', '{:.2f}'.format(0))
+                t1.setAttribute('fill', auto_text_color(fc))
+                tt = svg.createTextNode('{}'.format(s))
+                t1.appendChild(tt)
+                animate1 = svg.createElement('animate')
+                add_animate_scale_into_text(t1, animate1, time1, font_size, True)
+                svg_node.appendChild(t1)
 
     def _updateEdgeLabel(self, node1, node2, label):
         """Update the label value of the node in the graph.
@@ -731,7 +735,7 @@ class SvgGraph():
             if node is None:
                 dot.node(name='{}'.format(node_id))
             else:
-                fs = min(14, text_font_size(32, str(node)))
+                fs = min(14, text_font_size(SVG_GRAPH_NODE_WIDTH, str(node)))
                 dot.node(name='{}'.format(node_id), label='{}'.format(str(node)), fontsize='{:.2f}'.format(fs))
         for (node1, node2) in self._edge_label.keys():
             label = self._edge_label[(node1, node2)]

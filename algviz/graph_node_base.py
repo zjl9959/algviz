@@ -63,7 +63,7 @@ class GraphNodeBase:
         """
         bind_graphs = object.__getattribute__(self, '_bind_graphs')
         for graph in bind_graphs:
-            graph._updateNodeLabel(self, value)
+            graph._updateNodeLabel(self, self.__str__())
 
     def _on_update_neighbor_(self, new_neighbor):
         """

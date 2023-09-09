@@ -304,11 +304,17 @@ def text_font_size(text_width, text):
     Returns:
         float: Text font size.
     """
-    display_len = text_char_num(text)
-    if display_len > 0:
-        return min(16, text_width * 1.6 / display_len, text_width * 0.8)
-    else:
-        return 0
+    min_font_size = 1000
+    texts = text.split('\n')
+    for t in texts:
+        font_size = min_font_size
+        display_len = text_char_num(t)
+        if display_len > 0:
+            font_size = min(16, text_width * 1.6 / display_len, text_width * 0.8)
+        min_font_size = min(min_font_size, font_size)
+    if min_font_size == 1000:
+        min_font_size = 0
+    return min_font_size
 
 
 def get_text_width(text, font_size):
@@ -342,6 +348,33 @@ def text_char_num(text):
         else:
             count += 1
     return count
+
+
+def layout_text(text, width, height, font_size):
+    """Layout the text position in the given text box.
+        Support mult-line text. Just support rectangle text box.
+
+    Args:
+        text (str): The text content (should be unicode format string).
+        font_size (int): The text font size.
+        width (int): The width of the text box.
+        height (int): The height of the text box.
+
+    Returns:
+        list(tuple(str, int, int)): (string, x_pos, y_pos)
+            return the layout text strings and their position information.
+    """
+    res = []
+    x = width / 2
+    y = height / 2
+    texts = text.split('\n')
+    mid = len(texts) // 2
+    if len(texts) == mid * 2:
+        y += font_size * 1.25 * 0.5
+    for i in range(len(texts)):
+        y_pos = y + (i - mid) * font_size * 1.25
+        res.append((texts[i], x, y_pos))
+    return res
 
 
 def clamp(val, min_val, max_val):
