@@ -271,8 +271,8 @@ def auto_text_color(back_color):
     if l > 0.8 or (s - 1)**2 + l**2 > 1:
         # For bright color, fill black.
         return '#000000'
-    elif back_color in [(0, 255, 0), (255, 255, 0), (173, 255, 47)]:
-        # For lime and yellow color, fill black.
+    elif back_color[1] == 255:
+        # For lime and yellow color, etc, fill black.
         return '#000000'
     else:
         return '#FFFFFF'
