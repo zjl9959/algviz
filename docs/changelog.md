@@ -1,5 +1,27 @@
 # Changelog
 
+## algviz 0.3.1
+
++ **New interfaces**:
+    + [Vector.marks](https://algviz.readthedocs.io/en/0.3.1/api.html#algviz.vector.Vector.marks):  emphasize one or more cell(s) in the Vector by mark it’s background color.
+    + [Table.marks](https://algviz.readthedocs.io/en/0.3.1/api.html#algviz.table.Table.marks): emphasize one cell in the table by mark it’s background color.
+    + [Graph.markNodes](https://algviz.readthedocs.io/en/0.3.1/api.html#algviz.svg_graph.SvgGraph.markNodes): emphasize some nodes by mark it’s background color.
+    + [Graph.markEdges](https://algviz.readthedocs.io/en/0.3.1/api.html#algviz.svg_graph.SvgGraph.markEdges): emphasize some edges by mark it’s stoke color.
+    + [setUpRandomSeed](https://algviz.readthedocs.io/en/0.3.1/api.html#algviz.setUpRandomSeed): set up the random seed when program startup or manually.
+    + [Visualizer.removeCursors](https://algviz.readthedocs.io/en/0.3.1/api.html#algviz.visual.Visualizer.removeCursors): remove some cursor objects from viewport.
++ **New feature**: 
+    + Support multi-line text in vector, table, linked list, tree and graph.
+
+        ![multi_line_text_example](https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/multi_line_text_example.svg)
+
+    + Auto adjust the strip width in layouter.
++ **Fixed bugs**:
+    + Fix [issue9](https://github.com/zjl9959/algviz/issues/9): Two svgs in one page will impact each other.
+    + Fix [issue12](https://github.com/zjl9959/algviz/issues/12): Adjust font family, choose a fixed width font.
+    + Fix [issue13](https://github.com/zjl9959/algviz/issues/13) and [issue14](https://github.com/zjl9959/algviz/issues/14) 'Digraph' object has no attribute 'repr_svg' when display a graph like object.
+    + Fix display error when remove the same cursor multipy times.
+
+
 ## algviz 0.3.0
 
 + Support to layout different display objects and assemble the animation sequences. To use this feature, you need to do these things:

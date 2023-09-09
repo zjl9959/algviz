@@ -11,7 +11,7 @@ License: GPLv3
 from colorsys import rgb_to_hls
 
 
-_version = '0.3.0'                  # algviz version
+_version = '0.3.1'                  # algviz version
 _url = 'https://algviz.com'         # The homepage for algviz
 RANDOM_SEED = None
 KFATAL_HELP_INFO = """You can report this bug from link: https://github.com/zjl9959/algviz/issues"""
@@ -442,7 +442,11 @@ def add_default_text_style(dom):
 
 
 def setUpRandomSeed(sed=None):
-    """Set up the random seed when program startup or manually
+    """Set up the random seed when program startup or manually.
+
+    Args:
+        sed(int | float): the random seed for the random number generator.
+
     """
     global RANDOM_SEED
     from random import seed
