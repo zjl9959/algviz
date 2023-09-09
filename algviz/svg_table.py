@@ -216,7 +216,6 @@ class SvgTable():
                     for child in t.childNodes:
                         if child.nodeType == Node.TEXT_NODE:
                             t.setAttribute('font-size', '{:.2f}'.format(new_font))
-                            assert(s == child.data)
                             break
         if text is not None:
             rx = float(r.getAttribute('x'))
