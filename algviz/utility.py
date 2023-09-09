@@ -8,6 +8,9 @@ License: GPLv3
 
 """
 
+from colorsys import rgb_to_hls
+
+
 _version = '0.3.0'                  # algviz version
 _url = 'https://algviz.com'         # The homepage for algviz
 RANDOM_SEED = None
@@ -260,11 +263,18 @@ def auto_text_color(back_color):
         str: Text stroke color value formatted with hexadecimal number(SVG format).
             eg: '#FFFFFF'
     """
-    rgb_sum = back_color[0] + back_color[1] + back_color[2]
-    if rgb_sum < 150:
-        return '#FFFFFF'
-    else:
+    r = back_color[0] / 255
+    g = back_color[1] / 255
+    b = back_color[2] / 255
+    (_, l, s) = rgb_to_hls(r, g, b)
+    if l > 0.8 or (s - 1)**2 + l**2 > 1:
+        # For bright color, fill black.
         return '#000000'
+    elif back_color in [(0, 255, 0), (255, 255, 0), (173, 255, 47)]:
+        # For lime and yellow color, fill black.
+        return '#000000'
+    else:
+        return '#FFFFFF'
 
 
 def rgbcolor2str(color):

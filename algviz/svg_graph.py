@@ -27,6 +27,7 @@ from xml.dom.minidom import parseString as mindom_parseString
 
 SVG_GRAPH_NODE_WIDTH = 32
 
+
 class _SvgGraphType:
     """This class is used to specific the layout parameter for SvgGraph class.
     """
@@ -492,9 +493,9 @@ class SvgGraph():
             ellipse.setAttribute('fill', rgbcolor2str(color))
             text_list = node.getElementsByTagName('text')
             if text_list and len(text_list) > 0:
-                text = text_list[0]
-                if text is not None:
-                    text.setAttribute('fill', auto_text_color(color))
+                for text in text_list:
+                    if text is not None:
+                        text.setAttribute('fill', auto_text_color(color))
 
     def _update_edge_color_(self, edge, color):
         """Update the color attribute of the edge in SVG.
