@@ -236,7 +236,10 @@ class Layouter:
             "frames": end_frame - start_frame,
             "layout": self.layout_info
         }
-        return self._dom.toxml(), info
+        # Add description into svg.
+        comment = self._dom.createComment(str(info))
+        self._svg.appendChild(comment)
+        return self._dom.toxml()
 
 
 class RectType(ctypes_Structure):
