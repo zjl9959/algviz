@@ -267,12 +267,9 @@ def auto_text_color(back_color):
     r = back_color[0] / 255
     g = back_color[1] / 255
     b = back_color[2] / 255
-    (_, l, s) = rgb_to_hls(r, g, b)
-    if l > 0.8 or (s - 1)**2 + l**2 > 1:
+    (_, l, _) = rgb_to_hls(r, g, b)
+    if l >= 0.5:
         # For bright color, fill black.
-        return '#000000'
-    elif back_color[1] == 255:
-        # For lime and yellow color, etc, fill black.
         return '#000000'
     else:
         return '#FFFFFF'
