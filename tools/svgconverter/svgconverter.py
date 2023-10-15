@@ -62,6 +62,7 @@ def convert_svgs(svg_files):
     for file in svg_files:
         nb_processed += 1
         print('正在转换文件【{}/{}】：{}'.format(nb_processed, len(svg_files), file))
+        sys.stdout.flush()
         if not os.path.exists(file):
             continue
         # Parse svg info.
@@ -87,21 +88,23 @@ def check_env():
     return True
 
 
-@Gooey(language='chinese',
-       progress_regex=r"^正在转换文件【(?P<current>\d+)/(?P<total>\d+)】：.*$",
-       progress_expr="current / total * 100")
+@Gooey(language='chinese')
 def main():
     parser = GooeyParser(description="将文件夹下面的 svg 转成 gif 并更新 markdown 链接")
     parser.add_argument("dir_path", help="请选择要处理的文件夹", widget='DirChooser')
     args = parser.parse_args()
     if not os.path.exists(args.dir_path):
         print("文件夹不存在")
-        exit(1)
+        sys.stdout.flush()
+        sys.exit(0)
     if not check_env():
         print("请确保以下程序关闭：{}".format(CHECK_ENV_PROCESS))
-        exit(1)
+        sys.stdout.flush()
+        sys.exit(0)
     svg_files = process_markdown(args.dir_path)
     convert_svgs(svg_files)
+    sys.stdout.flush()
+    sys.exit(0)
 
 
 def test():
