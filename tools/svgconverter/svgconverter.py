@@ -1,27 +1,35 @@
 import os
 import re
 import sys
+import math
 import subprocess
+import psutil
 from gooey import GooeyParser, Gooey
 
-TIME_CUT_PATH = "D:\\SoftWares\\timecut"
-CHROME_PATH = '"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"'
+CHROME_PATH = "chrome.exe"
+CAPTURA_CLI = "captura-cli.exe"
+CHECK_ENV_PROCESS = ['chrome.exe']
 
 
 def convert_mp4(info, svg_file):
     mp4_file = svg_file.replace('.svg', '.mp4')
     gif_file = svg_file.replace('.svg', '.gif')
-    svg_width = info['size'][0] / 3 * 4
-    svg_height = info['size'][1] / 3 * 4
+    svg_width = math.floor(info['size'][0] * 2.33)
+    svg_height = math.floor(info['size'][1] * 2.33)
     duration = info['duration']
-    os.chdir(TIME_CUT_PATH)
-    command = """node cli.js {} --viewport="{}, {}" --duration={} -q --executable-path={} --no-headless --screenshot-type=jpeg --screenshot-quality=1 --pix-fmt=yuv420p --output={}""".format(
-        svg_file, svg_width + 1, svg_height + 1, duration, CHROME_PATH, mp4_file)
+    # Start chrome.
+    command_list = [CHROME_PATH, '--kiosk', svg_file]
+    print(command_list)
+    chrome_process = subprocess.Popen(command_list)
+    # Start captura: {--vq Video Quality (1 to 100) (Default is 70)}
+    command = """{} start -y --length {} --source {},{},{},{} --file {} --framerate 30 --vq 80""".format(
+        CAPTURA_CLI, math.floor(duration), 0, 0, svg_width, svg_height, mp4_file)
     print(command)
     subprocess.run(command, env=os.environ.copy())
+    chrome_process.terminate()
     # Convert to gif.
-    command = """ffmpeg -y -i {} {}""".format(mp4_file, gif_file)
-    print(command)
+    command = """ffmpeg -hide_banner -loglevel error -y -i {} {}""".format(mp4_file, gif_file)
+    print('\n{}'.format(command))
     subprocess.run(command, env=os.environ.copy())
     os.remove(mp4_file)
 
@@ -70,6 +78,15 @@ def convert_svgs(svg_files):
             convert_mp4(info, file)
 
 
+def check_env():
+    # Check chrome process.
+    processes = psutil.process_iter()
+    for process in processes:
+        if process.name() in CHECK_ENV_PROCESS:
+            return False
+    return True
+
+
 @Gooey(language='chinese',
        progress_regex=r"^正在转换文件【(?P<current>\d+)/(?P<total>\d+)】：.*$",
        progress_expr="current / total * 100")
@@ -79,6 +96,9 @@ def main():
     args = parser.parse_args()
     if not os.path.exists(args.dir_path):
         print("文件夹不存在")
+        exit(1)
+    if not check_env():
+        print("请确保以下程序关闭：{}".format(CHECK_ENV_PROCESS))
         exit(1)
     svg_files = process_markdown(args.dir_path)
     convert_svgs(svg_files)
