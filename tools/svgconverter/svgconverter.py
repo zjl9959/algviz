@@ -8,7 +8,7 @@ from gooey import GooeyParser, Gooey
 
 CHROME_PATH = "chrome.exe"
 CAPTURA_CLI = "captura-cli.exe"
-CHECK_ENV_PROCESS = ['chrome.exe']
+CHECK_ENV_PROCESS = ['chrome.exe', 'EyesRelax.exe']
 
 
 def convert_mp4(info, svg_file):
@@ -19,17 +19,17 @@ def convert_mp4(info, svg_file):
     duration = info['duration']
     # Start chrome.
     command_list = [CHROME_PATH, '--kiosk', svg_file]
-    print(command_list)
+    # print(command_list)
     chrome_process = subprocess.Popen(command_list)
     # Start captura: {--vq Video Quality (1 to 100) (Default is 70)}
     command = """{} start -y --length {} --source {},{},{},{} --file {} --framerate 30 --vq 80""".format(
         CAPTURA_CLI, math.floor(duration), 0, 0, svg_width, svg_height, mp4_file)
-    print(command)
+    # print(command)
     subprocess.run(command, env=os.environ.copy())
     chrome_process.terminate()
     # Convert to gif.
     command = """ffmpeg -hide_banner -loglevel error -y -i {} {}""".format(mp4_file, gif_file)
-    print('\n{}'.format(command))
+    # print('\n{}'.format(command))
     subprocess.run(command, env=os.environ.copy())
     os.remove(mp4_file)
 
@@ -61,7 +61,7 @@ def convert_svgs(svg_files):
     nb_processed = 0
     for file in svg_files:
         nb_processed += 1
-        print('正在转换文件【{}/{}】：{}'.format(nb_processed, len(svg_files), file))
+        print('Processed {}/{}.'.format(nb_processed, len(svg_files)))
         sys.stdout.flush()
         if not os.path.exists(file):
             continue
@@ -93,24 +93,14 @@ def main():
     parser = GooeyParser(description="将文件夹下面的 svg 转成 gif 并更新 markdown 链接")
     parser.add_argument("dir_path", help="请选择要处理的文件夹", widget='DirChooser')
     args = parser.parse_args()
-    if not os.path.exists(args.dir_path):
-        print("文件夹不存在")
-        sys.stdout.flush()
-        sys.exit(0)
     if not check_env():
-        print("请确保以下程序关闭：{}".format(CHECK_ENV_PROCESS))
+        print("Please close these processes first: {}".format(CHECK_ENV_PROCESS))
         sys.stdout.flush()
-        sys.exit(0)
+        sys.exit(1)
     svg_files = process_markdown(args.dir_path)
     convert_svgs(svg_files)
     sys.stdout.flush()
     sys.exit(0)
-
-
-def test():
-    dir_path = 'D:\\code\\algviz\\副业\\example'
-    svg_files = process_markdown(dir_path)
-    convert_svgs(svg_files)
 
 
 if __name__ == "__main__":
