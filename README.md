@@ -1,6 +1,6 @@
 # Algviz
 
-[<img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/>](https://algviz.com)
+[<img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/>](https://zjl9959.github.io/algviz)
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/algviz)
 ![PyPI](https://img.shields.io/pypi/v/algviz)
@@ -11,7 +11,7 @@
 
 ## What is algviz?
 
-[Algviz](https://algviz.com) is an algorithm animation engine for your Python code in [Jupyter](https://jupyter.org/), which supports multiple data structures such as `vector`, `table`, `linked_list`, `tree` and `graph`.
+[Algviz](https://zjl9959.github.io/algviz) is an algorithm animation engine for your Python code in [Jupyter](https://jupyter.org/), which supports multiple data structures such as `vector`, `table`, `linked_list`, `tree` and `graph`.
 
 | Vector | Table | Tree | Graph |
 |:---:|:---:|:---:|:---:|
@@ -66,11 +66,11 @@ Ready to see the magic? Click this button to try more algorithms on Gitpod!
 
 ## Installation
 
-Please follow this [installation guide](https://algviz.com/en/installation.html) to setup algviz.
+Please follow this [installation guide](https://zjl9959.github.io/algviz/en/installation.html) to setup algviz.
 
 ## Tutorial
 
-This [tutorial](https://algviz.com/en/examples.html) gives you a quick start on using algviz.
+This [tutorial](https://zjl9959.github.io/algviz/en/examples.html) gives you a quick start on using algviz.
 
 All the API references can be found at [algviz API reference](https://algviz.readthedocs.io/en/latest/api.html#).
 

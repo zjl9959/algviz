@@ -27,7 +27,7 @@ setup(
     long_description_content_type="text/markdown",
     license="GPLv3",
     keywords="Algorithm Visualizer Animation Jupyter-notebook Graph",
-    url="https://algviz.com/",
+    url="https://zjl9959.github.io/algviz/",
     project_urls={
         "Documentation": "https://algviz.readthedocs.io/en/latest/index.html",
         "Issue Tracker": "https://github.com/zjl9959/algviz/issues",

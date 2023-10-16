@@ -12,7 +12,7 @@ from colorsys import rgb_to_hls
 
 
 _version = '0.3.1'                  # algviz version
-_url = 'https://algviz.com'         # The homepage for algviz
+_url = 'https://zjl9959.github.io/algviz'         # The homepage for algviz
 RANDOM_SEED = None
 KFATAL_HELP_INFO = """You can report this bug from link: https://github.com/zjl9959/algviz/issues"""
 FONT_FAMILY = 'Courier,monospace'

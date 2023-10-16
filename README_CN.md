@@ -1,6 +1,6 @@
 # 项目介绍
 
-[<img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/>](https://algviz.com)
+[<img src="https://cdn.jsdelivr.net/gh/zjl9959/algviz@main/docs/images/logo_v1.svg"/>](https://zjl9959.github.io/algviz)
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/algviz)
 ![PyPI](https://img.shields.io/pypi/v/algviz)
@@ -9,7 +9,7 @@
 
 ## 关于本项目
 
-[Algviz](https://algviz.com) 是一个可以在你的 [Jupyter](https://jupyter.org/) 笔记中执行的算法动画引擎。 它支持多种数据结构的动画生成，例如下面的 `向量`、`表格`、`链表`、`树` 和 `拓扑图`。
+[Algviz](https://zjl9959.github.io/algviz) 是一个可以在你的 [Jupyter](https://jupyter.org/) 笔记中执行的算法动画引擎。 它支持多种数据结构的动画生成，例如下面的 `向量`、`表格`、`链表`、`树` 和 `拓扑图`。
 
 | 向量 | 表格 | 树 | 拓扑图 |
 |:---:|:---:|:---:|:---:|
@@ -65,11 +65,11 @@ bubble_sort([5, 4, -2, 1, -1, 3])
 
 ## 安装步骤
 
-请参考官网中的 [本地安装指南](https://algviz.com/cn/installation.html)。
+请参考官网中的 [本地安装指南](https://zjl9959.github.io/algviz/cn/installation.html)。
 
 ## 教程
 
-该链接中的 [教程](https://algviz.com/cn/examples.html) 会帮你快速上手 algviz。
+该链接中的 [教程](https://zjl9959.github.io/algviz/cn/examples.html) 会帮你快速上手 algviz。
 
 完整的接口文档请参考：[algviz API reference](https://algviz.readthedocs.io/en/latest/api.html#).
 

@@ -24,7 +24,7 @@ from algviz.logo import get_logo, get_logo_size
 
 
 LOGO_SHOW_TIME = 3
-WEB_URL = 'https://algviz.com/'
+WEB_URL = 'https://zjl9959.github.io/algviz/'
 SVG_MARGIN = 5
 NAME_MARGIN = 5
 
