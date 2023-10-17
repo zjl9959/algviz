@@ -11,7 +11,7 @@ CAPTURA_CLI = "captura-cli.exe"
 CHECK_ENV_PROCESS = ['chrome.exe', 'EyesRelax.exe']
 
 
-def convert_mp4(info, svg_file):
+def convert_svg(info, svg_file, keep_mp4):
     mp4_file = svg_file.replace('.svg', '.mp4')
     gif_file = svg_file.replace('.svg', '.gif')
     svg_width = math.floor(info['size'][0] * 2.33)
@@ -22,7 +22,7 @@ def convert_mp4(info, svg_file):
     # print(command_list)
     chrome_process = subprocess.Popen(command_list)
     # Start captura: {--vq Video Quality (1 to 100) (Default is 70)}
-    command = """{} start -y --length {} --source {},{},{},{} --file {} --framerate 30 --vq 80""".format(
+    command = """{} start --delay 300 -y --length {} --source {},{},{},{} --file {} --framerate 30 --vq 80""".format(
         CAPTURA_CLI, math.floor(duration), 0, 0, svg_width, svg_height, mp4_file)
     # print(command)
     subprocess.run(command, env=os.environ.copy())
@@ -31,7 +31,8 @@ def convert_mp4(info, svg_file):
     command = """ffmpeg -hide_banner -loglevel error -y -i {} {}""".format(mp4_file, gif_file)
     # print('\n{}'.format(command))
     subprocess.run(command, env=os.environ.copy())
-    os.remove(mp4_file)
+    if not keep_mp4:
+        os.remove(mp4_file)
 
 
 def process_markdown(dir_path):
@@ -57,7 +58,15 @@ def process_markdown(dir_path):
     return list(set(svg_path))
 
 
-def convert_svgs(svg_files):
+def process_folder(dir_path):
+    svg_path = []
+    for file in os.listdir(dir_path):
+        if file.endswith('.svg'):
+            svg_path.append(os.path.join(dir_path, file))
+    return svg_path
+
+
+def convert_svgs(svg_files, keep_mp4):
     nb_processed = 0
     for file in svg_files:
         nb_processed += 1
@@ -76,7 +85,7 @@ def convert_svgs(svg_files):
                     info = eval(info_str)
         if info is not None:
             sys.stdout.flush()
-            convert_mp4(info, file)
+            convert_svg(info, file, keep_mp4)
 
 
 def check_env():
@@ -92,13 +101,18 @@ def check_env():
 def main():
     parser = GooeyParser(description="将文件夹下面的 svg 转成 gif 并更新 markdown 链接")
     parser.add_argument("dir_path", help="请选择要处理的文件夹", widget='DirChooser')
+    parser.add_argument("--all_svg", default=False, help="是否处理文件中的所有 svg 图片", widget="CheckBox", action='store_true')
+    parser.add_argument("--keep_mp4", default=False, help="是否保留 mp4 格式的中间文件", widget="CheckBox", action='store_true')
     args = parser.parse_args()
     if not check_env():
         print("Please close these processes first: {}".format(CHECK_ENV_PROCESS))
         sys.stdout.flush()
         sys.exit(1)
-    svg_files = process_markdown(args.dir_path)
-    convert_svgs(svg_files)
+    if args.all_svg:
+        svg_files = process_folder(args.dir_path)
+    else:
+        svg_files = process_markdown(args.dir_path)
+    convert_svgs(svg_files, args.keep_mp4)
     sys.stdout.flush()
     sys.exit(0)
 
