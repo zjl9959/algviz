@@ -76,7 +76,7 @@ def convert_svgs(svg_files, remove_mp4):
             continue
         # Parse svg info.
         info = None
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             for line in f:
                 st = line.rfind('<!--{')
                 if st != -1:
