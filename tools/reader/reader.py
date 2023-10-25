@@ -23,14 +23,15 @@ def load_audio_texts(dir_name):
                         txt = line.strip('\r\n')
                     else:
                         txt += line.strip('\r\n')
-                    txt += '   '
+                    if len(txt) > 0 and txt[-1] not in ['。', '？', '！']:
+                        txt += '。'
                 audio_texts.append((file_real_path.replace('.txt', ''), txt))
     return audio_texts
 
 
 def process_audios(audio_texts, model):
     for (file, text) in audio_texts:
-        command = """tts --text "{}" --model_name "{}" --out_path {}.wav""".format(
+        command = """tts --text "{}" --model_name "{}" --out_path {}.mp3""".format(
             text, model, file)
         subprocess.run(command, env=os.environ.copy())
 
